@@ -1,6 +1,43 @@
 window.vtex or= {}
 window.vtex.checkout or= {}
 
+###
+  UTILITY FUNCTIONS
+###
+
+trim = (str) ->
+	str.replace(/^\s+|\s+$/g, '');
+
+mapize = (str, pairSeparator, keyValueSeparator, fnKey, fnValue) ->
+	map = {}
+	for pair in str.split(pairSeparator)
+		[key, value...] = pair.split(keyValueSeparator)
+		map[fnKey(key)] = fnValue(value.join('='))
+	return map
+
+urlParams = ->
+	mapize(window.location.search.substring(1), '&', '=', decodeURIComponent, decodeURIComponent)
+
+urlParam = (name) ->
+	urlParams()[name]
+
+readCookies = ->
+	mapize(document.cookie, ';', '=', trim, unescape)
+
+readCookie = (name) ->
+	readCookies()[name]
+
+readSubcookie = (name, cookie) ->
+	mapize(cookie, '&', '=', ((s)->s), unescape)[name]
+
+uniqueHashcode = (str) =>
+	hash = 0
+	for char in str
+		charcode = char.charCodeAt(0)
+		hash = ((hash << 5) - hash) + charcode
+		hash = hash & hash # Convert to 32bit integer
+	hash.toString()
+
 # jQuery.ajaxQueue - A queue for ajax requests - jQuery 1.5+
 # (c) 2011 Corey Frang - Dual licensed under the MIT and GPL licenses.
 do ($) ->
@@ -50,11 +87,8 @@ do ($) ->
 class CheckoutAPI
 	constructor: (@ajax = $.ajaxQueue) ->
 		@CHECKOUT_ID = 'checkout'
-		@HOST_URL = $.url().attr('base')
+		@HOST_URL = window.location.origin
 		@HOST_ORDER_FORM_URL = @HOST_URL + '/api/checkout/pub/orderForm/'
-		@HOST_CART_URL = @HOST_URL + '/' + $.url().segment(-2) + '/cart/'
-		@COOKIE_NAME = 'checkout.vtex.com'
-		@COOKIE_ORDER_FORM_ID_KEY = '__ofid'
 		@POSTALCODE_URL = @HOST_URL + '/api/checkout/pub/postal-code/'
 		@GATEWAY_CALLBACK_URL = @HOST_URL + '/checkout/gatewayCallback/{0}/{1}/{2}'
 		@requestingItem = undefined
@@ -91,20 +125,18 @@ class CheckoutAPI
 	# @param serializedAttachment stringified serializedAttachment
 	# @param expectedOrderFormSections
 	sendAttachment: (attachmentId, serializedAttachment, expectedOrderFormSections = @expectedFormSections(), options = {}) =>
-		orderAttachmentRequest =
-			expectedOrderFormSections: expectedOrderFormSections
-
 		if attachmentId is undefined or serializedAttachment is undefined
 			d = $.Deferred()
 			d.reject("Invalid arguments")
 			return d.promise()
 
-		## TODO alterar chamadas para não mandar stringified
-		_.extend(orderAttachmentRequest, JSON.parse(serializedAttachment))
+		# TODO alterar chamadas para não mandar stringified
+		orderAttachmentRequest = JSON.parse(serializedAttachment)
+		orderAttachmentRequest[expectedOrderFormSections] = expectedOrderFormSections
 
 		if options.cache and options.currentStateHash
-			requestHash = _.hash(attachmentId + JSON.stringify(orderAttachmentRequest))
-			stateRequestHash = options.currentStateHash.toString() + ':' +  requestHash.toString()
+			requestHash = uniqueHashcode(attachmentId + JSON.stringify(orderAttachmentRequest))
+			stateRequestHash = options.currentStateHash + ':' +  requestHash
 
 			if @stateRequestHashToResponseMap[stateRequestHash]
 				deferred = $.Deferred()
@@ -282,13 +314,14 @@ class CheckoutAPI
 		@_getOrderFormIdFromCookie() or @_getOrderFormIdFromURL() or ''
 
 	_getOrderFormIdFromCookie: =>
-		cookie = _.readCookie(@COOKIE_NAME)
-		unless cookie is undefined or cookie is ''
-			return _.getCookieValue(cookie, @COOKIE_ORDER_FORM_ID_KEY)
-		return undefined
+		COOKIE_NAME = 'checkout.vtex.com'
+		COOKIE_ORDER_FORM_ID_KEY = '__ofid'
+		cookie = readCookie(COOKIE_NAME)
+		return undefined if cookie is undefined or cookie is ''
+		return readSubcookie(cookie, COOKIE_ORDER_FORM_ID_KEY)
 
 	_getOrderFormIdFromURL: =>
-		$.url().param('orderFormId')
+		urlParam('orderFormId')
 
 	_getOrderFormURL: =>
 		@HOST_ORDER_FORM_URL + @_getOrderFormId()
