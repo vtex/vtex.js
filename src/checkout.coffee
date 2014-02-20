@@ -30,62 +30,14 @@ readCookie = (name) ->
 readSubcookie = (name, cookie) ->
 	mapize(cookie, '&', '=', ((s)->s), unescape)[name]
 
-uniqueHashcode = (str) =>
-	hash = 0
-	for char in str
-		charcode = char.charCodeAt(0)
-		hash = ((hash << 5) - hash) + charcode
-		hash = hash & hash # Convert to 32bit integer
-	hash.toString()
-
-# jQuery.ajaxQueue - A queue for ajax requests - jQuery 1.5+
-# (c) 2011 Corey Frang - Dual licensed under the MIT and GPL licenses.
-do ($) ->
-	# jQuery on an empty object, we are going to use this as our Queue
-	theQueue = $({})
-
-	$.ajaxQueue = (ajaxOpts) ->
-		jqXHR = undefined
-		dfd = $.Deferred()
-		promise = dfd.promise()
-
-		requestFunction = (next) ->
-			jqXHR = $.ajax(ajaxOpts);
-			jqXHR.done(dfd.resolve)
-				.fail(dfd.reject)
-				.then(next, next)
-
-		abortFunction = (statusText) ->
-			# proxy abort to the jqXHR if it is active
-			if jqXHR
-				return jqXHR.abort(statusText)
-
-			# if there wasn't already a jqXHR we need to remove from queue
-			queue = theQueue.queue()
-			index = $.inArray(requestFunction, queue)
-
-			if index > -1
-				queue.splice(index, 1)
-
-			# and then reject the deferred
-			dfd.rejectWith(ajaxOpts.context || ajaxOpts, [ promise, statusText, "" ])
-			return promise
-
-		# queue our ajax request
-		theQueue.queue(requestFunction)
-
-		# add the abort method
-		promise.abort = abortFunction
-
-		return promise
-
 # VTEX Checkout API v0.1.0
 # Depends on jQuery, vtex.utils.coffee, jquery.url.js
 #
 # Offers convenient methods for using the API in JS.
 # For more information head to: docs.vtex.com.br/js/CheckoutAPI
 class CheckoutAPI
-	constructor: (@ajax = $.ajaxQueue) ->
+	constructor: (ajax = $.ajax) ->
+		@ajax = AjaxQueue(ajax)
 		@CHECKOUT_ID = 'checkout'
 		@HOST_URL = window.location.origin
 		@HOST_ORDER_FORM_URL = @HOST_URL + '/api/checkout/pub/orderForm/'
