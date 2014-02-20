@@ -83,31 +83,19 @@ class CheckoutAPI
 			return d.promise()
 
 		# TODO alterar chamadas para não mandar stringified
-		orderAttachmentRequest = JSON.parse(serializedAttachment)
-		orderAttachmentRequest[expectedOrderFormSections] = expectedOrderFormSections
-
-		if options.cache and options.currentStateHash
-			requestHash = uniqueHashcode(attachmentId + JSON.stringify(orderAttachmentRequest))
-			stateRequestHash = options.currentStateHash + ':' +  requestHash
-
-			if @stateRequestHashToResponseMap[stateRequestHash]
-				deferred = $.Deferred()
-				deferred.resolve(@stateRequestHashToResponseMap[stateRequestHash])
-				return deferred.promise()
+		data = JSON.parse(serializedAttachment)
+		data[expectedOrderFormSections] = expectedOrderFormSections
 
 		xhr = @ajax
 			url: @_getSaveAttachmentURL(attachmentId)
 			type: 'POST'
 			contentType: 'application/json; charset=utf-8'
 			dataType: 'json'
-			data: JSON.stringify(orderAttachmentRequest)
+			data: JSON.stringify(data)
 
 		if options.abort and options.subject
 			@subjectToJqXHRMap[options.subject]?.abort()
 			@subjectToJqXHRMap[options.subject] = xhr
-
-		if options.cache and options.currentStateHash
-			xhr.done (data) => @stateRequestHashToResponseMap[stateRequestHash] = data
 
 		return xhr
 
