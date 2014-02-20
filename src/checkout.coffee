@@ -47,23 +47,23 @@ class CheckoutAPI
 		@stateRequestHashToResponseMap = {}
 		@subjectToJqXHRMap = {}
 
-	expectedFormSections: ->
-		[
-			'items'
-			'totalizers'
-			'clientProfileData'
-			'shippingData'
-			'paymentData'
-			'sellers'
-			'messages'
-			'marketingData'
-			'clientPreferencesData'
-			'storePreferencesData'
-			'giftRegistryData'
-			'ratesAndBenefitsData'
-		]
+		@expectedFormSections =
+			[
+				'items'
+				'totalizers'
+				'clientProfileData'
+				'shippingData'
+				'paymentData'
+				'sellers'
+				'messages'
+				'marketingData'
+				'clientPreferencesData'
+				'storePreferencesData'
+				'giftRegistryData'
+				'ratesAndBenefitsData'
+			]
 
-	getOrderForm: (expectedFormSections = @expectedFormSections()) =>
+	getOrderForm: (expectedFormSections = @expectedFormSections) =>
 		checkoutRequest = { expectedOrderFormSections: expectedFormSections }
 		@ajax
 			url: @_getOrderFormURL()
@@ -76,7 +76,7 @@ class CheckoutAPI
 	# @param attachmentId
 	# @param serializedAttachment stringified serializedAttachment
 	# @param expectedOrderFormSections
-	sendAttachment: (attachmentId, serializedAttachment, expectedOrderFormSections = @expectedFormSections(), options = {}) =>
+	sendAttachment: (attachmentId, serializedAttachment, expectedOrderFormSections = @expectedFormSections, options = {}) =>
 		if attachmentId is undefined or serializedAttachment is undefined
 			d = $.Deferred()
 			d.reject("Invalid arguments")
@@ -108,7 +108,7 @@ class CheckoutAPI
 		updateItemsRequest =
 			id: offeringId
 			info: offeringInfo
-			expectedOrderFormSections: expectedOrderFormSections ? @expectedFormSections()
+			expectedOrderFormSections: expectedOrderFormSections ? @expectedFormSections
 
 		@ajax
 			url: @_getAddOfferingsURL(itemIndex)
@@ -123,7 +123,7 @@ class CheckoutAPI
 	removeOffering: (offeringId, itemIndex, expectedOrderFormSections) =>
 		updateItemsRequest =
 			Id: offeringId
-			expectedOrderFormSections: expectedOrderFormSections ? @expectedFormSections()
+			expectedOrderFormSections: expectedOrderFormSections ? @expectedFormSections
 
 		@ajax
 			url: @_getRemoveOfferingsURL(itemIndex, offeringId)
@@ -132,7 +132,7 @@ class CheckoutAPI
 			dataType: 'json'
 			data: JSON.stringify(updateItemsRequest)
 
-	updateItems: (itemsJS, expectedOrderFormSections = @expectedFormSections()) =>
+	updateItems: (itemsJS, expectedOrderFormSections = @expectedFormSections) =>
 		updateItemsRequest =
 			orderItems: itemsJS
 			expectedOrderFormSections: expectedOrderFormSections
@@ -161,7 +161,7 @@ class CheckoutAPI
 	addDiscountCoupon: (couponCode, expectedOrderFormSections) =>
 		couponCodeRequest =
 			text: couponCode
-			expectedOrderFormSections: expectedOrderFormSections ? @expectedFormSections()
+			expectedOrderFormSections: expectedOrderFormSections ? @expectedFormSections
 
 		@ajax
 			url: @_getAddCouponURL()
@@ -173,7 +173,7 @@ class CheckoutAPI
 	removeDiscountCoupon: (expectedOrderFormSections) =>
 		return @addDiscountCoupon('', expectedOrderFormSections)
 
-	removeGiftRegistry: (expectedFormSections = @expectedFormSections()) =>
+	removeGiftRegistry: (expectedFormSections = @expectedFormSections) =>
 		checkoutRequest = { expectedOrderFormSections: expectedFormSections }
 		@ajax
 			url: "/api/checkout/pub/orderForm/giftRegistry/#{@_getOrderFormId()}/remove"
@@ -193,14 +193,13 @@ class CheckoutAPI
 			type: 'GET'
 			timeout : 20000
 
-	# Aceita um address com propriedades postalCode e country
 	getProfileByEmail: (email, salesChannel) =>
 		@ajax
 			url: @_getProfileURL()
 			type: 'GET'
 			data: {email: email, sc: salesChannel}
 
-	startTransaction: (value, referenceValue, interestValue, savePersonalData = false, optinNewsLetter = false, expectedOrderFormSections = @expectedFormSections()) =>
+	startTransaction: (value, referenceValue, interestValue, savePersonalData = false, optinNewsLetter = false, expectedOrderFormSections = @expectedFormSections) =>
 		transactionRequest = {
 			referenceId: @_getOrderFormId()
 			savePersonalData: savePersonalData
