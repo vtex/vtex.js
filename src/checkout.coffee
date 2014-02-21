@@ -39,7 +39,7 @@ class Checkout
 	# @param hostURL [String] (default = window.location.origin) the base URL for API calls, without the trailing slash, e.g. "http://example.vtexcommerce.com.br".
 	# @param ajax [Function] (default = $.ajax) an AJAX function that must follow the convention, i.e., accept an object of options such as 'url', 'type' and 'data', and return a promise.
 	# @param promise [Function] (default = $.when) a promise function that must follow the Promises/A+ specification.
-	# @return [VTEX] the SDK
+	# @return [Checkout] instance
 	# @note hostURL configures a static variable. This means you can't have two different instances looking at different host URLs.
 	constructor: (hostURL, ajax = $.ajax, promise = $.when) ->
 		@ajax = (if window.AjaxQueue then window.AjaxQueue(ajax) else ajax)
@@ -82,7 +82,7 @@ class Checkout
 	# @return [Promise] a promise for the OrderForm.
 	getOrderForm: (expectedFormSections = @_allOrderFormSections) =>
 		if orderFormHasExpectedSections(@orderForm, expectedFormSections)
-			return $.when(@orderForm)
+			return @promise(@orderForm)
 		else
 			checkoutRequest = { expectedOrderFormSections: expectedFormSections }
 			return @ajax
