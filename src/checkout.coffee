@@ -31,23 +31,26 @@ readSubcookie = (name, cookie) ->
 #
 # Offers convenient methods for using the Checkout API in JS.
 class Checkout
+
+	HOST_URL = window.location.origin
+
 	# Instantiate the SDK.
 	#
+	# @param hostURL [String] (default = window.location.origin) the base URL for API calls, without the trailing slash, e.g. "http://example.vtexcommerce.com.br".
 	# @param ajax [Function] (default = $.ajax) an AJAX function that must follow the convention, i.e., accept an object of options such as 'url', 'type' and 'data', and return a promise.
-	# @param HostURL [String] (default = window.location.origin) the base URL for API calls, without the trailing slash, e.g. "http://example.vtexcommerce.com.br"
+	# @param promise [Function] (default = $.when) a promise function that must follow the Promises/A+ specification.
 	# @return [VTEX] the SDK
-	constructor: (ajax = $.ajax, hostURL) ->
-		@ajax = AjaxQueue(ajax)
+	# @note hostURL configures a static variable. This means you can't have two different instances looking at different host URLs.
+	constructor: (hostURL, ajax = $.ajax, promise = $.when) ->
+		@ajax = (if window.AjaxQueue then window.AjaxQueue(ajax) else ajax)
+		@promise = promise
+		HOST_URL = hostURL if hostURL
 		@CHECKOUT_ID = 'checkout'
-		@HOST_URL = hostURL || window.location.origin
-		@HOST_ORDER_FORM_URL = @HOST_URL + '/api/checkout/pub/orderForm/'
-		@POSTALCODE_URL = @HOST_URL + '/api/checkout/pub/postal-code/'
-		@GATEWAY_CALLBACK_URL = @HOST_URL + '/checkout/gatewayCallback/{0}/{1}/{2}'
-		@requestingItem = undefined
-		@stateRequestHashToResponseMap = {}
-		@subjectToJqXHRMap = {}
-
-		@allOrderFormSections =
+		@orderForm = undefined
+		@orderFormId = undefined
+		@_requestingItem = undefined
+		@_subjectToJqXHRMap = {}
+		@_allOrderFormSections =
 			[
 				'items'
 				'totalizers'
@@ -62,6 +65,7 @@ class Checkout
 				'giftRegistryData'
 				'ratesAndBenefitsData'
 			]
+		@version = 'VERSION'
 
 	# Sends an idempotent request to retrieve the current OrderForm.
 	# @param expectedOrderFormSections [Array] an array of attachment names.
@@ -84,7 +88,7 @@ class Checkout
 	# @option options [String] (default = null) subject an internal name to give to your attachment submission.
 	# @option options [Boolean] (default = false) abort indicates whether a previous submission with the same subject should be aborted, if it's ongoing.
 	# @return [Promise] a promise for the updated OrderForm.
-	sendAttachment: (attachmentId, attachment, expectedOrderFormSections = @allOrderFormSections, options = {}) =>
+	sendAttachment: (attachmentId, attachment, expectedOrderFormSections = @_allOrderFormSections, options = {}) =>
 		if attachmentId is undefined or attachment is undefined
 			d = $.Deferred()
 			d.reject("Invalid arguments")
@@ -101,8 +105,8 @@ class Checkout
 			data: JSON.stringify(attachment)
 
 		if options.abort and options.subject
-			@subjectToJqXHRMap[options.subject]?.abort()
-			@subjectToJqXHRMap[options.subject] = xhr
+			@_subjectToJqXHRMap[options.subject]?.abort()
+			@_subjectToJqXHRMap[options.subject] = xhr
 
 		return xhr
 
@@ -118,7 +122,7 @@ class Checkout
 	# @param itemIndex [Number] the index of the item for which the offering applies.
 	# @param expectedOrderFormSections [Array] (default = *all*) an array of attachment names.
 	# @return [Promise] a promise for the updated OrderForm.
-	addOfferingWithInfo: (offeringId, offeringInfo, itemIndex, expectedOrderFormSections = @allOrderFormSections) =>
+	addOfferingWithInfo: (offeringId, offeringInfo, itemIndex, expectedOrderFormSections = @_allOrderFormSections) =>
 		updateItemsRequest =
 			id: offeringId
 			info: offeringInfo
@@ -160,13 +164,13 @@ class Checkout
 	# @param items [Array] an array of objects representing the items in the OrderForm.
 	# @param expectedOrderFormSections [Array] (default = *all*) an array of attachment names.
 	# @return [Promise] a promise for the updated OrderForm.
-	updateItems: (items, expectedOrderFormSections = @allOrderFormSections) =>
+	updateItems: (items, expectedOrderFormSections = @_allOrderFormSections) =>
 		updateItemsRequest =
 			orderItems: items
 			expectedOrderFormSections: expectedOrderFormSections
 
-		if @requestingItem isnt undefined
-			@requestingItem.abort()
+		if @_requestingItem isnt undefined
+			@_requestingItem.abort()
 
 		return @requestingItem = @ajax(
 			url: @_getUpdateItemURL()
@@ -193,7 +197,7 @@ class Checkout
 	# @param couponCode [String] the coupon code to add.
 	# @param expectedOrderFormSections [Array] (default = *all*) an array of attachment names.
 	# @return [Promise] a promise for the updated OrderForm.
-	addDiscountCoupon: (couponCode, expectedOrderFormSections = @allOrderFormSections) =>
+	addDiscountCoupon: (couponCode, expectedOrderFormSections = @_allOrderFormSections) =>
 		couponCodeRequest =
 			text: couponCode
 			expectedOrderFormSections: expectedOrderFormSections
@@ -214,7 +218,7 @@ class Checkout
 	# Sends a request to remove the gift registry for the current OrderForm.
 	# @param expectedOrderFormSections [Array] (default = *all*) an array of attachment names.
 	# @return [Promise] a promise for the updated OrderForm.
-	removeGiftRegistry: (expectedFormSections = @allOrderFormSections) =>
+	removeGiftRegistry: (expectedFormSections = @_allOrderFormSections) =>
 		checkoutRequest = { expectedOrderFormSections: expectedFormSections }
 		@ajax
 			url: @_getRemoveGiftRegistryURL()
@@ -256,7 +260,7 @@ class Checkout
 	# @param optinNewsLetter [Boolean] (default = true) whether to subscribe the user to the store newsletter.
 	# @param expectedOrderFormSections [Array] (default = *all*) an array of attachment names.
 	# @return [Promise] a promise for the final OrderForm.
-	startTransaction: (value, referenceValue, interestValue, savePersonalData = false, optinNewsLetter = false, expectedOrderFormSections = @allOrderFormSections) =>
+	startTransaction: (value, referenceValue, interestValue, savePersonalData = false, optinNewsLetter = false, expectedOrderFormSections = @_allOrderFormSections) =>
 		transactionRequest = {
 			referenceId: @_getOrderFormId()
 			savePersonalData: savePersonalData
@@ -310,7 +314,7 @@ class Checkout
 	# This method should be used to get the URL to redirect the user to when he chooses to logout.
 	# @return [String] the URL.
 	getChangeToAnonymousUserURL: =>
-		@HOST_URL + '/checkout/changeToAnonymousUser/' + @_getOrderFormId()
+		HOST_URL + '/checkout/changeToAnonymousUser/' + @_getOrderFormId()
 
 	#
 	# URL BUILDERS
@@ -318,7 +322,7 @@ class Checkout
 
 	# @nodoc
 	_getOrderFormId: =>
-		@_getOrderFormIdFromCookie() or @_getOrderFormIdFromURL() or ''
+		@orderFormId or @_getOrderFormIdFromCookie() or @_getOrderFormIdFromURL() or ''
 
 	# @nodoc
 	_getOrderFormIdFromCookie: =>
@@ -333,8 +337,15 @@ class Checkout
 		urlParam('orderFormId')
 
 	# @nodoc
+	_getBaseOrderFormURL: ->
+		HOST_URL + '/api/checkout/pub/orderForm'
+
+	# @nodoc
 	_getOrderFormURL: =>
-		@HOST_ORDER_FORM_URL + @_getOrderFormId()
+		id = @_getOrderFormId()
+		if id is ''
+			throw new Error "This method requires an OrderForm. Use getOrderForm beforehand."
+		@HOST_ORDER_FORM_URL + id
 
 	# @nodoc
 	_getSaveAttachmentURL: (attachmentId) =>
@@ -353,10 +364,6 @@ class Checkout
 		@_getOrderFormURL() + '/coupons'
 
 	# @nodoc
-	_getOrdersURL: (orderGroupId) =>
-		@HOST_URL + '/api/checkout/pub/orders/order-group/' + orderGroupId
-
-	# @nodoc
 	_startTransactionURL: =>
 		@_getOrderFormURL() + '/transaction'
 
@@ -365,16 +372,25 @@ class Checkout
 		@_getOrderFormURL() + '/items/update/'
 
 	# @nodoc
+	_getRemoveGiftRegistryURL: =>
+		@_getBaseOrderFormURL() + "/giftRegistry/#{@_getOrderFormId()}/remove"
+
+	# @nodoc
+	_getOrdersURL: (orderGroupId) =>
+		HOST_URL + '/api/checkout/pub/orders/order-group/' + orderGroupId
+
+	# @nodoc
 	_getPostalCodeURL: (postalCode = '', countryCode = 'BRA') =>
-		@POSTALCODE_URL + countryCode + '/' + postalCode
+		HOST_URL + '/api/checkout/pub/postal-code/' + countryCode + '/' + postalCode
 
 	# @nodoc
 	_getProfileURL: =>
-		@HOST_URL + '/api/checkout/pub/profiles/'
+		HOST_URL + '/api/checkout/pub/profiles/'
 
 	# @nodoc
-	_getRemoveGiftRegistryURL: =>
-		@HOST_ORDER_FORM_URL + "/giftRegistry/#{@_getOrderFormId()}/remove"
+	_getGatewayCallbackURL = ->
+		HOST_URL + '/checkout/gatewayCallback/{0}/{1}/{2}'
+
 
 
 window.vtex or= {}
