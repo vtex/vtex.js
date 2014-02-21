@@ -43,3 +43,5 @@ AjaxQueue = (ajax) ->
 		promise.abort = abortFunction
 
 		return promise
+
+window.AjaxQueue = AjaxQueue
