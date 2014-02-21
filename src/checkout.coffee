@@ -67,18 +67,31 @@ class Checkout
 			]
 		@version = 'VERSION'
 
+	cacheOrderForm: (data) =>
+		@orderFormId = data.orderFormId
+		@orderForm = data.orderForm
+
+	orderFormHasExpectedSections = (orderForm, sections) ->
+		if not orderForm or not orderForm instanceof Object
+			return false
+		for section in sections
+			return false if not orderForm[section]
+
 	# Sends an idempotent request to retrieve the current OrderForm.
 	# @param expectedOrderFormSections [Array] an array of attachment names.
 	# @return [Promise] a promise for the OrderForm.
-	getOrderForm: (expectedFormSections = @allOrderFormSections) =>
-		# TODO guardar orderForm
-		checkoutRequest = { expectedOrderFormSections: expectedFormSections }
-		@ajax
-			url: @_getOrderFormURL()
-			type: 'POST'
-			contentType: 'application/json; charset=utf-8'
-			dataType: 'json'
-			data: JSON.stringify(checkoutRequest)
+	getOrderForm: (expectedFormSections = @_allOrderFormSections) =>
+		if orderFormHasExpectedSections(@orderForm, expectedFormSections)
+			return $.when(@orderForm)
+		else
+			checkoutRequest = { expectedOrderFormSections: expectedFormSections }
+			return @ajax
+				url: @_getBaseOrderFormURL()
+				type: 'POST'
+				contentType: 'application/json; charset=utf-8'
+				dataType: 'json'
+				data: JSON.stringify(checkoutRequest)
+			.done @cacheOrderForm
 
 	# Sends an OrderForm attachment to the current OrderForm, possibly updating it.
 	# @param attachmentId [String] the name of the attachment you're sending.
@@ -103,6 +116,7 @@ class Checkout
 			contentType: 'application/json; charset=utf-8'
 			dataType: 'json'
 			data: JSON.stringify(attachment)
+		.done @cacheOrderForm
 
 		if options.abort and options.subject
 			@_subjectToJqXHRMap[options.subject]?.abort()
@@ -134,6 +148,7 @@ class Checkout
 			contentType: 'application/json; charset=utf-8'
 			dataType: 'json'
 			data: JSON.stringify(updateItemsRequest)
+		.done @cacheOrderForm
 
 	# Sends a request to add an offering to the OrderForm.
 	# @param offeringId [String, Number] the id of the offering.
@@ -159,6 +174,7 @@ class Checkout
 			contentType: 'application/json; charset=utf-8'
 			dataType: 'json'
 			data: JSON.stringify(updateItemsRequest)
+		.done @cacheOrderForm
 
 	# Sends a request to update the items in the OrderForm.
 	# @param items [Array] an array of objects representing the items in the OrderForm.
@@ -172,19 +188,22 @@ class Checkout
 		if @_requestingItem isnt undefined
 			@_requestingItem.abort()
 
-		return @requestingItem = @ajax(
+		return @_requestingItem = @ajax
 			url: @_getUpdateItemURL()
 			type: 'POST'
 			contentType: 'application/json; charset=utf-8'
 			dataType: 'json'
 			data: JSON.stringify(updateItemsRequest)
-		).done =>
-			@requestingItem = undefined
+		.done @cacheOrderForm
+		.done => @_requestingItem = undefined
 
 	# Sends a request to remove items from the OrderForm.
 	# @param items [Array] an array of objects representing the items to remove.
 	# @return [Promise] a promise for the updated OrderForm.
 	removeItems: (items) =>
+#		if orderFormHasExpectedSections(@orderForm, ['items'])
+#
+#		else @getOrderForm(['items'])
 		# TODO usar copia local do OrderForm
 		deferred = $.Deferred()
 		promiseForItems = if items then $.when(items) else @getOrderForm(['items']).then (orderForm) -> orderForm.items
@@ -208,6 +227,7 @@ class Checkout
 			contentType: 'application/json; charset=utf-8'
 			dataType: 'json'
 			data: JSON.stringify couponCodeRequest
+		.done @cacheOrderForm
 
 	# Sends a request to remove the discount coupon from the OrderForm.
 	# @param expectedOrderFormSections [Array] (default = *all*) an array of attachment names.
@@ -226,6 +246,7 @@ class Checkout
 			contentType: 'application/json; charset=utf-8'
 			dataType: 'json'
 			data: JSON.stringify(checkoutRequest)
+		.done @cacheOrderForm
 
 	# Sends a request to calculates shipping for the current OrderForm, given an address object.
 	# @param address [Object] an address object
@@ -277,6 +298,7 @@ class Checkout
 			contentType: 'application/json; charset=utf-8',
 			dataType: 'json',
 			data: JSON.stringify(transactionRequest)
+		.done @cacheOrderForm
 
 	# Sends a request to retrieve the orders for a specific orderGroupId.
 	# @param orderGroupId [String] the ID of the order group.
