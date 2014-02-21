@@ -1,6 +1,3 @@
-window.vtex or= {}
-window.vtex.checkout or= {}
-
 ###
   UTILITY FUNCTIONS
 ###
@@ -30,10 +27,10 @@ readCookie = (name) ->
 readSubcookie = (name, cookie) ->
 	mapize(cookie, '&', '=', ((s)->s), unescape)[name]
 
-# vtex.js
+# Checkout module
 #
-# Offers convenient methods for using the API in JS.
-class VTEX
+# Offers convenient methods for using the Checkout API in JS.
+class Checkout
 	# Instantiate the SDK.
 	#
 	# @param ajax [Function] (default = $.ajax) an AJAX function that must follow the convention, i.e., accept an object of options such as 'url', 'type' and 'data', and return a promise.
@@ -379,9 +376,8 @@ class VTEX
 	_getRemoveGiftRegistryURL: =>
 		@HOST_ORDER_FORM_URL + "/giftRegistry/#{@_getOrderFormId()}/remove"
 
-# Compatibility with old clients - DEPRECATED!
-window.vtex.checkout.API = CheckoutAPI
-window.vtex.checkout.API.version = 'VERSION'
 
-window.vtex.checkout.SDK = CheckoutAPI
-window.vtex.checkout.SDK.version = 'VERSION'
+window.vtex or= {}
+window.vtex.Checkout = Checkout
+window.vtex.Checkout.version = 'VERSION'
+window.vtex.checkout = new window.vtex.Checkout()
