@@ -65,11 +65,12 @@ class Checkout
 				'giftRegistryData'
 				'ratesAndBenefitsData'
 			]
+
 		@version = 'VERSION'
 
 	cacheOrderForm: (data) =>
 		@orderFormId = data.orderFormId
-		@orderForm = data.orderForm
+		@orderForm = data
 
 	orderFormHasExpectedSections = (orderForm, sections) ->
 		if not orderForm or not orderForm instanceof Object
