@@ -205,19 +205,21 @@ class Checkout
 
 	# Sends a request to remove items from the OrderForm.
 	# @param items [Array] an array of objects representing the items to remove. These objects must have at least the `index` property.
+	# @param expectedOrderFormSections [Array] (default = *all*) an array of attachment names.
 	# @return [Promise] a promise for the updated OrderForm.
-	removeItems: (items) =>
+	removeItems: (items, expectedOrderFormSections = @_allOrderFormSections) =>
 		items.quantity = 0 for item in items
-		@updateItems items
+		@updateItems items, expectedOrderFormSections
 
 	# Sends a request to remove all items from the OrderForm.
+	# @param expectedOrderFormSections [Array] (default = *all*) an array of attachment names.
 	# @return [Promise] a promise for the updated OrderForm.
-	removeAllItems: =>
+	removeAllItems: (expectedOrderFormSections = @_allOrderFormSections)=>
 		orderFormPromise = if orderFormHasExpectedSections(['items']) then @promise(@orderForm) else @getOrderForm(['items'])
 		orderFormPromise.then (orderForm) =>
 			items = orderForm.items
 			item.quantity = 0 for item in items
-			@updateItems items
+			@updateItems items, expectedOrderFormSections
 
 	# Sends a request to add a discount coupon to the OrderForm.
 	# @param couponCode [String] the coupon code to add.
