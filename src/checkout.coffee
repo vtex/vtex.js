@@ -75,8 +75,7 @@ class Checkout
 		@orderForm = data
 
 	# @nodoc
-	_broadcastOrderForm: (orderForm) =>
-		console.log 'broadcasting', orderForm
+	broadcastOrderForm = (orderForm) ->
 		$(window).trigger('vtex.checkout.orderform.update', orderForm)
 
 	# @nodoc
@@ -101,7 +100,7 @@ class Checkout
 				dataType: 'json'
 				data: JSON.stringify(checkoutRequest)
 			.done @_cacheOrderForm
-			.done @_broadcastOrderForm
+			.done broadcastOrderForm
 
 	# Sends an OrderForm attachment to the current OrderForm, possibly updating it.
 	# @param attachmentId [String] the name of the attachment you're sending.
@@ -127,7 +126,7 @@ class Checkout
 			dataType: 'json'
 			data: JSON.stringify(attachment)
 		.done @_cacheOrderForm
-		.done @_broadcastOrderForm
+		.done broadcastOrderForm
 
 		if options.abort and options.subject
 			@_subjectToJqXHRMap[options.subject]?.abort()
@@ -160,7 +159,7 @@ class Checkout
 			dataType: 'json'
 			data: JSON.stringify(updateItemsRequest)
 		.done @_cacheOrderForm
-		.done @_broadcastOrderForm
+		.done broadcastOrderForm
 
 	# Sends a request to add an offering to the OrderForm.
 	# @param offeringId [String, Number] the id of the offering.
@@ -187,7 +186,7 @@ class Checkout
 			dataType: 'json'
 			data: JSON.stringify(updateItemsRequest)
 		.done @_cacheOrderForm
-		.done @_broadcastOrderForm
+		.done broadcastOrderForm
 
 	# Sends a request to update the items in the OrderForm. Items that are omitted are not modified.
 	# @param items [Array] an array of objects representing the items in the OrderForm.
@@ -209,7 +208,7 @@ class Checkout
 			data: JSON.stringify(updateItemsRequest)
 		.done => @_requestingItem = undefined
 		.done @_cacheOrderForm
-		.done @_broadcastOrderForm
+		.done broadcastOrderForm
 
 	# Sends a request to remove items from the OrderForm.
 	# @param items [Array] an array of objects representing the items to remove. These objects must have at least the `index` property.
@@ -245,7 +244,7 @@ class Checkout
 			dataType: 'json'
 			data: JSON.stringify couponCodeRequest
 		.done @_cacheOrderForm
-		.done @_broadcastOrderForm
+		.done broadcastOrderForm
 
 	# Sends a request to remove the discount coupon from the OrderForm.
 	# @param expectedOrderFormSections [Array] (default = *all*) an array of attachment names.
@@ -265,7 +264,7 @@ class Checkout
 			dataType: 'json'
 			data: JSON.stringify(checkoutRequest)
 		.done @_cacheOrderForm
-		.done @_broadcastOrderForm
+		.done broadcastOrderForm
 
 	# Sends a request to calculates shipping for the current OrderForm, given an address object.
 	# @param address [Object] an address object
@@ -318,7 +317,7 @@ class Checkout
 			dataType: 'json',
 			data: JSON.stringify(transactionRequest)
 		.done @_cacheOrderForm
-		.done @_broadcastOrderForm
+		.done broadcastOrderForm
 
 	# Sends a request to retrieve the orders for a specific orderGroupId.
 	# @param orderGroupId [String] the ID of the order group.
