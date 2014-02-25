@@ -72,7 +72,8 @@ class Checkout
 
 		@version = 'VERSION'
 
-	cacheOrderForm: (data) =>
+	# @nodoc
+	_cacheOrderForm: (data) =>
 		@orderFormId = data.orderFormId
 		@orderForm = data
 
@@ -96,7 +97,7 @@ class Checkout
 				contentType: 'application/json; charset=utf-8'
 				dataType: 'json'
 				data: JSON.stringify(checkoutRequest)
-			.done @cacheOrderForm
+			.done @_cacheOrderForm
 
 	# Sends an OrderForm attachment to the current OrderForm, possibly updating it.
 	# @param attachmentId [String] the name of the attachment you're sending.
@@ -121,7 +122,7 @@ class Checkout
 			contentType: 'application/json; charset=utf-8'
 			dataType: 'json'
 			data: JSON.stringify(attachment)
-		.done @cacheOrderForm
+		.done @_cacheOrderForm
 
 		if options.abort and options.subject
 			@_subjectToJqXHRMap[options.subject]?.abort()
@@ -153,7 +154,7 @@ class Checkout
 			contentType: 'application/json; charset=utf-8'
 			dataType: 'json'
 			data: JSON.stringify(updateItemsRequest)
-		.done @cacheOrderForm
+		.done @_cacheOrderForm
 
 	# Sends a request to add an offering to the OrderForm.
 	# @param offeringId [String, Number] the id of the offering.
@@ -179,7 +180,7 @@ class Checkout
 			contentType: 'application/json; charset=utf-8'
 			dataType: 'json'
 			data: JSON.stringify(updateItemsRequest)
-		.done @cacheOrderForm
+		.done @_cacheOrderForm
 
 	# Sends a request to update the items in the OrderForm. Items that are omitted are not modified.
 	# @param items [Array] an array of objects representing the items in the OrderForm.
@@ -199,7 +200,7 @@ class Checkout
 			contentType: 'application/json; charset=utf-8'
 			dataType: 'json'
 			data: JSON.stringify(updateItemsRequest)
-		.done @cacheOrderForm
+		.done @_cacheOrderForm
 		.done => @_requestingItem = undefined
 
 	# Sends a request to remove items from the OrderForm.
@@ -233,7 +234,7 @@ class Checkout
 			contentType: 'application/json; charset=utf-8'
 			dataType: 'json'
 			data: JSON.stringify couponCodeRequest
-		.done @cacheOrderForm
+		.done @_cacheOrderForm
 
 	# Sends a request to remove the discount coupon from the OrderForm.
 	# @param expectedOrderFormSections [Array] (default = *all*) an array of attachment names.
@@ -252,7 +253,7 @@ class Checkout
 			contentType: 'application/json; charset=utf-8'
 			dataType: 'json'
 			data: JSON.stringify(checkoutRequest)
-		.done @cacheOrderForm
+		.done @_cacheOrderForm
 
 	# Sends a request to calculates shipping for the current OrderForm, given an address object.
 	# @param address [Object] an address object
@@ -304,7 +305,7 @@ class Checkout
 			contentType: 'application/json; charset=utf-8',
 			dataType: 'json',
 			data: JSON.stringify(transactionRequest)
-		.done @cacheOrderForm
+		.done @_cacheOrderForm
 
 	# Sends a request to retrieve the orders for a specific orderGroupId.
 	# @param orderGroupId [String] the ID of the order group.
