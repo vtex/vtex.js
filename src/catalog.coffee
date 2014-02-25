@@ -12,13 +12,11 @@ class Catalog
 	# @option options [String] hostURL (default = window.location.origin) the base URL for API calls, without the trailing slash, e.g. "http://example.vtexcommerce.com.br".
 	# @option options [Function] ajax (default = $.ajax) an AJAX function that must follow the convention, i.e., accept an object of options such as 'url', 'type' and 'data', and return a promise.
 	# @option options [Function] promise (default = $.when) a promise function that must follow the Promises/A+ specification.
-	# @option options [Function] trigger (default = $(window).trigger) a event trigger function that can broadcast events to be listened by others.
 	# @return [Catalog] instance
 	constructor: (options = {}) ->
 		HOST_URL = options.hostURL if options.hostURL
 		@ajax = options.ajax or $.ajax
 		@promise = options.promise or $.when
-		@trigger = options.trigger or $(window).trigger
 
 		@cache =
 			productWithVariations: {}

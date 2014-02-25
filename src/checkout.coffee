@@ -41,14 +41,12 @@ class Checkout
 	# @option options [String] hostURL (default = window.location.origin) the base URL for API calls, without the trailing slash, e.g. "http://example.vtexcommerce.com.br".
 	# @option options [Function] ajax (default = $.ajax) an AJAX function that must follow the convention, i.e., accept an object of options such as 'url', 'type' and 'data', and return a promise.
 	# @option options [Function] promise (default = $.when) a promise function that must follow the Promises/A+ specification.
-	# @option options [Function] trigger (default = $(window).trigger) a event trigger function that can broadcast events to be listened by others.
 	# @return [Checkout] instance
 	# @note hostURL configures a static variable. This means you can't have two different instances looking at different host URLs.
 	constructor: (options = {}) ->
 		HOST_URL = options.hostURL if options.hostURL
 		@ajax = options.ajax or $.ajax
 		@promise = options.promise or $.when
-		@trigger = options.trigger or $(window).trigger
 
 		@CHECKOUT_ID = 'checkout'
 		@orderForm = undefined
@@ -76,6 +74,12 @@ class Checkout
 		@orderFormId = data.orderFormId
 		@orderForm = data
 
+	# @nodoc
+	_broadcastOrderForm: (orderForm) =>
+		console.log 'broadcasting', orderForm
+		$(window).trigger('vtex.checkout.orderform.update', orderForm)
+
+	# @nodoc
 	orderFormHasExpectedSections = (orderForm, sections) ->
 		if not orderForm or not orderForm instanceof Object
 			return false
@@ -97,6 +101,7 @@ class Checkout
 				dataType: 'json'
 				data: JSON.stringify(checkoutRequest)
 			.done @_cacheOrderForm
+			.done @_broadcastOrderForm
 
 	# Sends an OrderForm attachment to the current OrderForm, possibly updating it.
 	# @param attachmentId [String] the name of the attachment you're sending.
@@ -122,6 +127,7 @@ class Checkout
 			dataType: 'json'
 			data: JSON.stringify(attachment)
 		.done @_cacheOrderForm
+		.done @_broadcastOrderForm
 
 		if options.abort and options.subject
 			@_subjectToJqXHRMap[options.subject]?.abort()
@@ -154,6 +160,7 @@ class Checkout
 			dataType: 'json'
 			data: JSON.stringify(updateItemsRequest)
 		.done @_cacheOrderForm
+		.done @_broadcastOrderForm
 
 	# Sends a request to add an offering to the OrderForm.
 	# @param offeringId [String, Number] the id of the offering.
@@ -180,6 +187,7 @@ class Checkout
 			dataType: 'json'
 			data: JSON.stringify(updateItemsRequest)
 		.done @_cacheOrderForm
+		.done @_broadcastOrderForm
 
 	# Sends a request to update the items in the OrderForm. Items that are omitted are not modified.
 	# @param items [Array] an array of objects representing the items in the OrderForm.
@@ -199,8 +207,9 @@ class Checkout
 			contentType: 'application/json; charset=utf-8'
 			dataType: 'json'
 			data: JSON.stringify(updateItemsRequest)
-		.done @_cacheOrderForm
 		.done => @_requestingItem = undefined
+		.done @_cacheOrderForm
+		.done @_broadcastOrderForm
 
 	# Sends a request to remove items from the OrderForm.
 	# @param items [Array] an array of objects representing the items to remove. These objects must have at least the `index` property.
@@ -236,6 +245,7 @@ class Checkout
 			dataType: 'json'
 			data: JSON.stringify couponCodeRequest
 		.done @_cacheOrderForm
+		.done @_broadcastOrderForm
 
 	# Sends a request to remove the discount coupon from the OrderForm.
 	# @param expectedOrderFormSections [Array] (default = *all*) an array of attachment names.
@@ -255,6 +265,7 @@ class Checkout
 			dataType: 'json'
 			data: JSON.stringify(checkoutRequest)
 		.done @_cacheOrderForm
+		.done @_broadcastOrderForm
 
 	# Sends a request to calculates shipping for the current OrderForm, given an address object.
 	# @param address [Object] an address object
@@ -307,6 +318,7 @@ class Checkout
 			dataType: 'json',
 			data: JSON.stringify(transactionRequest)
 		.done @_cacheOrderForm
+		.done @_broadcastOrderForm
 
 	# Sends a request to retrieve the orders for a specific orderGroupId.
 	# @param orderGroupId [String] the ID of the order group.
