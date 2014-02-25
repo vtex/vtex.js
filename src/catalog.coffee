@@ -19,7 +19,7 @@ class Catalog
 		@promise = options.promise or $.when
 		@trigger = options.trigger or $(window).trigger
 
-		@cache:
+		@cache =
 			productWithVariations: {}
 
 		@version = 'VERSION'
