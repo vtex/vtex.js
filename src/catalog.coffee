@@ -7,17 +7,22 @@ class Catalog
 
 	# Instantiate the SDK.
 	#
-	# @param hostURL [String] (default = window.location.origin) the base URL for API calls, without the trailing slash, e.g. "http://example.vtexcommerce.com.br".
-	# @param ajax [Function] (default = $.ajax) an AJAX function that must follow the convention, i.e., accept an object of options such as 'url', 'type' and 'data', and return a promise.
-	# @param promise [Function] (default = $.when) a promise function that must follow the Promises/A+ specification.
+	# @param options [Object] options.
+	# @option options [String] hostURL (default = window.location.origin) the base URL for API calls, without the trailing slash, e.g. "http://example.vtexcommerce.com.br".
+	# @option options [Function] ajax (default = $.ajax) an AJAX function that must follow the convention, i.e., accept an object of options such as 'url', 'type' and 'data', and return a promise.
+	# @option options [Function] promise (default = $.when) a promise function that must follow the Promises/A+ specification.
+	# @option options [Function] trigger (default = $(window).trigger) a event trigger function that can broadcast events to be listened by others.
 	# @return [Catalog] instance
-	constructor: (hostURL, ajax = $.ajax, promise = $.when) ->
-		@ajax = (if window.AjaxQueue then window.AjaxQueue(ajax) else ajax)
-		@promise = promise
-		HOST_URL = hostURL if hostURL
-		@version = 'VERSION'
+	constructor: (options = {}) ->
+		HOST_URL = options.hostURL if options.hostURL
+		@ajax = options.ajax or $.ajax
+		@promise = options.promise or $.when
+		@trigger = options.trigger or $(window).trigger
+
 		@cache:
 			productWithVariations: {}
+
+		@version = 'VERSION'
 
 	# Sends a request to retrieve the orders for a specific orderGroupId.
 	# @param orderGroupId [String] the ID of the order group.
