@@ -5,7 +5,7 @@ class Catalog
 
 	HOST_URL = window.location.origin
 
-	# Instantiate the SDK.
+	# Instantiate the Catalog module.
 	#
 	# @param options [Object] options.
 	# @option options [String] hostURL (default = window.location.origin) the base URL for API calls, without the trailing slash, e.g. "http://example.vtexcommerce.com.br".
