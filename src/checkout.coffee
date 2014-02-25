@@ -177,7 +177,7 @@ class Checkout
 			data: JSON.stringify(updateItemsRequest)
 		.done @cacheOrderForm
 
-	# Sends a request to update the items in the OrderForm.
+	# Sends a request to update the items in the OrderForm. Items that are omitted are not modified.
 	# @param items [Array] an array of objects representing the items in the OrderForm.
 	# @param expectedOrderFormSections [Array] (default = *all*) an array of attachment names.
 	# @return [Promise] a promise for the updated OrderForm.
@@ -199,19 +199,20 @@ class Checkout
 		.done => @_requestingItem = undefined
 
 	# Sends a request to remove items from the OrderForm.
-	# @param items [Array] an array of objects representing the items to remove.
+	# @param items [Array] an array of objects representing the items to remove. These objects must have at least the `index` property.
 	# @return [Promise] a promise for the updated OrderForm.
 	removeItems: (items) =>
-#		if orderFormHasExpectedSections(@orderForm, ['items'])
-#
-#		else @getOrderForm(['items'])
-		# TODO usar copia local do OrderForm
-		deferred = $.Deferred()
-		promiseForItems = if items then $.when(items) else @getOrderForm(['items']).then (orderForm) -> orderForm.items
-		promiseForItems.then (array) =>
-			@updateItems(_(array).map((item, i) => {index: item.index, quantity: 0}).reverse())
-				.done((data) -> deferred.resolve(data)).fail(deferred.reject)
-		deferred.promise()
+		items.quantity = 0 for item in items
+		@updateItems items
+
+	# Sends a request to remove all items from the OrderForm.
+	# @return [Promise] a promise for the updated OrderForm.
+	removeAllItems: =>
+		orderFormPromise = if orderFormHasExpectedSections(['items']) then @promise(@orderForm) else @getOrderForm(['items'])
+		orderFormPromise.then (orderForm) =>
+			items = orderForm.items
+			item.quantity = 0 for item in items
+			@updateItems items
 
 	# Sends a request to add a discount coupon to the OrderForm.
 	# @param couponCode [String] the coupon code to add.
