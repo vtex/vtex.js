@@ -4,6 +4,7 @@
 class Catalog
 
 	HOST_URL = window.location.origin
+	version = 'VERSION_REPLACE'
 
 	# Instantiate the Catalog module.
 	#
@@ -21,8 +22,6 @@ class Catalog
 
 		@cache =
 			productWithVariations: {}
-
-		@version = 'VERSION'
 
 	# Sends a request to retrieve the orders for a specific orderGroupId.
 	# @param orderGroupId [String] the ID of the order group.
@@ -46,5 +45,4 @@ class Catalog
 
 window.vtex or= {}
 window.vtex.Catalog = Catalog
-window.vtex.Catalog.version = 'VERSION'
 window.vtex.catalog = new window.vtex.Catalog()

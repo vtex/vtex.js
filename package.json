@@ -33,5 +33,9 @@
     "Guilherme Rodrigues <gadr90@gmail.com>",
     "Breno Calazans <brenocalazans@gmail.com>"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "gulp-header": "~1.0.2",
+    "gulp-replace": "~0.2.0"
+  }
 }

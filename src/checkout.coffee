@@ -33,6 +33,7 @@ readSubcookie = (name, cookie) ->
 class Checkout
 
 	HOST_URL = window.location.origin
+	version = 'VERSION_REPLACE'
 
 	# Instantiate the Checkout module.
 	#
@@ -69,8 +70,6 @@ class Checkout
 				'giftRegistryData'
 				'ratesAndBenefitsData'
 			]
-
-		@version = 'VERSION'
 
 	# @nodoc
 	_cacheOrderForm: (data) =>
@@ -426,5 +425,4 @@ class Checkout
 
 window.vtex or= {}
 window.vtex.Checkout = Checkout
-window.vtex.Checkout.version = 'VERSION'
 window.vtex.checkout = new window.vtex.Checkout()
