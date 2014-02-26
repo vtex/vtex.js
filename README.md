@@ -1,4 +1,4 @@
-# vtes.js
+# vtex.js
 
 Javascript SDK for the Checkout service API
 
