@@ -1,3 +1,5 @@
+spawn   = require('child_process').spawn
+fs      = require 'fs'
 gulp    = require 'gulp'
 gutil   = require 'gulp-util'
 clean   = require 'gulp-clean'
@@ -8,6 +10,7 @@ uglify  = require 'gulp-uglify'
 rename  = require 'gulp-rename'
 concat  = require 'gulp-concat'
 header  = require 'gulp-header'
+markdox = require 'gulp-markdox'
 
 readJson = require('jsonfile').readFileSync
 pkg = readJson 'package.json'
@@ -31,6 +34,18 @@ gulp.task 'dist', ['js'], ->
 		.pipe concat('vtex-' + pkg.version + '.min.js')
 		.pipe header('/* vtex.js <%= version %> */\n', pkg)
 		.pipe gulp.dest './dist'
+
+
+gulp.task 'clean-doc', ->
+	gulp.src './doc/*', read: false
+	.pipe clean()
+
+gulp.task 'doc', ['clean-doc'], ->
+	gulp.src './src/*'
+		.pipe markdox()
+		.pipe concat 'doc.md'
+		.pipe gulp.dest('./doc')
+
 
 gulp.task 'default', ['js'], ->
 	gulp.watch './src/*.coffee', ->
