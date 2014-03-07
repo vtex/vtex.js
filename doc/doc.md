@@ -275,17 +275,17 @@ Sends a request to retrieve a user&#39;s profile.
 
 * **Promise** a promise for the profile.
 
-## startTransaction(, , , savePersonalData, optinNewsLetter, expectedOrderFormSections)
+## startTransaction(value, referenceValue, interestValue, savePersonalData, optinNewsLetter, expectedOrderFormSections)
 
 Sends a request to start the transaction. This is the final step in the checkout process.
 
 ### Params: 
 
-* **value** ** 
+* **String|Number** *value* 
 
-* **referenceValue** ** 
+* **String|Number** *referenceValue* 
 
-* **interestValue** ** 
+* **String|Number** *interestValue* 
 
 * **Boolean** *savePersonalData* (default = false) whether to save the user&#39;s data for using it later in another order.
 

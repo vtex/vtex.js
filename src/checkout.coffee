@@ -330,9 +330,9 @@ class Checkout
 
 	###*
 	 * Sends a request to start the transaction. This is the final step in the checkout process.
-	 * @param value
-	 * @param referenceValue
-	 * @param interestValue
+	 * @param {String|Number} value
+	 * @param {String|Number} referenceValue
+	 * @param {String|Number} interestValue
 	 * @param {Boolean} savePersonalData (default = false) whether to save the user's data for using it later in another order.
 	 * @param {Boolean} optinNewsLetter (default = true) whether to subscribe the user to the store newsletter.
 	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
