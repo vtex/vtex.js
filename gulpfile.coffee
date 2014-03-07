@@ -38,13 +38,13 @@ gulp.task 'js', ['clean-build'], ->
 gulp.task 'dist', ['js', 'clean-dist'], ->
 	gulp.src './build/*'
 		.pipe header("/* vtex.js #{pkg.version} */\n")
-		.pipe rename extname: "-#{pkg.version}.js"
 		.pipe gulp.dest './dist'
 		.pipe rename extname: ".min.js"
 		.pipe uglify outSourceMap: true
 		.pipe gulp.dest './dist'
 	gulp.src './build/*'
-		.pipe concat("vtex-#{pkg.version}.js")
+		.pipe concat("vtex.js")
+		.pipe gulp.dest './dist'
 		.pipe header("/* vtex.js #{pkg.version} */\n")
 		.pipe rename extname: '.min.js'
 		.pipe uglify outSourceMap: true
