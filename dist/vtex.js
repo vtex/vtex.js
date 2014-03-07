@@ -713,7 +713,7 @@
       if (id === '') {
         throw new Error("This method requires an OrderForm. Use getOrderForm beforehand.");
       }
-      return this.HOST_ORDER_FORM_URL + id;
+      return "" + (this._getBaseOrderFormURL()) + "/" + id;
     };
 
     Checkout.prototype._getSaveAttachmentURL = function(attachmentId) {

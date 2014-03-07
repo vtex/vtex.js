@@ -427,7 +427,7 @@ class Checkout
 		id = @_getOrderFormId()
 		if id is ''
 			throw new Error "This method requires an OrderForm. Use getOrderForm beforehand."
-		@HOST_ORDER_FORM_URL + id
+		"#{@_getBaseOrderFormURL()}/#{id}"
 
 	_getSaveAttachmentURL: (attachmentId) =>
 		@_getOrderFormURL() + '/attachments/' + attachmentId
