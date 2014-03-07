@@ -72,6 +72,7 @@ class Checkout
 				'storePreferencesData'
 				'giftRegistryData'
 				'ratesAndBenefitsData'
+				'openTextField'
 			]
 
 	_cacheOrderForm: (data) =>
