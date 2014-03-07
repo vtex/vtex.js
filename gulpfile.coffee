@@ -11,6 +11,7 @@ rename  = require 'gulp-rename'
 concat  = require 'gulp-concat'
 header  = require 'gulp-header'
 markdox = require 'gulp-markdox'
+noDebug = require 'gulp-strip-debug'
 
 readJson = require('jsonfile').readFileSync
 pkg = readJson 'package.json'
@@ -37,12 +38,14 @@ gulp.task 'js', ['clean-build'], ->
 
 gulp.task 'dist', ['js', 'clean-dist'], ->
 	gulp.src './build/*'
+		.pipe noDebug()
 		.pipe header("/* vtex.js #{pkg.version} */\n")
 		.pipe gulp.dest './dist'
 		.pipe rename extname: ".min.js"
 		.pipe uglify outSourceMap: true
 		.pipe gulp.dest './dist'
 	gulp.src './build/*'
+		.pipe noDebug()
 		.pipe concat("vtex.js")
 		.pipe gulp.dest './dist'
 		.pipe header("/* vtex.js #{pkg.version} */\n")
