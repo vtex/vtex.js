@@ -1,0 +1,28 @@
+{
+  "name": "vtex.js",
+  "version": "0.1.0",
+  "homepage": "https://github.com/vtex/vtex.js",
+  "authors": [
+    "Guilherme Rodrigues <gadr90@gmail.com>",
+    "Breno Calazans <brenocalazans@gmail.com>",
+    "Guilherme Berger <guilherme.berger@gmail.com>"
+  ],
+  "description": "VTEX JS SDK",
+  "main": "dist/vtex.js",
+  "keywords": [
+    "vtex",
+    "js",
+    "sdk",
+    "checkout",
+    "catalog",
+    "commerce"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

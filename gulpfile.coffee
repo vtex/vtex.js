@@ -16,29 +16,40 @@ readJson = require('jsonfile').readFileSync
 pkg = readJson 'package.json'
 
 
-gulp.task 'clean', ->
+gulp.task 'clean-build', ->
 	gulp.src './build/*', read: false
 		.pipe clean()
+
+gulp.task 'clean-dist', ->
 	gulp.src './dist/*', read: false
 		.pipe clean()
 
-gulp.task 'js', ['clean'], ->
+gulp.task 'clean-doc', ->
+	gulp.src './doc/*', read: false
+		.pipe clean()
+
+
+gulp.task 'js', ['clean-build'], ->
 	gulp.src './src/*.coffee'
 		.pipe replace(/VERSION_REPLACE/, "#{pkg.version}")
 		.pipe coffee().on('error', gutil.log)
 		.pipe gulp.dest './build'
 
-gulp.task 'dist', ['js'], ->
+gulp.task 'dist', ['js', 'clean-dist'], ->
 	gulp.src './build/*'
-		.pipe uglify()
-		.pipe concat('vtex-' + pkg.version + '.min.js')
-		.pipe header('/* vtex.js <%= version %> */\n', pkg)
+		.pipe header("/* vtex.js #{pkg.version} */\n")
+		.pipe rename extname: "-#{pkg.version}.js"
+		.pipe gulp.dest './dist'
+		.pipe rename extname: ".min.js"
+		.pipe uglify outSourceMap: true
+		.pipe gulp.dest './dist'
+	gulp.src './build/*'
+		.pipe concat("vtex-#{pkg.version}.js")
+		.pipe header("/* vtex.js #{pkg.version} */\n")
+		.pipe rename extname: '.min.js'
+		.pipe uglify outSourceMap: true
 		.pipe gulp.dest './dist'
 
-
-gulp.task 'clean-doc', ->
-	gulp.src './doc/*', read: false
-	.pipe clean()
 
 gulp.task 'doc', ['clean-doc'], ->
 	gulp.src './src/*'
@@ -49,4 +60,4 @@ gulp.task 'doc', ['clean-doc'], ->
 
 gulp.task 'default', ['js'], ->
 	gulp.watch './src/*.coffee', ->
-		gulp.run 'clean', 'js'
+		gulp.run 'clean-build', 'js'

@@ -1,9 +1,9 @@
 {
-  "name": "checkout-sdk",
+  "name": "vtex.js",
   "version": "0.1.0",
   "readmeFilename": "README.md",
   "description": "VTEX JS SDK",
-  "main": "index.html",
+  "main": "dist/vtex.js",
   "devDependencies": {
     "coffee-script": "~1.7.1",
     "gulp": "~3.5.2",
@@ -22,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/vtex/front.checkout-sdk"
+    "url": "git://github.com/vtex/vtex.js"
   },
   "keywords": [
     "vtex",
@@ -33,9 +33,9 @@
     "commerce"
   ],
   "contributors": [
-    "Guilherme Berger <guilherme.berger@gmail.com>",
     "Guilherme Rodrigues <gadr90@gmail.com>",
-    "Breno Calazans <brenocalazans@gmail.com>"
+    "Breno Calazans <brenocalazans@gmail.com>",
+    "Guilherme Berger <guilherme.berger@gmail.com>"
   ],
   "license": "MIT"
 }
