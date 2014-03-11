@@ -128,7 +128,7 @@ class Checkout
 			return d.promise()
 
 		# TODO alterar chamadas para não mandar stringified
-		attachment[expectedOrderFormSections] = expectedOrderFormSections
+		attachment['expectedOrderFormSections'] = expectedOrderFormSections
 
 		xhr = @ajax
 			url: @_getSaveAttachmentURL(attachmentId)

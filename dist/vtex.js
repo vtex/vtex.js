@@ -14,7 +14,7 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.1.0';
+    version = '0.1.1';
 
 
     /**
@@ -136,7 +136,7 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.1.0';
+    version = '0.1.1';
 
 
     /**
@@ -284,7 +284,7 @@
         d.reject("Invalid arguments");
         return d.promise();
       }
-      attachment[expectedOrderFormSections] = expectedOrderFormSections;
+      attachment['expectedOrderFormSections'] = expectedOrderFormSections;
       xhr = this.ajax({
         url: this._getSaveAttachmentURL(attachmentId),
         type: 'POST',
