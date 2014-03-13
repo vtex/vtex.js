@@ -127,7 +127,6 @@ class Checkout
 			d.reject("Invalid arguments")
 			return d.promise()
 
-		# TODO alterar chamadas para não mandar stringified
 		attachment['expectedOrderFormSections'] = expectedOrderFormSections
 
 		xhr = @ajax
