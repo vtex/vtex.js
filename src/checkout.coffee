@@ -459,7 +459,7 @@ class Checkout
 	_getProfileURL: =>
 		HOST_URL + '/api/checkout/pub/profiles/'
 
-	_getGatewayCallbackURL = ->
+	_getGatewayCallbackURL: =>
 		HOST_URL + '/checkout/gatewayCallback/{0}/{1}/{2}'
 
 
