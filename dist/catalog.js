@@ -1,4 +1,4 @@
-/* vtex.js 0.1.3 */
+/* vtex.js 0.1.4 */
 
 /**
 * h1 Catalog module
@@ -15,7 +15,7 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.1.3';
+    version = '0.1.4';
 
 
     /**
