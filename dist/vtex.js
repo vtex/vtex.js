@@ -14,7 +14,7 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.1.1';
+    version = '0.1.3';
 
 
     /**
@@ -132,11 +132,11 @@
    */
 
   Checkout = (function() {
-    var HOST_URL, broadcastOrderForm, orderFormHasExpectedSections, version, _getGatewayCallbackURL;
+    var HOST_URL, broadcastOrderForm, orderFormHasExpectedSections, version;
 
     HOST_URL = window.location.origin;
 
-    version = '0.1.1';
+    version = '0.1.3';
 
 
     /**
@@ -157,6 +157,7 @@
       if (options == null) {
         options = {};
       }
+      this._getGatewayCallbackURL = __bind(this._getGatewayCallbackURL, this);
       this._getProfileURL = __bind(this._getProfileURL, this);
       this._getPostalCodeURL = __bind(this._getPostalCodeURL, this);
       this._getOrdersURL = __bind(this._getOrdersURL, this);
@@ -762,7 +763,7 @@
       return HOST_URL + '/api/checkout/pub/profiles/';
     };
 
-    _getGatewayCallbackURL = function() {
+    Checkout.prototype._getGatewayCallbackURL = function() {
       return HOST_URL + '/checkout/gatewayCallback/{0}/{1}/{2}';
     };
 

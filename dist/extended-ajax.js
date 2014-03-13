@@ -1,4 +1,4 @@
-/* vtex.js 0.1.1 */
+/* vtex.js 0.1.3 */
 (function() {
   var AjaxQueue, uniqueHashcode;
 
