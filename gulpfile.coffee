@@ -42,18 +42,18 @@ gulp.task 'dist', ['js', 'clean-dist'], ->
 	gulp.src './build/*'
 		.pipe noDebug()
 		.pipe header("/* vtex.js #{pkg.version} */\n")
-		.pipe gulp.dest './dist'
+		.pipe gulp.dest "./dist/#{pkg.version}"
 		.pipe rename extname: ".min.js"
 		.pipe uglify outSourceMap: true
-		.pipe gulp.dest './dist'
+		.pipe gulp.dest "./dist/#{pkg.version}"
 	gulp.src './build/*'
 		.pipe noDebug()
 		.pipe concat("vtex.js")
-		.pipe gulp.dest './dist'
+		.pipe gulp.dest "./dist/#{pkg.version}"
 		.pipe header("/* vtex.js #{pkg.version} */\n")
 		.pipe rename extname: '.min.js'
 		.pipe uglify outSourceMap: true
-		.pipe gulp.dest './dist'
+		.pipe gulp.dest "./dist/#{pkg.version}"
 
 
 gulp.task 'doc', ['clean-doc'], ->
