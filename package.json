@@ -3,6 +3,7 @@
   "version": "0.1.4",
   "readmeFilename": "README.md",
   "description": "VTEX JS SDK",
+  "deploy": "dist/",
   "main": "dist/vtex.js",
   "devDependencies": {
     "coffee-script": "~1.7.1",
@@ -19,7 +20,9 @@
     "gulp-replace": "~0.2.0",
     "markdox": "~0.1.2",
     "gulp-markdox": "~0.1.0",
-    "gulp-strip-debug": "^0.3.0"
+    "gulp-strip-debug": "^0.3.0",
+    "deploy-s3": "^0.1.0",
+    "knox": "^0.8.9"
   },
   "repository": {
     "type": "git",

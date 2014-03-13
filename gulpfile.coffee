@@ -12,6 +12,8 @@ concat  = require 'gulp-concat'
 header  = require 'gulp-header'
 markdox = require 'gulp-markdox'
 noDebug = require 'gulp-strip-debug'
+knox    = require 'knox'
+Deploy  = require 'deploy-s3'
 
 readJson = require('jsonfile').readFileSync
 pkg = readJson 'package.json'
@@ -59,6 +61,17 @@ gulp.task 'doc', ['clean-doc'], ->
 		.pipe markdox()
 		.pipe concat 'doc.md'
 		.pipe gulp.dest('./doc')
+
+
+gulp.task 'vtex_deploy', (cb) ->
+	credentials = JSON.parse fs.readFileSync '/credentials.json'
+	credentials.bucket = 'vtex-io'
+	client = knox.createClient credentials
+	deployer = new Deploy(pkg, client, dryrun: false)
+	deployer.deploy().then ->
+		cb()
+	, null, console.log
+	return undefined
 
 
 gulp.task 'default', ['js'], ->
