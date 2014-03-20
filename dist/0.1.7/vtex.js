@@ -14,7 +14,7 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.1.6';
+    version = '0.1.7';
 
 
     /**
@@ -57,7 +57,7 @@
       if (this.cache.productWithVariations[productId]) {
         return this.promise(this.cache.productWithVariations[productId]);
       } else {
-        return $.when(this.cache.productWithVariations[productId] || $.ajax("" + this.BASE_ENDPOINT + "/products/variations/" + productId)).done((function(_this) {
+        return $.when(this.cache.productWithVariations[productId] || $.ajax("" + (this._getBaseCatalogSystemURL()) + "/products/variations/" + productId)).done((function(_this) {
           return function(response) {
             return _this.cache.productWithVariations[productId] = response;
           };
@@ -136,7 +136,7 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.1.6';
+    version = '0.1.7';
 
 
     /**
