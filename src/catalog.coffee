@@ -38,7 +38,7 @@ class Catalog
 		if @cache.productWithVariations[productId]
 			return @promise(@cache.productWithVariations[productId])
 		else
-			$.when(@cache.productWithVariations[productId] or $.ajax("#{@BASE_ENDPOINT}/products/variations/#{productId}"))
+			$.when(@cache.productWithVariations[productId] or $.ajax("#{@_getBaseCatalogSystemURL()}/products/variations/#{productId}"))
 			.done (response) =>
 				@cache.productWithVariations[productId] = response
 
