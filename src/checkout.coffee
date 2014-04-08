@@ -98,14 +98,14 @@ class Checkout
 			return @promise(@orderForm)
 		else
 			checkoutRequest = { expectedOrderFormSections: expectedFormSections }
-			return @ajax
+			@ajax
 				url: @_getBaseOrderFormURL()
 				type: 'POST'
 				contentType: 'application/json; charset=utf-8'
 				dataType: 'json'
 				data: JSON.stringify(checkoutRequest)
-			.done @_cacheOrderForm
-			.done broadcastOrderForm
+			.done(@_cacheOrderForm)
+			.done(broadcastOrderForm)
 
 	###*
 	 * Sends an OrderForm attachment to the current OrderForm, possibly updating it.
@@ -135,8 +135,8 @@ class Checkout
 			contentType: 'application/json; charset=utf-8'
 			dataType: 'json'
 			data: JSON.stringify(attachment)
-		.done @_cacheOrderForm
-		.done broadcastOrderForm
+		.done(@_cacheOrderForm)
+		.done(broadcastOrderForm)
 
 		if options.abort and options.subject
 			@_subjectToJqXHRMap[options.subject]?.abort()
@@ -172,8 +172,8 @@ class Checkout
 			contentType: 'application/json; charset=utf-8'
 			dataType: 'json'
 			data: JSON.stringify(updateItemsRequest)
-		.done @_cacheOrderForm
-		.done broadcastOrderForm
+		.done(@_cacheOrderForm)
+		.done(broadcastOrderForm)
 
 	###*
 	 * Sends a request to add an offering to the OrderForm.
@@ -203,8 +203,8 @@ class Checkout
 			contentType: 'application/json; charset=utf-8'
 			dataType: 'json'
 			data: JSON.stringify(updateItemsRequest)
-		.done @_cacheOrderForm
-		.done broadcastOrderForm
+		.done(@_cacheOrderForm)
+		.done(broadcastOrderForm)
 
 	###*
 	 * Sends a request to update the items in the OrderForm. Items that are omitted are not modified.
@@ -226,9 +226,9 @@ class Checkout
 			contentType: 'application/json; charset=utf-8'
 			dataType: 'json'
 			data: JSON.stringify(updateItemsRequest)
-		.done => @_requestingItem = undefined
-		.done @_cacheOrderForm
-		.done broadcastOrderForm
+		.done(=> @_requestingItem = undefined)
+		.done(@_cacheOrderForm)
+		.done(broadcastOrderForm)
 
 	###*
 	 * Sends a request to remove items from the OrderForm.
@@ -250,7 +250,7 @@ class Checkout
 		orderFormPromise.then (orderForm) =>
 			items = orderForm.items
 			item.quantity = 0 for item in items
-			@updateItems items, expectedOrderFormSections
+			@updateItems(items, expectedOrderFormSections)
 
 	###*
 	 * Sends a request to add a discount coupon to the OrderForm.
@@ -269,8 +269,8 @@ class Checkout
 			contentType: 'application/json; charset=utf-8'
 			dataType: 'json'
 			data: JSON.stringify couponCodeRequest
-		.done @_cacheOrderForm
-		.done broadcastOrderForm
+		.done(@_cacheOrderForm)
+		.done(broadcastOrderForm)
 
 	###*
 	 * Sends a request to remove the discount coupon from the OrderForm.
@@ -293,8 +293,8 @@ class Checkout
 			contentType: 'application/json; charset=utf-8'
 			dataType: 'json'
 			data: JSON.stringify(checkoutRequest)
-		.done @_cacheOrderForm
-		.done broadcastOrderForm
+		.done(@_cacheOrderForm)
+		.done(broadcastOrderForm)
 
 	###*
 	 * Sends a request to calculates shipping for the current OrderForm, given an address object.
@@ -354,8 +354,8 @@ class Checkout
 			contentType: 'application/json; charset=utf-8',
 			dataType: 'json',
 			data: JSON.stringify(transactionRequest)
-		.done @_cacheOrderForm
-		.done broadcastOrderForm
+		.done(@_cacheOrderForm)
+		.done(broadcastOrderForm)
 
 	###*
 	 * Sends a request to retrieve the orders for a specific orderGroupId.
