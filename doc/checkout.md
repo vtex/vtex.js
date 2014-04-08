@@ -201,6 +201,40 @@ Sends a request to remove the gift registry for the current OrderForm.
 
 * **Promise** a promise for the updated OrderForm.
 
+## addGiftMessage(itemIndex, bundleItemId, giftMessage, expectedOrderFormSections)
+
+Sends a request to add a gift message to the current OrderForm.
+
+### Params: 
+
+* **Number** *itemIndex* the index of the item for which the gift message applies.
+
+* **Number** *bundleItemId* the bundle item for which the gift message applies.
+
+* **String** *giftMessage* the gift message.
+
+* **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
+
+### Return:
+
+* **Promise** a promise for the updated OrderForm.
+
+## removeGiftMessage(itemIndex, bundleItemId, expectedOrderFormSections)
+
+Sends a request to add a gift message to the current OrderForm.
+
+### Params: 
+
+* **Number** *itemIndex* the index of the item for which the gift message applies.
+
+* **Number** *bundleItemId* the bundle item for which the gift message applies.
+
+* **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
+
+### Return:
+
+* **Promise** a promise for the updated OrderForm.
+
 ## calculateShipping(address)
 
 Sends a request to calculates shipping for the current OrderForm, given an address object.

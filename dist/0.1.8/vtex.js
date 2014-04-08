@@ -1,4 +1,86 @@
-/* vtex.js 0.1.7 */
+
+/**
+* h1 Catalog module
+*
+* Offers convenient methods for using the Checkout API in JS.
+ */
+
+(function() {
+  var Catalog,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+  Catalog = (function() {
+    var HOST_URL, version;
+
+    HOST_URL = window.location.origin;
+
+    version = '0.1.8';
+
+
+    /**
+    	 * Instantiate the Catalog module.
+    	 *
+      * h3 Options:
+      *
+    	 *  - **String** *options.hostURL* (default = `window.location.origin`) the base URL for API calls, without the trailing slash
+    	 *  - **Function** *options.ajax* (default = `$.ajax`) an AJAX function that must follow the convention, i.e., accept an object of options such as 'url', 'type' and 'data', and return a promise.
+    	 *  - **Function** *options.promise* (default = `$.when`) a promise function that must follow the Promises/A+ specification.
+      *
+    	 * @param {Object} options options.
+    	 * @return {Checkout} instance
+    	 * @note hostURL configures a static variable. This means you can't have two different instances looking at different host URLs.
+     */
+
+    function Catalog(options) {
+      if (options == null) {
+        options = {};
+      }
+      this.getProductWithVariations = __bind(this.getProductWithVariations, this);
+      if (options.hostURL) {
+        HOST_URL = options.hostURL;
+      }
+      this.ajax = options.ajax || $.ajax;
+      this.promise = options.promise || $.when;
+      this.cache = {
+        productWithVariations: {}
+      };
+    }
+
+
+    /**
+    	 * Sends a request to retrieve the orders for a specific orderGroupId.
+    	 * @param {String} orderGroupId the ID of the order group.
+    	 * @return {Promise} a promise for the orders.
+     */
+
+    Catalog.prototype.getProductWithVariations = function(productId) {
+      if (this.cache.productWithVariations[productId]) {
+        return this.promise(this.cache.productWithVariations[productId]);
+      } else {
+        return $.when(this.cache.productWithVariations[productId] || $.ajax("" + (this._getBaseCatalogSystemURL()) + "/products/variations/" + productId)).done((function(_this) {
+          return function(response) {
+            return _this.cache.productWithVariations[productId] = response;
+          };
+        })(this));
+      }
+    };
+
+    Catalog.prototype._getBaseCatalogSystemURL = function() {
+      return HOST_URL + '/api/catalog_system/pub';
+    };
+
+    return Catalog;
+
+  })();
+
+  window.vtex || (window.vtex = {});
+
+  window.vtex.Catalog = Catalog;
+
+  window.vtex.catalog = new window.vtex.Catalog();
+
+}).call(this);
+
 (function() {
   var Checkout, mapize, readCookie, readCookies, readSubcookie, trim, urlParam, urlParams,
     __slice = [].slice,
@@ -54,7 +136,7 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.1.7';
+    version = '0.1.8';
 
 
     /**
@@ -83,6 +165,8 @@
       this._getUpdateItemURL = __bind(this._getUpdateItemURL, this);
       this._startTransactionURL = __bind(this._startTransactionURL, this);
       this._getAddCouponURL = __bind(this._getAddCouponURL, this);
+      this._getRemoveGiftMessageURL = __bind(this._getRemoveGiftMessageURL, this);
+      this._getAddGiftMessageURL = __bind(this._getAddGiftMessageURL, this);
       this._getRemoveOfferingsURL = __bind(this._getRemoveOfferingsURL, this);
       this._getAddOfferingsURL = __bind(this._getAddOfferingsURL, this);
       this._getSaveAttachmentURL = __bind(this._getSaveAttachmentURL, this);
@@ -98,6 +182,8 @@
       this.getProfileByEmail = __bind(this.getProfileByEmail, this);
       this.getAddressInformation = __bind(this.getAddressInformation, this);
       this.calculateShipping = __bind(this.calculateShipping, this);
+      this.removeGiftMessage = __bind(this.removeGiftMessage, this);
+      this.addGiftMessage = __bind(this.addGiftMessage, this);
       this.removeGiftRegistry = __bind(this.removeGiftRegistry, this);
       this.removeDiscountCoupon = __bind(this.removeDiscountCoupon, this);
       this.addDiscountCoupon = __bind(this.addDiscountCoupon, this);
@@ -447,6 +533,65 @@
 
 
     /**
+    	 * Sends a request to add a gift message to the current OrderForm.
+    	 * @param {Number} itemIndex the index of the item for which the gift message applies.
+      * @param {Number} bundleItemId the bundle item for which the gift message applies.
+      * @param {String} giftMessage the gift message.
+    	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
+    	 * @return {Promise} a promise for the updated OrderForm.
+     */
+
+    Checkout.prototype.addGiftMessage = function(itemIndex, bundleItemId, giftMessage, expectedOrderFormSections) {
+      var addGiftMessageRequest;
+      if (expectedOrderFormSections == null) {
+        expectedOrderFormSections = this._allOrderFormSections;
+      }
+      addGiftMessageRequest = {
+        content: {
+          'gift-message': giftMessage
+        },
+        expectedOrderFormSections: expectedOrderFormSections
+      };
+      return this.ajax({
+        url: this._getAddGiftMessageURL(itemIndex, bundleItemId),
+        type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        data: JSON.stringify(addGiftMessageRequest)
+      }).done(this._cacheOrderForm).done(broadcastOrderForm);
+    };
+
+
+    /**
+    	 * Sends a request to add a gift message to the current OrderForm.
+    	 * @param {Number} itemIndex the index of the item for which the gift message applies.
+      * @param {Number} bundleItemId the bundle item for which the gift message applies.
+    	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
+    	 * @return {Promise} a promise for the updated OrderForm.
+     */
+
+    Checkout.prototype.removeGiftMessage = function(itemIndex, bundleItemId, expectedOrderFormSections) {
+      var removeGiftMessageRequest;
+      if (expectedOrderFormSections == null) {
+        expectedOrderFormSections = this._allOrderFormSections;
+      }
+      removeGiftMessageRequest = {
+        content: {
+          'gift-message': ''
+        },
+        expectedOrderFormSections: expectedOrderFormSections
+      };
+      return this.ajax({
+        url: this._getRemoveGiftMessageURL(itemIndex, bundleItemId),
+        type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        data: JSON.stringify(removeGiftMessageRequest)
+      }).done(this._cacheOrderForm).done(broadcastOrderForm);
+    };
+
+
+    /**
     	 * Sends a request to calculates shipping for the current OrderForm, given an address object.
     	 * @param {Object} address an address object
     	 * @return {Promise} a promise for the updated OrderForm.
@@ -647,6 +792,14 @@
       return this._getOrderFormURL() + '/items/' + itemIndex + '/offerings/' + offeringId + '/remove';
     };
 
+    Checkout.prototype._getAddGiftMessageURL = function(itemIndex, bundleItemId) {
+      return this._getOrderFormURL() + '/items/' + itemIndex + '/itemAttachment/bundles/' + bundleItemId;
+    };
+
+    Checkout.prototype._getRemoveGiftMessageURL = function(itemIndex, bundleItemId) {
+      return this._getOrderFormURL() + '/items/' + itemIndex + '/itemAttachment/bundles/' + bundleItemId + '/remove';
+    };
+
     Checkout.prototype._getAddCouponURL = function() {
       return this._getOrderFormURL() + '/coupons';
     };
@@ -694,5 +847,58 @@
   window.vtex.Checkout = Checkout;
 
   window.vtex.checkout = new window.vtex.Checkout();
+
+}).call(this);
+
+(function() {
+  var AjaxQueue, uniqueHashcode;
+
+  uniqueHashcode = (function(_this) {
+    return function(str) {
+      var char, charcode, hash, _i, _len;
+      hash = 0;
+      for (_i = 0, _len = str.length; _i < _len; _i++) {
+        char = str[_i];
+        charcode = char.charCodeAt(0);
+        hash = ((hash << 5) - hash) + charcode;
+        hash = hash & hash;
+      }
+      return hash.toString();
+    };
+  })(this);
+
+  AjaxQueue = function(ajax) {
+    var theQueue;
+    theQueue = $({});
+    return function(ajaxOpts) {
+      var abortFunction, dfd, jqXHR, promise, requestFunction;
+      jqXHR = void 0;
+      dfd = $.Deferred();
+      promise = dfd.promise();
+      requestFunction = function(next) {
+        jqXHR = ajax(ajaxOpts);
+        return jqXHR.done(dfd.resolve).fail(dfd.reject).then(next, next);
+      };
+      abortFunction = function(statusText) {
+        var index, queue;
+        if (jqXHR) {
+          return jqXHR.abort(statusText);
+        } else {
+          queue = theQueue.queue();
+          index = [].indexOf.call(queue, requestFunction);
+          if (index > -1) {
+            queue.splice(index, 1);
+          }
+          dfd.rejectWith(ajaxOpts.context || ajaxOpts, [promise, statusText, ""]);
+          return promise;
+        }
+      };
+      theQueue.queue(requestFunction);
+      promise.abort = abortFunction;
+      return promise;
+    };
+  };
+
+  window.AjaxQueue = AjaxQueue;
 
 }).call(this);
