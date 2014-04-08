@@ -9,5 +9,5 @@ gulp doc
 echo ">>> Copying"
 cp -r doc/* ~/tmp/docs/pt-br/vtex.js/lib/
 echo ">>> Pushing"
-cd ~/tmp/docs && git commit -am "Atualiza documentação do vtex.js" && git push && cd -
+(cd ~/tmp/docs && git add . -A && git commit -m "Atualiza documentação do vtex.js" && git push)
 echo ">>> Done!"
