@@ -297,6 +297,51 @@ class Checkout
 		.done(broadcastOrderForm)
 
 	###*
+	 * Sends a request to add a gift message to the current OrderForm.
+	 * @param {Number} itemIndex the index of the item for which the gift message applies.
+   * @param {Number} bundleItemId the bundle item for which the gift message applies.
+   * @param {String} giftMessage the gift message.
+	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
+	 * @return {Promise} a promise for the updated OrderForm.
+	###
+	addGiftMessage: (itemIndex, bundleItemId, giftMessage, expectedOrderFormSections = @_allOrderFormSections) =>
+		addGiftMessageRequest =
+			content:
+				'gift-message': giftMessage
+			expectedOrderFormSections: expectedOrderFormSections
+
+		@ajax
+			url: @_getAddGiftMessageURL(itemIndex, bundleItemId)
+			type: 'POST'
+			contentType: 'application/json; charset=utf-8'
+			dataType: 'json'
+			data: JSON.stringify(addGiftMessageRequest)
+		.done(@_cacheOrderForm)
+		.done(broadcastOrderForm)
+
+	###*
+	 * Sends a request to add a gift message to the current OrderForm.
+	 * @param {Number} itemIndex the index of the item for which the gift message applies.
+   * @param {Number} bundleItemId the bundle item for which the gift message applies.
+	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
+	 * @return {Promise} a promise for the updated OrderForm.
+	###
+	removeGiftMessage: (itemIndex, bundleItemId, expectedOrderFormSections = @_allOrderFormSections) =>
+		removeGiftMessageRequest =
+			content:
+				'gift-message': ''
+			expectedOrderFormSections: expectedOrderFormSections
+
+		@ajax
+			url: @_getRemoveGiftMessageURL(itemIndex, bundleItemId)
+			type: 'POST'
+			contentType: 'application/json; charset=utf-8'
+			dataType: 'json'
+			data: JSON.stringify(removeGiftMessageRequest)
+		.done(@_cacheOrderForm)
+		.done(broadcastOrderForm)
+
+	###*
 	 * Sends a request to calculates shipping for the current OrderForm, given an address object.
 	 * @param {Object} address an address object
 	 * @return {Promise} a promise for the updated OrderForm.
@@ -436,6 +481,12 @@ class Checkout
 
 	_getRemoveOfferingsURL: (itemIndex, offeringId) =>
 		@_getOrderFormURL() + '/items/' + itemIndex + '/offerings/' + offeringId + '/remove'
+
+	_getAddGiftMessageURL: (itemIndex, bundleItemId) =>
+		@_getOrderFormURL() + '/items/' + itemIndex + '/itemAttachment/bundles/' + bundleItemId
+
+	_getRemoveGiftMessageURL: (itemIndex, bundleItemId) =>
+		@_getOrderFormURL() + '/items/' + itemIndex + '/itemAttachment/bundles/' + bundleItemId + '/remove'
 
 	_getAddCouponURL: =>
 		@_getOrderFormURL() + '/coupons'
