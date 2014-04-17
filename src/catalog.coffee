@@ -49,6 +49,6 @@ class Catalog
 
 
 
-window.vtex or= {}
-window.vtex.Catalog = Catalog
-window.vtex.catalog = new window.vtex.Catalog()
+window.vtexjs or= {}
+window.vtexjs.Catalog = Catalog
+window.vtexjs.catalog = new window.vtex.Catalog()

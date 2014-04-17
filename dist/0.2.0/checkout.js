@@ -1,4 +1,4 @@
-/* vtex.js 0.1.8 */
+/* vtex.js 0.2.0 */
 (function() {
   var Checkout, mapize, readCookie, readCookies, readSubcookie, trim, urlParam, urlParams,
     __slice = [].slice,
@@ -54,7 +54,7 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.1.8';
+    version = '0.2.0';
 
 
     /**
@@ -760,10 +760,10 @@
 
   })();
 
-  window.vtex || (window.vtex = {});
+  window.vtexjs || (window.vtexjs = {});
 
-  window.vtex.Checkout = Checkout;
+  window.vtexjs.Checkout = Checkout;
 
-  window.vtex.checkout = new window.vtex.Checkout();
+  window.vtexjs.checkout = new window.vtex.Checkout();
 
 }).call(this);

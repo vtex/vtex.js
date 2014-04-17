@@ -14,7 +14,7 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.1.8';
+    version = '0.2.0';
 
 
     /**
@@ -73,11 +73,11 @@
 
   })();
 
-  window.vtex || (window.vtex = {});
+  window.vtexjs || (window.vtexjs = {});
 
-  window.vtex.Catalog = Catalog;
+  window.vtexjs.Catalog = Catalog;
 
-  window.vtex.catalog = new window.vtex.Catalog();
+  window.vtexjs.catalog = new window.vtex.Catalog();
 
 }).call(this);
 
@@ -136,7 +136,7 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.1.8';
+    version = '0.2.0';
 
 
     /**
@@ -842,11 +842,11 @@
 
   })();
 
-  window.vtex || (window.vtex = {});
+  window.vtexjs || (window.vtexjs = {});
 
-  window.vtex.Checkout = Checkout;
+  window.vtexjs.Checkout = Checkout;
 
-  window.vtex.checkout = new window.vtex.Checkout();
+  window.vtexjs.checkout = new window.vtex.Checkout();
 
 }).call(this);
 
