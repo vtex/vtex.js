@@ -516,4 +516,4 @@ class Checkout
 
 window.vtexjs or= {}
 window.vtexjs.Checkout = Checkout
-window.vtexjs.checkout = new window.vtex.Checkout()
+window.vtexjs.checkout = new window.vtexjs.Checkout()
