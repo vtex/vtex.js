@@ -80,7 +80,7 @@ gulp.task 'vtex_deploy', (cb) ->
 	, null, console.log
 	return undefined
 
+gulp.task 'watch', ->
+  gulp.watch './src/*.coffee', ['js']
 
-gulp.task 'default', ['js'], ->
-	gulp.watch './src/*.coffee', ->
-		gulp.run 'clean-build', 'js'
+gulp.task 'default', ['js', 'watch']
