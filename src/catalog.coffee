@@ -11,19 +11,26 @@ class Catalog
 	###*
 	 * Instantiate the Catalog module.
 	 *
-   * h3 Options:
-   *
+	 * h3 Options:
+	 *
 	 *  - **String** *options.hostURL* (default = `window.location.origin`) the base URL for API calls, without the trailing slash
-	 *  - **Function** *options.ajax* (default = `$.ajax`) an AJAX function that must follow the convention, i.e., accept an object of options such as 'url', 'type' and 'data', and return a promise.
+	 *  - **Function** *options.ajax* (default = `$.ajax`) an AJAX function that must follow the convention, i.e., accept an object of options such as 'url', 'type' and 'data', and return a promise. If AjaxQueue is present, the default will use it.
 	 *  - **Function** *options.promise* (default = `$.when`) a promise function that must follow the Promises/A+ specification.
-   *
+	 *
 	 * @param {Object} options options.
 	 * @return {Checkout} instance
 	 * @note hostURL configures a static variable. This means you can't have two different instances looking at different host URLs.
-  ###
+	###
 	constructor: (options = {}) ->
 		HOST_URL = options.hostURL if options.hostURL
-		@ajax = options.ajax or $.ajax
+
+		if options.ajax
+			@ajax = options.ajax
+		else if window.AjaxQueue
+			@ajax = window.AjaxQueue($.ajax)
+		else
+			@ajax = $.ajax
+
 		@promise = options.promise or $.when
 
 		@cache =
@@ -33,7 +40,7 @@ class Catalog
 	 * Sends a request to retrieve the orders for a specific orderGroupId.
 	 * @param {String} orderGroupId the ID of the order group.
 	 * @return {Promise} a promise for the orders.
-  ###
+	###
 	getProductWithVariations: (productId) =>
 		if @cache.productWithVariations[productId]
 			return @promise(@cache.productWithVariations[productId])

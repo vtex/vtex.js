@@ -4,7 +4,7 @@ title: checkout
 category: vtex-js
 ---
 
-<!-- Start /home/gberger/Projects/vtex.js/src/checkout.coffee -->
+<!-- Start /home/gberger/projects/vtex.js/src/checkout.coffee -->
 
 # Checkout module
 
@@ -16,7 +16,7 @@ Instantiate the Checkout module.
 ### Options:
 
  - **String** *options.hostURL* (default = `window.location.origin`) the base URL for API calls, without the trailing slash
- - **Function** *options.ajax* (default = `$.ajax`) an AJAX function that must follow the convention, i.e., accept an object of options such as &#39;url&#39;, &#39;type&#39; and &#39;data&#39;, and return a promise.
+ - **Function** *options.ajax* (default = `$.ajax`) an AJAX function that must follow the convention, i.e., accept an object of options such as 'url', 'type' and 'data', and return a promise. If AjaxQueue is present, the default will use it.
  - **Function** *options.promise* (default = `$.when`) a promise function that must follow the Promises/A+ specification.
 
 ### Params: 
@@ -45,16 +45,13 @@ Sends an OrderForm attachment to the current OrderForm, possibly updating it.
 ### Options:
 
  - **String** *options.subject* (default = `null`) an internal name to give to your attachment submission.
- - **Boolean** *abort.abort* (default = `false`) indicates whether a previous submission with the same subject should be aborted, if it&#39;s ongoing.
+ - **Boolean** *abort.abort* (default = `false`) indicates whether a previous submission with the same subject should be aborted, if it's ongoing.
 
 ### Params: 
 
-* **String** *attachmentId* the name of the attachment you&#39;re sending.
-
+* **String** *attachmentId* the name of the attachment you're sending.
 * **Object** *attachment* the attachment.
-
 * **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
-
 * **Object** *options* extra options.
 
 ### Return:
@@ -67,7 +64,7 @@ Sends a request to set the used locale.
 
 ### Params: 
 
-* **String** *locale* the locale string, e.g. &quot;pt-BR&quot;, &quot;en-US&quot;.
+* **String** *locale* the locale string, e.g. "pt-BR", "en-US".
 
 ### Return:
 
@@ -80,11 +77,8 @@ Sends a request to add an offering, along with its info, to the OrderForm.
 ### Params: 
 
 * **String|Number** *offeringId* the id of the offering.
-
 * **offeringInfo** ** 
-
 * **Number** *itemIndex* the index of the item for which the offering applies.
-
 * **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
 
 ### Return:
@@ -98,9 +92,7 @@ Sends a request to add an offering to the OrderForm.
 ### Params: 
 
 * **String|Number** *offeringId* the id of the offering.
-
 * **Number** *itemIndex* the index of the item for which the offering applies.
-
 * **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
 
 ### Return:
@@ -114,9 +106,7 @@ Sends a request to remove an offering from the OrderForm.
 ### Params: 
 
 * **String|Number** *offeringId* the id of the offering.
-
 * **Number** *itemIndex* the index of the item for which the offering applies.
-
 * **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
 
 ### Return:
@@ -130,7 +120,6 @@ Sends a request to update the items in the OrderForm. Items that are omitted are
 ### Params: 
 
 * **Array** *items* an array of objects representing the items in the OrderForm.
-
 * **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
 
 ### Return:
@@ -144,7 +133,6 @@ Sends a request to remove items from the OrderForm.
 ### Params: 
 
 * **Array** *items* an array of objects representing the items to remove. These objects must have at least the `index` property.
-
 * **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
 
 ### Return:
@@ -170,7 +158,6 @@ Sends a request to add a discount coupon to the OrderForm.
 ### Params: 
 
 * **String** *couponCode* the coupon code to add.
-
 * **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
 
 ### Return:
@@ -208,11 +195,8 @@ Sends a request to add a gift message to the current OrderForm.
 ### Params: 
 
 * **Number** *itemIndex* the index of the item for which the gift message applies.
-
 * **Number** *bundleItemId* the bundle item for which the gift message applies.
-
 * **String** *giftMessage* the gift message.
-
 * **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
 
 ### Return:
@@ -226,9 +210,7 @@ Sends a request to add a gift message to the current OrderForm.
 ### Params: 
 
 * **Number** *itemIndex* the index of the item for which the gift message applies.
-
 * **Number** *bundleItemId* the bundle item for which the gift message applies.
-
 * **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
 
 ### Return:
@@ -261,13 +243,12 @@ Given an address with postal code and a country, retrieves a complete address, w
 
 ## getProfileByEmail(email, salesChannel)
 
-Sends a request to retrieve a user&#39;s profile.
+Sends a request to retrieve a user's profile.
 
 ### Params: 
 
-* **String** *email* the user&#39;s email.
-
-* **Number|String** *salesChannel* the sales channel in which to look for the user&#39;s profile.
+* **String** *email* the user's email.
+* **Number|String** *salesChannel* the sales channel in which to look for the user's profile.
 
 ### Return:
 
@@ -280,15 +261,10 @@ Sends a request to start the transaction. This is the final step in the checkout
 ### Params: 
 
 * **String|Number** *value* 
-
 * **String|Number** *referenceValue* 
-
 * **String|Number** *interestValue* 
-
-* **Boolean** *savePersonalData* (default = false) whether to save the user&#39;s data for using it later in another order.
-
+* **Boolean** *savePersonalData* (default = false) whether to save the user's data for using it later in another order.
 * **Boolean** *optinNewsLetter* (default = true) whether to subscribe the user to the store newsletter.
-
 * **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
 
 ### Return:
@@ -335,5 +311,5 @@ This method should be used to get the URL to redirect the user to when he choose
 
 * **String** the URL.
 
-<!-- End /home/gberger/Projects/vtex.js/src/checkout.coffee -->
+<!-- End /home/gberger/projects/vtex.js/src/checkout.coffee -->
 

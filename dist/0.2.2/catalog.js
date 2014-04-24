@@ -1,4 +1,4 @@
-/* vtex.js 0.2.1 */
+/* vtex.js 0.2.2 */
 
 /**
 * h1 Catalog module
@@ -15,18 +15,18 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.2.1';
+    version = '0.2.2';
 
 
     /**
     	 * Instantiate the Catalog module.
     	 *
-      * h3 Options:
-      *
+    	 * h3 Options:
+    	 *
     	 *  - **String** *options.hostURL* (default = `window.location.origin`) the base URL for API calls, without the trailing slash
-    	 *  - **Function** *options.ajax* (default = `$.ajax`) an AJAX function that must follow the convention, i.e., accept an object of options such as 'url', 'type' and 'data', and return a promise.
+    	 *  - **Function** *options.ajax* (default = `$.ajax`) an AJAX function that must follow the convention, i.e., accept an object of options such as 'url', 'type' and 'data', and return a promise. If AjaxQueue is present, the default will use it.
     	 *  - **Function** *options.promise* (default = `$.when`) a promise function that must follow the Promises/A+ specification.
-      *
+    	 *
     	 * @param {Object} options options.
     	 * @return {Checkout} instance
     	 * @note hostURL configures a static variable. This means you can't have two different instances looking at different host URLs.
@@ -40,7 +40,13 @@
       if (options.hostURL) {
         HOST_URL = options.hostURL;
       }
-      this.ajax = options.ajax || $.ajax;
+      if (options.ajax) {
+        this.ajax = options.ajax;
+      } else if (window.AjaxQueue) {
+        this.ajax = window.AjaxQueue($.ajax);
+      } else {
+        this.ajax = $.ajax;
+      }
       this.promise = options.promise || $.when;
       this.cache = {
         productWithVariations: {}

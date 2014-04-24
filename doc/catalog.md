@@ -4,7 +4,7 @@ title: catalog
 category: vtex-js
 ---
 
-<!-- Start /home/gberger/Projects/vtex.js/src/catalog.coffee -->
+<!-- Start /home/gberger/projects/vtex.js/src/catalog.coffee -->
 
 # Catalog module
 
@@ -16,7 +16,7 @@ Instantiate the Catalog module.
 ### Options:
 
  - **String** *options.hostURL* (default = `window.location.origin`) the base URL for API calls, without the trailing slash
- - **Function** *options.ajax* (default = `$.ajax`) an AJAX function that must follow the convention, i.e., accept an object of options such as &#39;url&#39;, &#39;type&#39; and &#39;data&#39;, and return a promise.
+ - **Function** *options.ajax* (default = `$.ajax`) an AJAX function that must follow the convention, i.e., accept an object of options such as 'url', 'type' and 'data', and return a promise. If AjaxQueue is present, the default will use it.
  - **Function** *options.promise* (default = `$.when`) a promise function that must follow the Promises/A+ specification.
 
 ### Params: 
@@ -39,5 +39,5 @@ Sends a request to retrieve the orders for a specific orderGroupId.
 
 * **Promise** a promise for the orders.
 
-<!-- End /home/gberger/Projects/vtex.js/src/catalog.coffee -->
+<!-- End /home/gberger/projects/vtex.js/src/catalog.coffee -->
 

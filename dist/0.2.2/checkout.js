@@ -1,86 +1,4 @@
-
-/**
-* h1 Catalog module
-*
-* Offers convenient methods for using the Checkout API in JS.
- */
-
-(function() {
-  var Catalog,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-
-  Catalog = (function() {
-    var HOST_URL, version;
-
-    HOST_URL = window.location.origin;
-
-    version = '0.2.1';
-
-
-    /**
-    	 * Instantiate the Catalog module.
-    	 *
-      * h3 Options:
-      *
-    	 *  - **String** *options.hostURL* (default = `window.location.origin`) the base URL for API calls, without the trailing slash
-    	 *  - **Function** *options.ajax* (default = `$.ajax`) an AJAX function that must follow the convention, i.e., accept an object of options such as 'url', 'type' and 'data', and return a promise.
-    	 *  - **Function** *options.promise* (default = `$.when`) a promise function that must follow the Promises/A+ specification.
-      *
-    	 * @param {Object} options options.
-    	 * @return {Checkout} instance
-    	 * @note hostURL configures a static variable. This means you can't have two different instances looking at different host URLs.
-     */
-
-    function Catalog(options) {
-      if (options == null) {
-        options = {};
-      }
-      this.getProductWithVariations = __bind(this.getProductWithVariations, this);
-      if (options.hostURL) {
-        HOST_URL = options.hostURL;
-      }
-      this.ajax = options.ajax || $.ajax;
-      this.promise = options.promise || $.when;
-      this.cache = {
-        productWithVariations: {}
-      };
-    }
-
-
-    /**
-    	 * Sends a request to retrieve the orders for a specific orderGroupId.
-    	 * @param {String} orderGroupId the ID of the order group.
-    	 * @return {Promise} a promise for the orders.
-     */
-
-    Catalog.prototype.getProductWithVariations = function(productId) {
-      if (this.cache.productWithVariations[productId]) {
-        return this.promise(this.cache.productWithVariations[productId]);
-      } else {
-        return $.when(this.cache.productWithVariations[productId] || $.ajax("" + (this._getBaseCatalogSystemURL()) + "/products/variations/" + productId)).done((function(_this) {
-          return function(response) {
-            return _this.cache.productWithVariations[productId] = response;
-          };
-        })(this));
-      }
-    };
-
-    Catalog.prototype._getBaseCatalogSystemURL = function() {
-      return HOST_URL + '/api/catalog_system/pub';
-    };
-
-    return Catalog;
-
-  })();
-
-  window.vtexjs || (window.vtexjs = {});
-
-  window.vtexjs.Catalog = Catalog;
-
-  window.vtexjs.catalog = new window.vtexjs.Catalog();
-
-}).call(this);
-
+/* vtex.js 0.2.2 */
 (function() {
   var Checkout, mapize, readCookie, readCookies, readSubcookie, trim, urlParam, urlParams,
     __slice = [].slice,
@@ -136,18 +54,18 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.2.1';
+    version = '0.2.2';
 
 
     /**
     	 * Instantiate the Checkout module.
-      *
-      * h3 Options:
-      *
+    	 *
+    	 * h3 Options:
+    	 *
     	 *  - **String** *options.hostURL* (default = `window.location.origin`) the base URL for API calls, without the trailing slash
-    	 *  - **Function** *options.ajax* (default = `$.ajax`) an AJAX function that must follow the convention, i.e., accept an object of options such as 'url', 'type' and 'data', and return a promise.
+    	 *  - **Function** *options.ajax* (default = `$.ajax`) an AJAX function that must follow the convention, i.e., accept an object of options such as 'url', 'type' and 'data', and return a promise. If AjaxQueue is present, the default will use it.
     	 *  - **Function** *options.promise* (default = `$.when`) a promise function that must follow the Promises/A+ specification.
-      *
+    	 *
     	 * @param {Object} options options.
     	 * @return {Checkout} instance
     	 * @note hostURL configures a static variable. This means you can't have two different instances looking at different host URLs.
@@ -200,7 +118,13 @@
       if (options.hostURL) {
         HOST_URL = options.hostURL;
       }
-      this.ajax = options.ajax || $.ajax;
+      if (options.ajax) {
+        this.ajax = options.ajax;
+      } else if (window.AjaxQueue) {
+        this.ajax = window.AjaxQueue($.ajax);
+      } else {
+        this.ajax = $.ajax;
+      }
       this.promise = options.promise || $.when;
       this.CHECKOUT_ID = 'checkout';
       this.orderForm = void 0;
@@ -263,12 +187,12 @@
 
     /**
     	 * Sends an OrderForm attachment to the current OrderForm, possibly updating it.
-      *
-      * h3 Options:
-      *
+    	 *
+    	 * h3 Options:
+    	 *
     	 *  - **String** *options.subject* (default = `null`) an internal name to give to your attachment submission.
     	 *  - **Boolean** *abort.abort* (default = `false`) indicates whether a previous submission with the same subject should be aborted, if it's ongoing.
-      *
+    	 *
     	 * @param {String} attachmentId the name of the attachment you're sending.
     	 * @param {Object} attachment the attachment.
     	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
@@ -535,8 +459,8 @@
     /**
     	 * Sends a request to add a gift message to the current OrderForm.
     	 * @param {Number} itemIndex the index of the item for which the gift message applies.
-      * @param {Number} bundleItemId the bundle item for which the gift message applies.
-      * @param {String} giftMessage the gift message.
+    	 * @param {Number} bundleItemId the bundle item for which the gift message applies.
+    	 * @param {String} giftMessage the gift message.
     	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
     	 * @return {Promise} a promise for the updated OrderForm.
      */
@@ -565,7 +489,7 @@
     /**
     	 * Sends a request to add a gift message to the current OrderForm.
     	 * @param {Number} itemIndex the index of the item for which the gift message applies.
-      * @param {Number} bundleItemId the bundle item for which the gift message applies.
+    	 * @param {Number} bundleItemId the bundle item for which the gift message applies.
     	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
     	 * @return {Promise} a promise for the updated OrderForm.
      */
@@ -847,58 +771,5 @@
   window.vtexjs.Checkout = Checkout;
 
   window.vtexjs.checkout = new window.vtexjs.Checkout();
-
-}).call(this);
-
-(function() {
-  var AjaxQueue, uniqueHashcode;
-
-  uniqueHashcode = (function(_this) {
-    return function(str) {
-      var char, charcode, hash, _i, _len;
-      hash = 0;
-      for (_i = 0, _len = str.length; _i < _len; _i++) {
-        char = str[_i];
-        charcode = char.charCodeAt(0);
-        hash = ((hash << 5) - hash) + charcode;
-        hash = hash & hash;
-      }
-      return hash.toString();
-    };
-  })(this);
-
-  AjaxQueue = function(ajax) {
-    var theQueue;
-    theQueue = $({});
-    return function(ajaxOpts) {
-      var abortFunction, dfd, jqXHR, promise, requestFunction;
-      jqXHR = void 0;
-      dfd = $.Deferred();
-      promise = dfd.promise();
-      requestFunction = function(next) {
-        jqXHR = ajax(ajaxOpts);
-        return jqXHR.done(dfd.resolve).fail(dfd.reject).then(next, next);
-      };
-      abortFunction = function(statusText) {
-        var index, queue;
-        if (jqXHR) {
-          return jqXHR.abort(statusText);
-        } else {
-          queue = theQueue.queue();
-          index = [].indexOf.call(queue, requestFunction);
-          if (index > -1) {
-            queue.splice(index, 1);
-          }
-          dfd.rejectWith(ajaxOpts.context || ajaxOpts, [promise, statusText, ""]);
-          return promise;
-        }
-      };
-      theQueue.queue(requestFunction);
-      promise.abort = abortFunction;
-      return promise;
-    };
-  };
-
-  window.AjaxQueue = AjaxQueue;
 
 }).call(this);
