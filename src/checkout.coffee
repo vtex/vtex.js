@@ -25,6 +25,9 @@ readCookie = (name) ->
 readSubcookie = (name, cookie) ->
 	mapize(cookie, '&', '=', ((s)->s), unescape)[name]
 
+# IE
+window.location.origin or= window.location.protocol + "//" + window.location.hostname + (if window.location.port then ':' + window.location.port else '')
+
 ###*
  * h1 Checkout module
  *

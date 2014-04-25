@@ -1,21 +1,23 @@
-/* vtex.js 0.2.2 */
-
-/**
-* h1 Catalog module
-*
-* Offers convenient methods for using the Checkout API in JS.
- */
-
+/* vtex.js 0.2.3 */
 (function() {
-  var Catalog,
+  var Catalog, _base,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+  (_base = window.location).origin || (_base.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : ''));
+
+
+  /**
+  * h1 Catalog module
+  *
+  * Offers convenient methods for using the Checkout API in JS.
+   */
 
   Catalog = (function() {
     var HOST_URL, version;
 
     HOST_URL = window.location.origin;
 
-    version = '0.2.2';
+    version = '0.2.3';
 
 
     /**
