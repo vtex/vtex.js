@@ -1,4 +1,4 @@
-/* vtex.js 0.2.3 */
+/* vtex.js 0.2.4 */
 (function() {
   var Checkout, mapize, readCookie, readCookies, readSubcookie, trim, urlParam, urlParams, _base,
     __slice = [].slice,
@@ -56,7 +56,7 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.2.3';
+    version = '0.2.4';
 
 
     /**
@@ -302,7 +302,7 @@
     Checkout.prototype.removeOffering = function(offeringId, itemIndex, expectedOrderFormSections) {
       var updateItemsRequest;
       if (expectedOrderFormSections == null) {
-        expectedOrderFormSections = expectedOrderFormSections;
+        expectedOrderFormSections = this._allOrderFormSections;
       }
       updateItemsRequest = {
         Id: offeringId,
