@@ -202,7 +202,7 @@ class Checkout
 	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
 	 * @return {Promise} a promise for the updated OrderForm.
 	###
-	removeOffering: (offeringId, itemIndex, expectedOrderFormSections = expectedOrderFormSections) =>
+	removeOffering: (offeringId, itemIndex, expectedOrderFormSections = @_allOrderFormSections) =>
 		updateItemsRequest =
 			Id: offeringId
 			expectedOrderFormSections: expectedOrderFormSections
