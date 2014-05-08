@@ -221,35 +221,33 @@ class Checkout
 		.done(@_cacheOrderForm)
 		.done(broadcastOrderForm)
 
-	# Sends a request to add a gift message to the current OrderForm.
-	addGiftMessage: (itemIndex, bundleItemId, giftMessage, expectedOrderFormSections = @_allOrderFormSections) =>
-		addGiftMessageRequest =
-			content:
-				'gift-message': giftMessage
+	# Sends a request to add an attachment to a specific item
+	addItemAttachment: (itemIndex, attachmentName, content, expectedFormSections = @_allOrderFormSections) =>
+		dataRequest =
+			content: content
 			expectedOrderFormSections: expectedOrderFormSections
 
 		@ajax
-			url: @_getAddGiftMessageURL(itemIndex, bundleItemId)
+			url: @_getItemAttachmentURL(itemIndex, attachmentName)
 			type: 'POST'
 			contentType: 'application/json; charset=utf-8'
 			dataType: 'json'
-			data: JSON.stringify(addGiftMessageRequest)
+			data: JSON.stringify(dataRequest)
 		.done(@_cacheOrderForm)
 		.done(broadcastOrderForm)
 
-	# Sends a request to add a gift message to the current OrderForm.
-	removeGiftMessage: (itemIndex, bundleItemId, expectedOrderFormSections = @_allOrderFormSections) =>
-		removeGiftMessageRequest =
-			content:
-				'gift-message': ''
+	# Sends a request to remove an attachment of a specific item
+	removeItemAttachment: (itemIndex, attachmentName, content, expectedFormSections = @_allOrderFormSections) =>
+		dataRequest =
+			content: content
 			expectedOrderFormSections: expectedOrderFormSections
 
 		@ajax
-			url: @_getRemoveGiftMessageURL(itemIndex, bundleItemId)
-			type: 'POST'
+			url: @_getItemAttachmentURL(itemIndex, attachmentName)
+			type: 'DELETE'
 			contentType: 'application/json; charset=utf-8'
 			dataType: 'json'
-			data: JSON.stringify(removeGiftMessageRequest)
+			data: JSON.stringify(dataRequest)
 		.done(@_cacheOrderForm)
 		.done(broadcastOrderForm)
 
@@ -373,11 +371,11 @@ class Checkout
 	_getRemoveOfferingsURL: (itemIndex, offeringId) =>
 		@_getOrderFormURL() + '/items/' + itemIndex + '/offerings/' + offeringId + '/remove'
 
-	_getAddGiftMessageURL: (itemIndex, bundleItemId) =>
-		@_getOrderFormURL() + '/items/' + itemIndex + '/itemAttachment/bundles/' + bundleItemId
+	_getBundleItemAttachmentURL: (itemIndex, attachmentName, bundleItemId) =>
+		@_getOrderFormURL() + '/items/' + itemIndex + '/bundles/' + bundleItemId + '/attachments/' + attachmentName
 
-	_getRemoveGiftMessageURL: (itemIndex, bundleItemId) =>
-		@_getOrderFormURL() + '/items/' + itemIndex + '/itemAttachment/bundles/' + bundleItemId + '/remove'
+	_getItemAttachmentURL: (itemIndex, attachmentName) =>
+		@_getOrderFormURL() + '/items/' + itemIndex + '/attachments/' + attachmentName
 
 	_getAddCouponURL: =>
 		@_getOrderFormURL() + '/coupons'
