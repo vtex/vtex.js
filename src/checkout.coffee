@@ -247,8 +247,8 @@ class Checkout
 	 * @return {Promise} a promise for the updated OrderForm.
 	###
 	removeItems: (items, expectedOrderFormSections = @_allOrderFormSections) =>
-		items.quantity = 0 for item in items
-		@updateItems items, expectedOrderFormSections
+		item.quantity = 0 for item in items
+		@updateItems(items, expectedOrderFormSections)
 
 	###*
 	 * Sends a request to remove all items from the OrderForm.
