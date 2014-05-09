@@ -1,8 +1,4 @@
----
-layout: page
-title: checkout
-category: vtex-js
----
+
 
 <!-- Start /home/gberger/projects/vtex.js/src/checkout.coffee -->
 

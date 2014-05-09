@@ -1,8 +1,4 @@
----
-layout: page
-title: catalog
-category: vtex-js
----
+
 
 <!-- Start /home/gberger/projects/vtex.js/src/catalog.coffee -->
 

@@ -59,13 +59,6 @@ gulp.task 'dist', ['js', 'clean-dist'], ->
 gulp.task 'doc', ['clean-doc'], ->
 	gulp.src ['./src/catalog.coffee', './src/checkout.coffee']
 		.pipe markdox()
-		.pipe header  """
-                  ---
-                  layout: page
-                  title: <%= file.path.split('/').pop().split('.').shift() %>
-                  category: vtex-js
-                  ---
-                  """
 		.pipe rename extname: '.md'
 		.pipe gulp.dest('./doc')
 
