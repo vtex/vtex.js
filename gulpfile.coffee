@@ -57,7 +57,7 @@ gulp.task 'dist', ['js', 'clean-dist'], ->
 
 
 gulp.task 'doc', ['clean-doc'], ->
-	gulp.src './src/*'
+	gulp.src ['./src/catalog.coffee', './src/checkout.coffee']
 		.pipe markdox()
 		.pipe header  """
                   ---
