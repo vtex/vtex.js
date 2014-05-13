@@ -2,29 +2,11 @@
 # IE
 window.location.origin or= window.location.protocol + "//" + window.location.hostname + (if window.location.port then ':' + window.location.port else '')
 
-###*
-* h1 Catalog module
-*
-* Offers convenient methods for using the Checkout API in JS.
-###
 class Catalog
 
 	HOST_URL = window.location.origin
 	version = 'VERSION_REPLACE'
 
-	###*
-	 * Instantiate the Catalog module.
-	 *
-	 * h3 Options:
-	 *
-	 *  - **String** *options.hostURL* (default = `window.location.origin`) the base URL for API calls, without the trailing slash
-	 *  - **Function** *options.ajax* (default = `$.ajax`) an AJAX function that must follow the convention, i.e., accept an object of options such as 'url', 'type' and 'data', and return a promise. If AjaxQueue is present, the default will use it.
-	 *  - **Function** *options.promise* (default = `$.when`) a promise function that must follow the Promises/A+ specification.
-	 *
-	 * @param {Object} options options.
-	 * @return {Checkout} instance
-	 * @note hostURL configures a static variable. This means you can't have two different instances looking at different host URLs.
-	###
 	constructor: (options = {}) ->
 		HOST_URL = options.hostURL if options.hostURL
 
@@ -40,11 +22,7 @@ class Catalog
 		@cache =
 			productWithVariations: {}
 
-	###*
-	 * Sends a request to retrieve the orders for a specific orderGroupId.
-	 * @param {String} orderGroupId the ID of the order group.
-	 * @return {Promise} a promise for the orders.
-	###
+	# Returns a promise .
 	getProductWithVariations: (productId) =>
 		if @cache.productWithVariations[productId]
 			return @promise(@cache.productWithVariations[productId])

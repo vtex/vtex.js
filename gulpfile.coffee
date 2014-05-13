@@ -56,13 +56,6 @@ gulp.task 'dist', ['js', 'clean-dist'], ->
 		.pipe gulp.dest "./dist/#{pkg.version}"
 
 
-gulp.task 'doc', ['clean-doc'], ->
-	gulp.src ['./src/catalog.coffee', './src/checkout.coffee']
-		.pipe markdox()
-		.pipe rename extname: '.md'
-		.pipe gulp.dest('./doc')
-
-
 gulp.task 'vtex_deploy', (cb) ->
 	credentials = JSON.parse fs.readFileSync '/credentials.json'
 	credentials.bucket = 'vtex-io'

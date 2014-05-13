@@ -28,29 +28,11 @@ readSubcookie = (name, cookie) ->
 # IE
 window.location.origin or= window.location.protocol + "//" + window.location.hostname + (if window.location.port then ':' + window.location.port else '')
 
-###*
- * h1 Checkout module
- *
- * Offers convenient methods for using the Checkout API in JS.
-###
 class Checkout
 
 	HOST_URL = window.location.origin
 	version = 'VERSION_REPLACE'
 
-	###*
-	 * Instantiate the Checkout module.
-	 *
-	 * h3 Options:
-	 *
-	 *  - **String** *options.hostURL* (default = `window.location.origin`) the base URL for API calls, without the trailing slash
-	 *  - **Function** *options.ajax* (default = `$.ajax`) an AJAX function that must follow the convention, i.e., accept an object of options such as 'url', 'type' and 'data', and return a promise. If AjaxQueue is present, the default will use it.
-	 *  - **Function** *options.promise* (default = `$.when`) a promise function that must follow the Promises/A+ specification.
-	 *
-	 * @param {Object} options options.
-	 * @return {Checkout} instance
-	 * @note hostURL configures a static variable. This means you can't have two different instances looking at different host URLs.
-	###
 	constructor: (options = {}) ->
 		HOST_URL = options.hostURL if options.hostURL
 
@@ -98,11 +80,7 @@ class Checkout
 		for section in sections
 			return false if not orderForm[section]
 
-	###*
-	 * Sends an idempotent request to retrieve the current OrderForm.
-	 * @param {Array} expectedOrderFormSections an array of attachment names.
-	 * @return {Promise} a promise for the OrderForm.
-	###
+	# Sends an idempotent request to retrieve the current OrderForm.
 	getOrderForm: (expectedFormSections = @_allOrderFormSections) =>
 		if orderFormHasExpectedSections(@orderForm, expectedFormSections)
 			return @promise(@orderForm)
@@ -117,20 +95,7 @@ class Checkout
 			.done(@_cacheOrderForm)
 			.done(broadcastOrderForm)
 
-	###*
-	 * Sends an OrderForm attachment to the current OrderForm, possibly updating it.
-	 *
-	 * h3 Options:
-	 *
-	 *  - **String** *options.subject* (default = `null`) an internal name to give to your attachment submission.
-	 *  - **Boolean** *abort.abort* (default = `false`) indicates whether a previous submission with the same subject should be aborted, if it's ongoing.
-	 *
-	 * @param {String} attachmentId the name of the attachment you're sending.
-	 * @param {Object} attachment the attachment.
-	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-	 * @param {Object} options extra options.
-	 * @return {Promise} a promise for the updated OrderForm.
-	###
+	# Sends an OrderForm attachment to the current OrderForm, possibly updating it.
 	sendAttachment: (attachmentId, attachment, expectedOrderFormSections = @_allOrderFormSections, options = {}) =>
 		if attachmentId is undefined or attachment is undefined
 			d = $.Deferred()
@@ -154,22 +119,11 @@ class Checkout
 
 		return xhr
 
-	###*
-	 * Sends a request to set the used locale.
-	 * @param {String} locale the locale string, e.g. "pt-BR", "en-US".
-	 * @return {Promise} a promise for the success.
-	###
+	# Sends a request to set the used locale.
 	sendLocale: (locale='pt-BR') =>
 		@sendAttachment('clientPreferencesData', {locale: locale}, [])
 
-	###*
-	 * Sends a request to add an offering, along with its info, to the OrderForm.
-	 * @param {String|Number} offeringId the id of the offering.
-	 * @param offeringInfo
-	 * @param {Number} itemIndex the index of the item for which the offering applies.
-	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-	 * @return {Promise} a promise for the updated OrderForm.
-	###
+	# Sends a request to add an offering, along with its info, to the OrderForm.
 	addOfferingWithInfo: (offeringId, offeringInfo, itemIndex, expectedOrderFormSections = @_allOrderFormSections) =>
 		updateItemsRequest =
 			id: offeringId
@@ -185,23 +139,11 @@ class Checkout
 		.done(@_cacheOrderForm)
 		.done(broadcastOrderForm)
 
-	###*
-	 * Sends a request to add an offering to the OrderForm.
-	 * @param {String|Number} offeringId the id of the offering.
-	 * @param {Number} itemIndex the index of the item for which the offering applies.
-	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-	 * @return {Promise} a promise for the updated OrderForm.
-	###
+	# Sends a request to add an offering to the OrderForm.
 	addOffering: (offeringId, itemIndex, expectedOrderFormSections) =>
 		@addOfferingWithInfo(offeringId, null, itemIndex, expectedOrderFormSections)
 
-	###*
-	 * Sends a request to remove an offering from the OrderForm.
-	 * @param {String|Number} offeringId the id of the offering.
-	 * @param {Number} itemIndex the index of the item for which the offering applies.
-	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-	 * @return {Promise} a promise for the updated OrderForm.
-	###
+	# Sends a request to remove an offering from the OrderForm.
 	removeOffering: (offeringId, itemIndex, expectedOrderFormSections = @_allOrderFormSections) =>
 		updateItemsRequest =
 			Id: offeringId
@@ -216,12 +158,7 @@ class Checkout
 		.done(@_cacheOrderForm)
 		.done(broadcastOrderForm)
 
-	###*
-	 * Sends a request to update the items in the OrderForm. Items that are omitted are not modified.
-	 * @param {Array} items an array of objects representing the items in the OrderForm.
-	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-	 * @return {Promise} a promise for the updated OrderForm.
-	###
+	# Sends a request to update the items in the OrderForm. Items that are omitted are not modified.
 	updateItems: (items, expectedOrderFormSections = @_allOrderFormSections) =>
 		updateItemsRequest =
 			orderItems: items
@@ -240,21 +177,12 @@ class Checkout
 		.done(@_cacheOrderForm)
 		.done(broadcastOrderForm)
 
-	###*
-	 * Sends a request to remove items from the OrderForm.
-	 * @param {Array} items an array of objects representing the items to remove. These objects must have at least the `index` property.
-	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-	 * @return {Promise} a promise for the updated OrderForm.
-	###
+	# Sends a request to remove items from the OrderForm.
 	removeItems: (items, expectedOrderFormSections = @_allOrderFormSections) =>
 		item.quantity = 0 for item in items
 		@updateItems(items, expectedOrderFormSections)
 
-	###*
-	 * Sends a request to remove all items from the OrderForm.
-	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-	 * @return {Promise} a promise for the updated OrderForm.
-	###
+	# Sends a request to remove all items from the OrderForm.
 	removeAllItems: (expectedOrderFormSections = @_allOrderFormSections)=>
 		orderFormPromise = if orderFormHasExpectedSections(['items']) then @promise(@orderForm) else @getOrderForm(['items'])
 		orderFormPromise.then (orderForm) =>
@@ -262,12 +190,7 @@ class Checkout
 			item.quantity = 0 for item in items
 			@updateItems(items, expectedOrderFormSections)
 
-	###*
-	 * Sends a request to add a discount coupon to the OrderForm.
-	 * @param {String} couponCode the coupon code to add.
-	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-	 * @return {Promise} a promise for the updated OrderForm.
-	###
+	# Sends a request to add a discount coupon to the OrderForm.
 	addDiscountCoupon: (couponCode, expectedOrderFormSections = @_allOrderFormSections) =>
 		couponCodeRequest =
 			text: couponCode
@@ -282,19 +205,11 @@ class Checkout
 		.done(@_cacheOrderForm)
 		.done(broadcastOrderForm)
 
-	###*
-	 * Sends a request to remove the discount coupon from the OrderForm.
-	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-	 * @return {Promise} a promise for the updated OrderForm.
-	###
+	# Sends a request to remove the discount coupon from the OrderForm.
 	removeDiscountCoupon: (expectedOrderFormSections) =>
 		@addDiscountCoupon('', expectedOrderFormSections)
 
-	###*
-	 * Sends a request to remove the gift registry for the current OrderForm.
-	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-	 * @return {Promise} a promise for the updated OrderForm.
-	###
+	# Sends a request to remove the gift registry for the current OrderForm.
 	removeGiftRegistry: (expectedFormSections = @_allOrderFormSections) =>
 		checkoutRequest = { expectedOrderFormSections: expectedFormSections }
 		@ajax
@@ -306,14 +221,7 @@ class Checkout
 		.done(@_cacheOrderForm)
 		.done(broadcastOrderForm)
 
-	###*
-	 * Sends a request to add a gift message to the current OrderForm.
-	 * @param {Number} itemIndex the index of the item for which the gift message applies.
-	 * @param {Number} bundleItemId the bundle item for which the gift message applies.
-	 * @param {String} giftMessage the gift message.
-	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-	 * @return {Promise} a promise for the updated OrderForm.
-	###
+	# Sends a request to add a gift message to the current OrderForm.
 	addGiftMessage: (itemIndex, bundleItemId, giftMessage, expectedOrderFormSections = @_allOrderFormSections) =>
 		addGiftMessageRequest =
 			content:
@@ -329,13 +237,7 @@ class Checkout
 		.done(@_cacheOrderForm)
 		.done(broadcastOrderForm)
 
-	###*
-	 * Sends a request to add a gift message to the current OrderForm.
-	 * @param {Number} itemIndex the index of the item for which the gift message applies.
-	 * @param {Number} bundleItemId the bundle item for which the gift message applies.
-	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-	 * @return {Promise} a promise for the updated OrderForm.
-	###
+	# Sends a request to add a gift message to the current OrderForm.
 	removeGiftMessage: (itemIndex, bundleItemId, expectedOrderFormSections = @_allOrderFormSections) =>
 		removeGiftMessageRequest =
 			content:
@@ -351,47 +253,25 @@ class Checkout
 		.done(@_cacheOrderForm)
 		.done(broadcastOrderForm)
 
-	###*
-	 * Sends a request to calculates shipping for the current OrderForm, given an address object.
-	 * @param {Object} address an address object
-	 * @return {Promise} a promise for the updated OrderForm.
-	###
+	# Sends a request to calculates shipping for the current OrderForm, given an address object.
 	calculateShipping: (address) =>
 		@sendAttachment('shippingData', {address: address})
 
-	###*
-	 * Given an address with postal code and a country, retrieves a complete address, when available.
-	 * @param {Object} address an address that must contain the properties `postalCode` and `country`.
-	 * @return {Promise} a promise for the address.
-	###
+	# Given an address with postal code and a country, retrieves a complete address, when available.
 	getAddressInformation: (address) =>
 		@ajax
 			url: @_getPostalCodeURL(address.postalCode, address.country)
 			type: 'GET'
 			timeout : 20000
 
-	###*
-	 * Sends a request to retrieve a user's profile.
-	 * @param {String} email the user's email.
-	 * @param {Number|String} salesChannel the sales channel in which to look for the user's profile.
-	 * @return {Promise} a promise for the profile.
-	###
+	# Sends a request to retrieve a user's profile.
 	getProfileByEmail: (email, salesChannel = 1) =>
 		@ajax
 			url: @_getProfileURL()
 			type: 'GET'
 			data: {email: email, sc: salesChannel}
 
-	###*
-	 * Sends a request to start the transaction. This is the final step in the checkout process.
-	 * @param {String|Number} value
-	 * @param {String|Number} referenceValue
-	 * @param {String|Number} interestValue
-	 * @param {Boolean} savePersonalData (default = false) whether to save the user's data for using it later in another order.
-	 * @param {Boolean} optinNewsLetter (default = true) whether to subscribe the user to the store newsletter.
-	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-	 * @return {Promise} a promise for the final OrderForm.
-	###
+	# Sends a request to start the transaction. This is the final step in the checkout process.
 	startTransaction: (value, referenceValue, interestValue, savePersonalData = false, optinNewsLetter = false, expectedOrderFormSections = @_allOrderFormSections) =>
 		transactionRequest = {
 			referenceId: @_getOrderFormId()
@@ -412,11 +292,7 @@ class Checkout
 		.done(@_cacheOrderForm)
 		.done(broadcastOrderForm)
 
-	###*
-	 * Sends a request to retrieve the orders for a specific orderGroupId.
-	 * @param {String} orderGroupId the ID of the order group.
-	 * @return {Promise} a promise for the orders.
-	###
+	# Sends a request to retrieve the orders for a specific orderGroupId.
 	getOrders: (orderGroupId) =>
 		@ajax
 			url: @_getOrdersURL(orderGroupId)
@@ -424,10 +300,7 @@ class Checkout
 			contentType: 'application/json; charset=utf-8'
 			dataType: 'json'
 
-	###*
-	 * Sends a request to clear the OrderForm messages.
-	 * @return {Promise} a promise for the success.
-	###
+	# Sends a request to clear the OrderForm messages.
 	clearMessages: =>
 		clearMessagesRequest = { expectedOrderFormSections: [] }
 		@ajax
@@ -437,11 +310,7 @@ class Checkout
 			dataType: 'json'
 			data: JSON.stringify clearMessagesRequest
 
-	###*
-	 * Sends a request to remove a payment account from the OrderForm.
-	 * @param {String} accountId the ID of the payment account.
-	 * @return {Promise} a promise for the success.
-	###
+	# Sends a request to remove a payment account from the OrderForm.
 	removeAccountId: (accountId) =>
 		removeAccountIdRequest = { expectedOrderFormSections: [] }
 		@ajax
@@ -451,10 +320,7 @@ class Checkout
 			dataType: 'json'
 			data: JSON.stringify removeAccountIdRequest
 
-	###*
-	 * This method should be used to get the URL to redirect the user to when he chooses to logout.
-	 * @return {String} the URL.
-	###
+	# URL to redirect the user to when he chooses to logout.
 	getChangeToAnonymousUserURL: =>
 		HOST_URL + '/checkout/changeToAnonymousUser/' + @_getOrderFormId()
 
