@@ -74,15 +74,15 @@ class Checkout
 	broadcastOrderForm = (orderForm) ->
 		$(window).trigger('vtex.checkout.orderform.update', orderForm)
 
-	orderFormHasExpectedSections = (orderForm, sections) ->
-		if not orderForm or not orderForm instanceof Object
+	orderFormHasExpectedSections = (sections) ->
+		if not @orderForm or not @orderForm instanceof Object
 			return false
 		for section in sections
 			return false if not orderForm[section]
 
 	# Sends an idempotent request to retrieve the current OrderForm.
 	getOrderForm: (expectedFormSections = @_allOrderFormSections) =>
-		if orderFormHasExpectedSections(@orderForm, expectedFormSections)
+		if orderFormHasExpectedSections(expectedFormSections)
 			return @promise(@orderForm)
 		else
 			checkoutRequest = { expectedOrderFormSections: expectedFormSections }
