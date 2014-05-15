@@ -73,6 +73,7 @@ class Checkout
 
 	broadcastOrderForm = (orderForm) ->
 		$(window).trigger('vtex.checkout.orderform.update', orderForm)
+		$(window).trigger('vtexjs.checkout.orderform.update', orderForm)
 
 	orderFormHasExpectedSections = (sections) ->
 		if not @orderForm or not @orderForm instanceof Object
