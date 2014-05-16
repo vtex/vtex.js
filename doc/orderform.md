@@ -2,6 +2,8 @@
 
 O OrderForm é o principal conjunto de dados do processo de Checkout.
 
+Ele é composto de diversas seções, cada uma com informações úteis que podem ser acessadas, manipuladas e (possivelmente) alteradas.
+
 Quase toda operação na API do Checkout retorna o OrderForm (ou parte dele).
 
 Ele é constituído de várias [seções](#secoes). A maioria das chamadas à API do Checkout pede um parâmetro `expectedOrderFormSection` que indica exatamente quais seções devem ser retornadas pela API.
@@ -35,7 +37,7 @@ As propriedades com `…` serão melhor explicadas em [Seções](#secoes).
 
 ## Convenções
 
-* As propriedades que representam valores monetários tem seus valores expressos em centavos. Por exemplo, 10990 pode significar R$109,90.
+* As propriedades que representam valores monetários tem seus valores expressos em centavos. Por exemplo, 10990 significa R$109,90 em lojas brasileiras.
 
 * Seções que não foram pedidas à API são retornadas com valor `null`.
 
