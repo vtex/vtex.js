@@ -1,4 +1,65 @@
-/* vtex.js 0.2.5 */
+(function() {
+  var Catalog, _base,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+  (_base = window.location).origin || (_base.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : ''));
+
+  Catalog = (function() {
+    var HOST_URL, version;
+
+    HOST_URL = window.location.origin;
+
+    version = '0.3.0';
+
+    function Catalog(options) {
+      if (options == null) {
+        options = {};
+      }
+      this.getProductWithVariations = __bind(this.getProductWithVariations, this);
+      if (options.hostURL) {
+        HOST_URL = options.hostURL;
+      }
+      if (options.ajax) {
+        this.ajax = options.ajax;
+      } else if (window.AjaxQueue) {
+        this.ajax = window.AjaxQueue($.ajax);
+      } else {
+        this.ajax = $.ajax;
+      }
+      this.promise = options.promise || $.when;
+      this.cache = {
+        productWithVariations: {}
+      };
+    }
+
+    Catalog.prototype.getProductWithVariations = function(productId) {
+      if (this.cache.productWithVariations[productId]) {
+        return this.promise(this.cache.productWithVariations[productId]);
+      } else {
+        return $.when(this.cache.productWithVariations[productId] || $.ajax("" + (this._getBaseCatalogSystemURL()) + "/products/variations/" + productId)).done((function(_this) {
+          return function(response) {
+            return _this.cache.productWithVariations[productId] = response;
+          };
+        })(this));
+      }
+    };
+
+    Catalog.prototype._getBaseCatalogSystemURL = function() {
+      return HOST_URL + '/api/catalog_system/pub';
+    };
+
+    return Catalog;
+
+  })();
+
+  window.vtexjs || (window.vtexjs = {});
+
+  window.vtexjs.Catalog = Catalog;
+
+  window.vtexjs.catalog = new window.vtexjs.Catalog();
+
+}).call(this);
+
 (function() {
   var Checkout, mapize, readCookie, readCookies, readSubcookie, trim, urlParam, urlParams, _base,
     __slice = [].slice,
@@ -44,34 +105,12 @@
 
   (_base = window.location).origin || (_base.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : ''));
 
-
-  /**
-   * h1 Checkout module
-   *
-   * Offers convenient methods for using the Checkout API in JS.
-   */
-
   Checkout = (function() {
     var HOST_URL, broadcastOrderForm, orderFormHasExpectedSections, version;
 
     HOST_URL = window.location.origin;
 
-    version = '0.2.5';
-
-
-    /**
-    	 * Instantiate the Checkout module.
-    	 *
-    	 * h3 Options:
-    	 *
-    	 *  - **String** *options.hostURL* (default = `window.location.origin`) the base URL for API calls, without the trailing slash
-    	 *  - **Function** *options.ajax* (default = `$.ajax`) an AJAX function that must follow the convention, i.e., accept an object of options such as 'url', 'type' and 'data', and return a promise. If AjaxQueue is present, the default will use it.
-    	 *  - **Function** *options.promise* (default = `$.when`) a promise function that must follow the Promises/A+ specification.
-    	 *
-    	 * @param {Object} options options.
-    	 * @return {Checkout} instance
-    	 * @note hostURL configures a static variable. This means you can't have two different instances looking at different host URLs.
-     */
+    version = '0.3.0';
 
     function Checkout(options) {
       if (options == null) {
@@ -80,6 +119,7 @@
       this._getGatewayCallbackURL = __bind(this._getGatewayCallbackURL, this);
       this._getProfileURL = __bind(this._getProfileURL, this);
       this._getPostalCodeURL = __bind(this._getPostalCodeURL, this);
+      this._getSimulationURL = __bind(this._getSimulationURL, this);
       this._getOrdersURL = __bind(this._getOrdersURL, this);
       this._getRemoveGiftRegistryURL = __bind(this._getRemoveGiftRegistryURL, this);
       this._getUpdateItemURL = __bind(this._getUpdateItemURL, this);
@@ -101,6 +141,7 @@
       this.startTransaction = __bind(this.startTransaction, this);
       this.getProfileByEmail = __bind(this.getProfileByEmail, this);
       this.getAddressInformation = __bind(this.getAddressInformation, this);
+      this.simulateShipping = __bind(this.simulateShipping, this);
       this.calculateShipping = __bind(this.calculateShipping, this);
       this.removeGiftMessage = __bind(this.removeGiftMessage, this);
       this.addGiftMessage = __bind(this.addGiftMessage, this);
@@ -142,12 +183,13 @@
     };
 
     broadcastOrderForm = function(orderForm) {
-      return $(window).trigger('vtex.checkout.orderform.update', orderForm);
+      $(window).trigger('vtex.checkout.orderform.update', orderForm);
+      return $(window).trigger('vtexjs.checkout.orderform.update', orderForm);
     };
 
-    orderFormHasExpectedSections = function(orderForm, sections) {
+    orderFormHasExpectedSections = function(sections) {
       var section, _i, _len;
-      if (!orderForm || !orderForm instanceof Object) {
+      if (!this.orderForm || !this.orderForm instanceof Object) {
         return false;
       }
       for (_i = 0, _len = sections.length; _i < _len; _i++) {
@@ -158,19 +200,12 @@
       }
     };
 
-
-    /**
-    	 * Sends an idempotent request to retrieve the current OrderForm.
-    	 * @param {Array} expectedOrderFormSections an array of attachment names.
-    	 * @return {Promise} a promise for the OrderForm.
-     */
-
     Checkout.prototype.getOrderForm = function(expectedFormSections) {
       var checkoutRequest;
       if (expectedFormSections == null) {
         expectedFormSections = this._allOrderFormSections;
       }
-      if (orderFormHasExpectedSections(this.orderForm, expectedFormSections)) {
+      if (orderFormHasExpectedSections(expectedFormSections)) {
         return this.promise(this.orderForm);
       } else {
         checkoutRequest = {
@@ -185,22 +220,6 @@
         }).done(this._cacheOrderForm).done(broadcastOrderForm);
       }
     };
-
-
-    /**
-    	 * Sends an OrderForm attachment to the current OrderForm, possibly updating it.
-    	 *
-    	 * h3 Options:
-    	 *
-    	 *  - **String** *options.subject* (default = `null`) an internal name to give to your attachment submission.
-    	 *  - **Boolean** *abort.abort* (default = `false`) indicates whether a previous submission with the same subject should be aborted, if it's ongoing.
-    	 *
-    	 * @param {String} attachmentId the name of the attachment you're sending.
-    	 * @param {Object} attachment the attachment.
-    	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-    	 * @param {Object} options extra options.
-    	 * @return {Promise} a promise for the updated OrderForm.
-     */
 
     Checkout.prototype.sendAttachment = function(attachmentId, attachment, expectedOrderFormSections, options) {
       var d, xhr, _ref;
@@ -232,13 +251,6 @@
       return xhr;
     };
 
-
-    /**
-    	 * Sends a request to set the used locale.
-    	 * @param {String} locale the locale string, e.g. "pt-BR", "en-US".
-    	 * @return {Promise} a promise for the success.
-     */
-
     Checkout.prototype.sendLocale = function(locale) {
       if (locale == null) {
         locale = 'pt-BR';
@@ -247,16 +259,6 @@
         locale: locale
       }, []);
     };
-
-
-    /**
-    	 * Sends a request to add an offering, along with its info, to the OrderForm.
-    	 * @param {String|Number} offeringId the id of the offering.
-    	 * @param offeringInfo
-    	 * @param {Number} itemIndex the index of the item for which the offering applies.
-    	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-    	 * @return {Promise} a promise for the updated OrderForm.
-     */
 
     Checkout.prototype.addOfferingWithInfo = function(offeringId, offeringInfo, itemIndex, expectedOrderFormSections) {
       var updateItemsRequest;
@@ -277,27 +279,9 @@
       }).done(this._cacheOrderForm).done(broadcastOrderForm);
     };
 
-
-    /**
-    	 * Sends a request to add an offering to the OrderForm.
-    	 * @param {String|Number} offeringId the id of the offering.
-    	 * @param {Number} itemIndex the index of the item for which the offering applies.
-    	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-    	 * @return {Promise} a promise for the updated OrderForm.
-     */
-
     Checkout.prototype.addOffering = function(offeringId, itemIndex, expectedOrderFormSections) {
       return this.addOfferingWithInfo(offeringId, null, itemIndex, expectedOrderFormSections);
     };
-
-
-    /**
-    	 * Sends a request to remove an offering from the OrderForm.
-    	 * @param {String|Number} offeringId the id of the offering.
-    	 * @param {Number} itemIndex the index of the item for which the offering applies.
-    	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-    	 * @return {Promise} a promise for the updated OrderForm.
-     */
 
     Checkout.prototype.removeOffering = function(offeringId, itemIndex, expectedOrderFormSections) {
       var updateItemsRequest;
@@ -316,14 +300,6 @@
         data: JSON.stringify(updateItemsRequest)
       }).done(this._cacheOrderForm).done(broadcastOrderForm);
     };
-
-
-    /**
-    	 * Sends a request to update the items in the OrderForm. Items that are omitted are not modified.
-    	 * @param {Array} items an array of objects representing the items in the OrderForm.
-    	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-    	 * @return {Promise} a promise for the updated OrderForm.
-     */
 
     Checkout.prototype.updateItems = function(items, expectedOrderFormSections) {
       var updateItemsRequest;
@@ -350,14 +326,6 @@
       })(this)).done(this._cacheOrderForm).done(broadcastOrderForm);
     };
 
-
-    /**
-    	 * Sends a request to remove items from the OrderForm.
-    	 * @param {Array} items an array of objects representing the items to remove. These objects must have at least the `index` property.
-    	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-    	 * @return {Promise} a promise for the updated OrderForm.
-     */
-
     Checkout.prototype.removeItems = function(items, expectedOrderFormSections) {
       var item, _i, _len;
       if (expectedOrderFormSections == null) {
@@ -369,13 +337,6 @@
       }
       return this.updateItems(items, expectedOrderFormSections);
     };
-
-
-    /**
-    	 * Sends a request to remove all items from the OrderForm.
-    	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-    	 * @return {Promise} a promise for the updated OrderForm.
-     */
 
     Checkout.prototype.removeAllItems = function(expectedOrderFormSections) {
       var orderFormPromise;
@@ -396,14 +357,6 @@
       })(this));
     };
 
-
-    /**
-    	 * Sends a request to add a discount coupon to the OrderForm.
-    	 * @param {String} couponCode the coupon code to add.
-    	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-    	 * @return {Promise} a promise for the updated OrderForm.
-     */
-
     Checkout.prototype.addDiscountCoupon = function(couponCode, expectedOrderFormSections) {
       var couponCodeRequest;
       if (expectedOrderFormSections == null) {
@@ -422,23 +375,9 @@
       }).done(this._cacheOrderForm).done(broadcastOrderForm);
     };
 
-
-    /**
-    	 * Sends a request to remove the discount coupon from the OrderForm.
-    	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-    	 * @return {Promise} a promise for the updated OrderForm.
-     */
-
     Checkout.prototype.removeDiscountCoupon = function(expectedOrderFormSections) {
       return this.addDiscountCoupon('', expectedOrderFormSections);
     };
-
-
-    /**
-    	 * Sends a request to remove the gift registry for the current OrderForm.
-    	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-    	 * @return {Promise} a promise for the updated OrderForm.
-     */
 
     Checkout.prototype.removeGiftRegistry = function(expectedFormSections) {
       var checkoutRequest;
@@ -456,16 +395,6 @@
         data: JSON.stringify(checkoutRequest)
       }).done(this._cacheOrderForm).done(broadcastOrderForm);
     };
-
-
-    /**
-    	 * Sends a request to add a gift message to the current OrderForm.
-    	 * @param {Number} itemIndex the index of the item for which the gift message applies.
-    	 * @param {Number} bundleItemId the bundle item for which the gift message applies.
-    	 * @param {String} giftMessage the gift message.
-    	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-    	 * @return {Promise} a promise for the updated OrderForm.
-     */
 
     Checkout.prototype.addGiftMessage = function(itemIndex, bundleItemId, giftMessage, expectedOrderFormSections) {
       var addGiftMessageRequest;
@@ -487,15 +416,6 @@
       }).done(this._cacheOrderForm).done(broadcastOrderForm);
     };
 
-
-    /**
-    	 * Sends a request to add a gift message to the current OrderForm.
-    	 * @param {Number} itemIndex the index of the item for which the gift message applies.
-    	 * @param {Number} bundleItemId the bundle item for which the gift message applies.
-    	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-    	 * @return {Promise} a promise for the updated OrderForm.
-     */
-
     Checkout.prototype.removeGiftMessage = function(itemIndex, bundleItemId, expectedOrderFormSections) {
       var removeGiftMessageRequest;
       if (expectedOrderFormSections == null) {
@@ -516,25 +436,27 @@
       }).done(this._cacheOrderForm).done(broadcastOrderForm);
     };
 
-
-    /**
-    	 * Sends a request to calculates shipping for the current OrderForm, given an address object.
-    	 * @param {Object} address an address object
-    	 * @return {Promise} a promise for the updated OrderForm.
-     */
-
     Checkout.prototype.calculateShipping = function(address) {
       return this.sendAttachment('shippingData', {
         address: address
       });
     };
 
-
-    /**
-    	 * Given an address with postal code and a country, retrieves a complete address, when available.
-    	 * @param {Object} address an address that must contain the properties `postalCode` and `country`.
-    	 * @return {Promise} a promise for the address.
-     */
+    Checkout.prototype.simulateShipping = function(items, postalCode, country) {
+      var data;
+      data = {
+        items: items,
+        postalCode: postalCode,
+        country: country
+      };
+      return this.ajax({
+        url: this._getSimulationURL(),
+        type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        data: JSON.stringify(data)
+      });
+    };
 
     Checkout.prototype.getAddressInformation = function(address) {
       return this.ajax({
@@ -543,14 +465,6 @@
         timeout: 20000
       });
     };
-
-
-    /**
-    	 * Sends a request to retrieve a user's profile.
-    	 * @param {String} email the user's email.
-    	 * @param {Number|String} salesChannel the sales channel in which to look for the user's profile.
-    	 * @return {Promise} a promise for the profile.
-     */
 
     Checkout.prototype.getProfileByEmail = function(email, salesChannel) {
       if (salesChannel == null) {
@@ -565,18 +479,6 @@
         }
       });
     };
-
-
-    /**
-    	 * Sends a request to start the transaction. This is the final step in the checkout process.
-    	 * @param {String|Number} value
-    	 * @param {String|Number} referenceValue
-    	 * @param {String|Number} interestValue
-    	 * @param {Boolean} savePersonalData (default = false) whether to save the user's data for using it later in another order.
-    	 * @param {Boolean} optinNewsLetter (default = true) whether to subscribe the user to the store newsletter.
-    	 * @param {Array} expectedOrderFormSections (default = *all*) an array of attachment names.
-    	 * @return {Promise} a promise for the final OrderForm.
-     */
 
     Checkout.prototype.startTransaction = function(value, referenceValue, interestValue, savePersonalData, optinNewsLetter, expectedOrderFormSections) {
       var transactionRequest;
@@ -607,13 +509,6 @@
       }).done(this._cacheOrderForm).done(broadcastOrderForm);
     };
 
-
-    /**
-    	 * Sends a request to retrieve the orders for a specific orderGroupId.
-    	 * @param {String} orderGroupId the ID of the order group.
-    	 * @return {Promise} a promise for the orders.
-     */
-
     Checkout.prototype.getOrders = function(orderGroupId) {
       return this.ajax({
         url: this._getOrdersURL(orderGroupId),
@@ -622,12 +517,6 @@
         dataType: 'json'
       });
     };
-
-
-    /**
-    	 * Sends a request to clear the OrderForm messages.
-    	 * @return {Promise} a promise for the success.
-     */
 
     Checkout.prototype.clearMessages = function() {
       var clearMessagesRequest;
@@ -643,13 +532,6 @@
       });
     };
 
-
-    /**
-    	 * Sends a request to remove a payment account from the OrderForm.
-    	 * @param {String} accountId the ID of the payment account.
-    	 * @return {Promise} a promise for the success.
-     */
-
     Checkout.prototype.removeAccountId = function(accountId) {
       var removeAccountIdRequest;
       removeAccountIdRequest = {
@@ -663,12 +545,6 @@
         data: JSON.stringify(removeAccountIdRequest)
       });
     };
-
-
-    /**
-    	 * This method should be used to get the URL to redirect the user to when he chooses to logout.
-    	 * @return {String} the URL.
-     */
 
     Checkout.prototype.getChangeToAnonymousUserURL = function() {
       return HOST_URL + '/checkout/changeToAnonymousUser/' + this._getOrderFormId();
@@ -746,6 +622,10 @@
       return HOST_URL + '/api/checkout/pub/orders/order-group/' + orderGroupId;
     };
 
+    Checkout.prototype._getSimulationURL = function() {
+      return HOST_URL + '/api/checkout/pub/orderForms/simulation';
+    };
+
     Checkout.prototype._getPostalCodeURL = function(postalCode, countryCode) {
       if (postalCode == null) {
         postalCode = '';
@@ -773,5 +653,58 @@
   window.vtexjs.Checkout = Checkout;
 
   window.vtexjs.checkout = new window.vtexjs.Checkout();
+
+}).call(this);
+
+(function() {
+  var AjaxQueue, uniqueHashcode;
+
+  uniqueHashcode = (function(_this) {
+    return function(str) {
+      var char, charcode, hash, _i, _len;
+      hash = 0;
+      for (_i = 0, _len = str.length; _i < _len; _i++) {
+        char = str[_i];
+        charcode = char.charCodeAt(0);
+        hash = ((hash << 5) - hash) + charcode;
+        hash = hash & hash;
+      }
+      return hash.toString();
+    };
+  })(this);
+
+  AjaxQueue = function(ajax) {
+    var theQueue;
+    theQueue = $({});
+    return function(ajaxOpts) {
+      var abortFunction, dfd, jqXHR, promise, requestFunction;
+      jqXHR = void 0;
+      dfd = $.Deferred();
+      promise = dfd.promise();
+      requestFunction = function(next) {
+        jqXHR = ajax(ajaxOpts);
+        return jqXHR.done(dfd.resolve).fail(dfd.reject).then(next, next);
+      };
+      abortFunction = function(statusText) {
+        var index, queue;
+        if (jqXHR) {
+          return jqXHR.abort(statusText);
+        } else {
+          queue = theQueue.queue();
+          index = [].indexOf.call(queue, requestFunction);
+          if (index > -1) {
+            queue.splice(index, 1);
+          }
+          dfd.rejectWith(ajaxOpts.context || ajaxOpts, [promise, statusText, ""]);
+          return promise;
+        }
+      };
+      theQueue.queue(requestFunction);
+      promise.abort = abortFunction;
+      return promise;
+    };
+  };
+
+  window.AjaxQueue = AjaxQueue;
 
 }).call(this);

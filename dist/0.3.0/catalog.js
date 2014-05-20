@@ -1,38 +1,16 @@
-/* vtex.js 0.2.5 */
+/* vtex.js 0.3.0 */
 (function() {
   var Catalog, _base,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   (_base = window.location).origin || (_base.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : ''));
 
-
-  /**
-  * h1 Catalog module
-  *
-  * Offers convenient methods for using the Checkout API in JS.
-   */
-
   Catalog = (function() {
     var HOST_URL, version;
 
     HOST_URL = window.location.origin;
 
-    version = '0.2.5';
-
-
-    /**
-    	 * Instantiate the Catalog module.
-    	 *
-    	 * h3 Options:
-    	 *
-    	 *  - **String** *options.hostURL* (default = `window.location.origin`) the base URL for API calls, without the trailing slash
-    	 *  - **Function** *options.ajax* (default = `$.ajax`) an AJAX function that must follow the convention, i.e., accept an object of options such as 'url', 'type' and 'data', and return a promise. If AjaxQueue is present, the default will use it.
-    	 *  - **Function** *options.promise* (default = `$.when`) a promise function that must follow the Promises/A+ specification.
-    	 *
-    	 * @param {Object} options options.
-    	 * @return {Checkout} instance
-    	 * @note hostURL configures a static variable. This means you can't have two different instances looking at different host URLs.
-     */
+    version = '0.3.0';
 
     function Catalog(options) {
       if (options == null) {
@@ -54,13 +32,6 @@
         productWithVariations: {}
       };
     }
-
-
-    /**
-    	 * Sends a request to retrieve the orders for a specific orderGroupId.
-    	 * @param {String} orderGroupId the ID of the order group.
-    	 * @return {Promise} a promise for the orders.
-     */
 
     Catalog.prototype.getProductWithVariations = function(productId) {
       if (this.cache.productWithVariations[productId]) {
