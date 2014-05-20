@@ -254,9 +254,23 @@ class Checkout
 		.done(@_cacheOrderForm)
 		.done(broadcastOrderForm)
 
-	# Sends a request to calculates shipping for the current OrderForm, given an address object.
+	# Sends a request to calculates shipping for the current OrderForm, given a COMPLETE address object.
 	calculateShipping: (address) =>
 		@sendAttachment('shippingData', {address: address})
+
+	# Simulates shipping using a list of items, a postal code and a country.
+	simulateShipping: (items, postalCode, country) =>
+		data =
+			items: items
+			postalCode: postalCode
+			country: country
+
+		@ajax
+			url: @_getSimulationURL()
+			type: 'POST'
+			contentType: 'application/json; charset=utf-8'
+			dataType: 'json'
+			data: JSON.stringify(data)
 
 	# Given an address with postal code and a country, retrieves a complete address, when available.
 	getAddressInformation: (address) =>
@@ -379,6 +393,9 @@ class Checkout
 
 	_getOrdersURL: (orderGroupId) =>
 		HOST_URL + '/api/checkout/pub/orders/order-group/' + orderGroupId
+
+	_getSimulationURL: =>
+		HOST_URL + '/api/checkout/pub/orderForms/simulation'
 
 	_getPostalCodeURL: (postalCode = '', countryCode = 'BRA') =>
 		HOST_URL + '/api/checkout/pub/postal-code/' + countryCode + '/' + postalCode
