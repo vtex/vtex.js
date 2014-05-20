@@ -4,7 +4,7 @@
 
 É possível calcular frete de duas maneiras: para um conjunto de items isoladamente, ou para o carrinho em questão.
 
-### Calcular frete isoladamente [isolated-shipping]
+### Calcular frete isoladamente <a name="isolated-shipping"></a>
 
 Com o método `vtexjs.checkout.simulateShipping(items, postalCode, country)`, é possível simular frete para items que não estejam no carrinho.
 
@@ -37,7 +37,7 @@ vtexjs.checkout.simulateShipping(items, postalCode, country)
 });
 ```
 
-### Calcular frete para o carrinho [orderform-shipping]
+### Calcular frete para o carrinho <a name="orderform-shipping"></a>
 
 Nesse caso, para calcular frete para os items que já estão no carrinho, vamos inserir o endereço
 dado nas informações do cliente. A orderForm resultante terá os dados que precisamos.
