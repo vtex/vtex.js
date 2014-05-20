@@ -23,7 +23,7 @@ Você pode ter acesso a guias, exemplos e documentação completa de todos os m�
 
 Atenção: o vtex.js e sua documentação estão em constante melhorias.
 
-Veja também os [slides da apresentação](http://goo.gl/R6lm8Q) sobre o vtex.js que rolou no VTEX Day 2014.
+Veja também os [slides da apresentação](https://docs.google.com/presentation/d/1VpuGpnLywFUPT3z0tR-J13M_bRzE22-NPojPBURuDN4/pub?start=false&loop=false&delayms=3000) sobre o vtex.js que rolou no VTEX Day 2014.
 
 ------
 
