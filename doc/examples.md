@@ -58,7 +58,6 @@ vtexjs.checkout.getOrderForm()
     var address = {postalCode: postalCode, country: country};
     return vtexjs.checkout.calculateShipping(address);
 }).then(function(orderForm){
-console.log(orderForm);
     /* Aqui temos o orderForm completo.
        Em `orderForm.totalizers`, um deles será referente a "Shipping".
        Em `orderForm.shippingData`, terá acesso a diversas informações de entrega,
