@@ -9,22 +9,22 @@
 Com o método `vtexjs.checkout.simulateShipping(items, postalCode, country)`, é possível simular frete para items que não estejam no carrinho.
 
 ```javascript
-// items deve ser um array de objetos que contenham, no mínimo, as informações abaixo
+// O `items` deve ser um array de objetos que contenham, no mínimo, as informações abaixo
 var items = [{
     id: 5987,  // sku do item
     quantity: 1,
     seller: 1
 }];
 
-// postalCode deve ser o CEP do cliente, no caso do Brasil
+// O `postalCode` deve ser o CEP do cliente, no caso do Brasil
 var postalCode = '22631-280';
-// desse jeito também funciona
+// Desse jeito também funciona
 var postalCode = '22631280';
 
-// country deve ser a sigla de 3 letras do país
+// O `country` deve ser a sigla de 3 letras do país
 var country = 'BRA';
 
-// faça a chamada e use a promise para trabalhar com o resultado
+// Faça a chamada e use a promise para trabalhar com o resultado
 vtexjs.checkout.simulateShipping(items, postalCode, country)
 .then(function(result){
     /* `result.logisticsInfo` é um array de objetos (abaixo há um JSON representando um exemplo dele).
@@ -77,11 +77,14 @@ var postalCode = '22631280';
 // O `country` deve ser a sigla de 3 letras do país
 var country = 'BRA';
 
+// É importante, ao trabalhar com dados do checkout do cliente, certificar-se de que há um orderForm.
 vtexjs.checkout.getOrderForm().then(function(){
+    // Agora vamos conseguir o endereço completo a partir das informações parciais.
     var address = {postalCode: postalCode, country: country};
     return vtexjs.checkout.getAddressInformation(address);
 }).then(function(completeAddress){
     // Aqui temos o endereço completo com rua, cidade, etc.
+    // É exatamente isso que o método abaixo precisa.
     return vtexjs.checkout.calculateShipping(completeAddress);
 }).then(function(orderForm){
     /* Aqui temos o orderForm completo.
