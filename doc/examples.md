@@ -4,7 +4,7 @@
 
 É possível calcular frete de duas maneiras: para um conjunto de items isoladamente, ou para o carrinho em questão.
 
-### Calcular frete isoladamente
+### Calcular frete isoladamente [isolated-shipping]
 
 Com o método `vtexjs.checkout.simulateShipping(items, postalCode, country)`, é possível simular frete para items que não estejam no carrinho.
 
@@ -17,9 +17,9 @@ var items = [{
 }];
 
 // O `postalCode` deve ser o CEP do cliente, no caso do Brasil
-var postalCode = '22631-280';
+var postalCode = '22250-040';
 // Desse jeito também funciona
-// var postalCode = '22631280';
+// var postalCode = '22250040';
 
 // O `country` deve ser a sigla de 3 letras do país
 var country = 'BRA';
@@ -37,35 +37,52 @@ vtexjs.checkout.simulateShipping(items, postalCode, country)
 });
 ```
 
-### Calcular frete para o carrinho
+### Calcular frete para o carrinho [orderform-shipping]
 
-Nesse caso, vamos usar uma chamada isolada que nos dá um endereço completo a partir de um abreviado (postalCode + country),
-então vamos usar um método que insere esse endereço nos dados do usuário, e o orderForm respondido estará
-preenchido com informações de logística e o totalizador de frete.
+Nesse caso, para calcular frete para os items que já estão no carrinho, vamos inserir o endereço
+dado nas informações do cliente. A orderForm resultante terá os dados que precisamos.
+
 
 ```javascript
 // O `postalCode` deve ser o CEP do cliente, no caso do Brasil
-var postalCode = '22631-280';
+var postalCode = '22250-040';
 // Desse jeito também funciona
-var postalCode = '22631280';
+var postalCode = '22250040';
 
 // O `country` deve ser a sigla de 3 letras do país
 var country = 'BRA';
 
 // É importante, ao trabalhar com dados do checkout do cliente, certificar-se de que há um orderForm.
-vtexjs.checkout.getOrderForm().then(function(){
-    // Agora vamos conseguir o endereço completo a partir das informações parciais.
+vtexjs.checkout.getOrderForm()
+.then(function(){
     var address = {postalCode: postalCode, country: country};
-    return vtexjs.checkout.getAddressInformation(address);
-}).then(function(completeAddress){
-    // Aqui temos o endereço completo com rua, cidade, etc.
-    // É exatamente isso que o método abaixo precisa.
-    return vtexjs.checkout.calculateShipping(completeAddress);
+    return vtexjs.checkout.calculateShipping(address);
 }).then(function(orderForm){
+console.log(orderForm);
     /* Aqui temos o orderForm completo.
        Em `orderForm.totalizers`, um deles será referente a "Shipping".
        Em `orderForm.shippingData`, terá acesso a diversas informações de entrega,
          como endereço do cliente e opções de transportadoras.
     */
+});
+```
+
+### Calcular frete para os items do carrinho sem vincular endereço
+
+O exemplo anterior mostra como calcular frete para os items do carrinho, mas com isso ele já vincula
+o endereço dado ao usuário.
+
+Se não quiser fazer isso, podemos obter os items em questão a partir do orderForm e usar na chamda mostrada
+no exemplo "[Calcular frete isoladamente](#isolated-shipping)".
+
+```javascript
+var postalCode = '22250-040';
+var country = 'BRA';
+
+vtexjs.checkout.getOrderForm().then(function(orderForm){
+    var items = orderForm.items;
+    return vtexjs.checkout.simulateShipping(items, postalCode, country);
+}).then(function(result){
+    // Veja no exemplo "Calcular frete isoladamente" como usar esse `result`.
 });
 ```
