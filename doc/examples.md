@@ -19,7 +19,7 @@ var items = [{
 // O `postalCode` deve ser o CEP do cliente, no caso do Brasil
 var postalCode = '22631-280';
 // Desse jeito também funciona
-var postalCode = '22631280';
+// var postalCode = '22631280';
 
 // O `country` deve ser a sigla de 3 letras do país
 var country = 'BRA';
@@ -27,37 +27,12 @@ var country = 'BRA';
 // Faça a chamada e use a promise para trabalhar com o resultado
 vtexjs.checkout.simulateShipping(items, postalCode, country)
 .then(function(result){
-    /* `result.logisticsInfo` é um array de objetos (abaixo há um JSON representando um exemplo dele).
+    /* `result.logisticsInfo` é um array de objetos.
        Cada objeto corresponde às informações de logística (frete) para cada item,
          na ordem em que os items foram enviados.
-       `slas` é um array de objetos de SLA. Cada SLA é uma entrega diferente que pode ser
-         escolhida pelo cliente. Geralmente dizem respeito a diferentes métodos de entrega
-         e possuem prazos e preços diferentes.
-        [{
-            "itemIndex": 0,
-            "stockBalance": 6,
-            "quantity": 1,
-            "shipsTo": ["BRA"],
-            "slas": [{
-                "id": ".PAC",
-                "name": ".PAC",
-                "deliveryIds": [{
-                    "courierId": "61",
-                    "warehouseId": "1_1",
-                    "dockId": "1_1_1",
-                    "courierName": "PAC",
-                    "quantity": 1
-                }],
-                "shippingEstimate": "11bd",
-                "shippingEstimateDate": null,
-                "lockTTL": null,
-                "availableDeliveryWindows": [],
-                "deliveryWindow": null,
-                "price": 4284,
-                "listPrice": 0,
-                "tax": 0
-            }]
-        }]
+       Por exemplo, em `result.logisticsInfo[0].slas` estarão as diferentes opções
+         de transportadora (com prazo e preço) para o primeiro item.
+       Para maiores detalhes, consulte a documentação do orderForm.
     */
 });
 ```
