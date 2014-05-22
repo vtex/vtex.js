@@ -1,70 +1,293 @@
+# Módulo Checkout
+
+O módulo Checkout manipula dados referentes à compra do cliente.
+
+Naturalmente, o Checkout agrega os mais diversos dados necessários para o fechamento de uma compra: dados pessoais, de endereço, de frete, de items, entre outros.
+
+O OrderForm é a estrutura responsável por esse aglomerado de dados.
+Ele é composto de diversas seções, cada uma com informações úteis que podem ser acessadas, manipuladas e (possivelmente) alteradas.
+Se tiver qualquer dúvida quanto a suas seções, consulte a [documentação do OrderForm](orderform.md).
+
+## Eventos
+
+Quando uma chamada é feita que atualiza o orderForm, o evento `'orderFormUpdated.vtex'` é disparado.
+
+Isso é útil para que diferentes componentes que usem o vtex.js consigam se manter sempre atualizados, sem ter que conhecer os outros componentes presentes.
+
+Os [slides da apresentação](https://docs.google.com/presentation/d/1VpuGpnLywFUPT3z0tR-J13M_bRzE22-NPojPBURuDN4/pub?start=false&loop=false&delayms=3000)
+mostram um diagrama que esclarece a interação entre diferentes componentes com o uso de eventos.
+
+## expectedOrderFormSections
+
+Você vai reparar que grande parte dos métodos requerem um argumento `expectedOrderFormSections`.
+
+O orderForm é composto de várias seções (ou attachments). É possível requisitar que somente algumas sejam enviadas na resposta.
+
+Isso serve primariamente para melhorar a performance quando você sabe que a sua chamada não vai afetar as seções que você não pediu,
+ou se você simplesmente não se importa com as mudanças.
+
+Em geral, é seguro **não enviar** esse argumento; nesse caso, todas as seções serão requisitadas.
+
+É possível saber quais são todas as seções dando uma olhada na propriedade `_allOrderFormSections`.
+
+Dada essa explicação, não será mais explicado esse argumento na documentação dos métodos.
+
+### Exemplo
+
+    $(window).on('orderFormUpdated.vtex', function(evt, orderForm){
+      alert('Alguem atualizou o orderForm!');
+      console.log(orderForm);
+    });
+
+## Métodos
+
+### getOrderForm(expectedOrderFormSections)
+
+Pega o orderForm atual.
+
+Esse é um dos métodos mais importantes: é essencial certificar-se de que haja um orderForm disponível antes de fazer chamadas que o alterem.
+
+ - **Retorna** `Promise` para o orderForm
+
+#### Exemplo
+
+    vtexjs.checkout.getOrderForm().done(function(orderForm){
+        console.log(orderForm);
+    });
 
 
-<!-- Start /home/gberger/projects/vtex.js/src/checkout.coffee -->
+### sendAttachment(attachmentId, attachment, expectedOrderFormSections, options)
 
-# Checkout module
+Envia um attachment para a orderForm atual. (Um attachment é uma seção.)
 
-Offers convenient methods for using the Checkout API in JS.
+Isso possibilita atualizar essa seção, enviando novas informações, alterando, ou retirando.
 
-## Checkout(options)
+Veja a [documentação do OrderForm](orderform.md) para descobrir quais são as seções.
 
-Instantiate the Checkout module.
-### Options:
+Não se esqueça de usar getOrderForm anteriormente.
 
- - **String** *options.hostURL* (default = `window.location.origin`) the base URL for API calls, without the trailing slash
- - **Function** *options.ajax* (default = `$.ajax`) an AJAX function that must follow the convention, i.e., accept an object of options such as 'url', 'type' and 'data', and return a promise. If AjaxQueue is present, the default will use it.
- - **Function** *options.promise* (default = `$.when`) a promise function that must follow the Promises/A+ specification.
+ - **attachmentId** `String` o nome do attachment sendo enviado.
+ - **attachment** `Object` o attachment em si.
+ - **options.subject** `String` (default = `null`) an internal name to give to your attachment submission.
+ - **options.abort** `Boolean` (default = `false`) indicates whether a previous submission with the same subject should be aborted, if it's ongoing.
+ - **Retorna** `Promise` para o orderForm
 
-### Params: 
+#### Exemplos
 
-* **Object** *options* options.
 
-### Return:
+### updateItems(items, expectedOrderFormSections)
 
-* **Checkout** instance
+Atualiza items no orderForm.
 
-## getOrderForm(expectedOrderFormSections)
+Um item é identificado pela sua propriedade `index`. No orderForm, essa propriedade pode ser obtida observando o índice do item no Array de items.
 
-Sends an idempotent request to retrieve the current OrderForm.
+Veja a [documentação do OrderForm](orderform.md) para conhecer mais sobre o que compõe o objeto de item.
 
-### Params: 
+Propriedades que não forem enviadas serão mantidas inalteradas, assim como items que estão no orderForm mas nao foram enviados.
 
-* **Array** *expectedOrderFormSections* an array of attachment names.
+Não se esqueça de usar getOrderForm anteriormente.
 
-### Return:
+ - **items** `Array` o conjunto de items que vão ser atualizados. Mesmo que só haja um item, deve ser envolto num Array.
+ - **Retorna** `Promise` para o orderForm
 
-* **Promise** a promise for the OrderForm.
+#### Exemplo
 
-## sendAttachment(attachmentId, attachment, expectedOrderFormSections, options)
+Altera a quantidade e o seller do primeiro item.
 
-Sends an OrderForm attachment to the current OrderForm, possibly updating it.
-### Options:
+    vtexjs.checkout.getOrderForm().then(function(orderForm){
+        var item = orderForm.items[0];
+        item.index = 0;
+        item.quantity = 5;
+        item.seller = 2;
+        return vtexjs.checkout.updateItems([item]);
+    }).done(function(orderForm){
+        alert('Items atualizados!');
+        console.log(orderForm);
+    });
 
- - **String** *options.subject* (default = `null`) an internal name to give to your attachment submission.
- - **Boolean** *abort.abort* (default = `false`) indicates whether a previous submission with the same subject should be aborted, if it's ongoing.
 
-### Params: 
+### removeItems(items, expectedOrderFormSections)
 
-* **String** *attachmentId* the name of the attachment you're sending.
-* **Object** *attachment* the attachment.
-* **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
-* **Object** *options* extra options.
+Remove items no orderForm.
 
-### Return:
+Um item é identificado pela sua propriedade `index`. No orderForm, essa propriedade pode ser obtida observando o índice do item no Array de items.
 
-* **Promise** a promise for the updated OrderForm.
+Não se esqueça de usar getOrderForm anteriormente.
 
-## sendLocale(locale)
+ - **items** `Array` o conjunto de items que vão ser retirados. Mesmo que só haja um item, deve ser envolto num Array.
+ - **Retorna** `Promise` para o orderForm
 
-Sends a request to set the used locale.
+#### Exemplo
 
-### Params: 
+Remove o primeiro item.
 
-* **String** *locale* the locale string, e.g. "pt-BR", "en-US".
+    vtexjs.checkout.getOrderForm().then(function(orderForm){
+        var item = orderForm.items[0];
+        item.index = 0;
+        return vtexjs.checkout.removeItems([item]);
+    }).done(function(orderForm){
+        alert('Item removido!');
+        console.log(orderForm);
+    });
 
-### Return:
 
-* **Promise** a promise for the success.
+### removeAllItems(expectedOrderFormSections)
+
+Remove todos os items presentes no orderForm.
+
+Não se esqueça de usar getOrderForm anteriormente.
+
+ - **Retorna** `Promise` para o orderForm
+
+#### Exemplo
+
+    vtexjs.checkout.getOrderForm().then(function(orderForm){
+        return vtexjs.checkout.removeAllItems([item]);
+    }).done(function(orderForm){
+        alert('Carrinho esvaziado.');
+        console.log(orderForm);
+    });
+
+
+### calculateShipping(address)
+
+Recebendo um endereço, registra o endereço no shippingData do usuário.
+
+O efeito disso é que o frete estará calculado e disponível em um dos totalizers do orderForm.
+
+Não se esqueça de usar getOrderForm anteriormente.
+
+ - **address** `Object` o endereço deve ter, no mínimo, postalCode e country. Com essas duas propriedades, as outras serão inferidas.
+ - **Retorna** `Promise` para o orderForm
+
+#### Exemplo
+
+    vtexjs.checkout.getOrderForm().then(function(orderForm){
+        var postalCode = '22250-040';  // também pode ser sem o hífen
+        var country: 'Brazil';
+        var address = {postalCode: postalCode, country: country};
+        return vtexjs.checkout.calculateShipping(address)
+    })
+    .done(function(orderForm){
+        alert('Frete calculado.');
+        console.log(orderForm.shippingData);
+        console.log(orderForm.totalizers);
+    });
+
+
+### simulateShipping(items, postalCode, country)
+
+Recebendo uma lista de items, seu postalCode e country, simula frete desses items para este endereço.
+
+A diferença em relação ao `calculateShipping` é que esta chamada é isolada.
+Pode ser usada para um conjunto arbitrário de items, e não vincula o endereço ao usuário.
+
+O resultado dessa simualação inclui as diferentes transportadoras que podem ser usadas para cada item, acompanhadas
+de nome, prazo de entrega e preço.
+
+É ideal para simular frete na página de produto.
+
+ - **items** `Array` de objetos que contenham no mínimo, `id`, `quantity` e `seller`.
+ - **postalCode** `String` no caso do Brasil é o CEP do cliente
+ - **country** `String` a sigla de 3 letras do país, por exemplo, "BRA"
+ - **Retorna** `Promise` para o resultado. O resultado tem uma propriedade logisticsInfo.
+
+#### Exemplo
+
+    // O `items` deve ser um array de objetos que contenham, no mínimo, as informações abaixo
+    var items = [{
+        id: 5987,  // sku do item
+        quantity: 1,
+        seller: 1
+    }];
+
+    // O `postalCode` deve ser o CEP do cliente, no caso do Brasil
+    var postalCode = '22250-040';
+    // Desse jeito também funciona
+    // var postalCode = '22250040';
+
+    // O `country` deve ser a sigla de 3 letras do país
+    var country = 'BRA';
+
+    vtexjs.checkout.simulateShipping(items, postalCode, country).done(function(result){
+        /* `result.logisticsInfo` é um array de objetos.
+           Cada objeto corresponde às informações de logística (frete) para cada item,
+             na ordem em que os items foram enviados.
+           Por exemplo, em `result.logisticsInfo[0].slas` estarão as diferentes opções
+             de transportadora (com prazo e preço) para o primeiro item.
+           Para maiores detalhes, consulte a documentação do orderForm.
+        */
+    });
+
+
+### getAddressInformation(address)
+
+Dado um endereço incompleto com postalCode e country, devolve um endereço completo, com cidade, estado, rua, e quaisquer outras informações disponíveis.
+
+ - **address** `Object` o endereço deve ter, no mínimo, postalCode e country. Com essas duas propriedades, as outras serão inferidas.
+ - **Retorna** `Promise` para o endereço completo
+
+#### Exemplo
+
+    // O `postalCode` deve ser o CEP do cliente, no caso do Brasil
+    var postalCode = '22250-040';
+    // Desse jeito também funciona
+    // var postalCode = '22250040';
+
+    // O `country` deve ser a sigla de 3 letras do país
+    var country = 'BRA';
+
+    var address = {postalCode: postalCode, country: country};
+
+    vtexjs.checkout.getAddressInformation(address).done(function(result){
+        console.log(result);
+    });
+
+
+### getProfileByEmail(email, salesChannel)
+
+Faz o login parcial do usuário usando o email.
+
+As informações provavelmente vão vir mascaradas e não será possível editá-las, caso o usuário já exista. Para isso, é necessário autenticar-se com VTEX ID.
+Certifique-se disso com a propriedade canEditData do orderForm. Veja a [documentação do OrderForm](orderform.md).
+
+Não se esqueça de usar getOrderForm anteriormente.
+
+ - **email** `String`
+ - **salesChannel** `Number|String` (default = `1`)
+ - **Retorna** `Promise` para o orderForm
+
+#### Exemplo
+
+    vtexjs.checkout.getOrderForm().then(function(orderForm){
+        var email = "exemplo@vtex.com.br";
+        return vtexjs.checkout.getProfileByEmail(email);
+    }).done(function(orderForm){
+        console.log(orderForm);
+    });
+
+### sendLocale(locale)
+
+Muda a locale do usuário.
+
+Isso causa uma mudança no orderForm, em `clientPreferencesData`.
+
+Não se esqueça de usar getOrderForm anteriormente.
+
+ - **locale** `String` exemplos: "pt-BR", "en-US"
+ - **Retorna** `Promise` para o sucesso (nenhuma seção do orderForm é requisitada)
+
+#### Exemplo
+
+    vtexjs.checkout.getOrderForm().then(function(orderForm){
+        return vtexjs.checkout.sendLocale("en-US");
+    }).then(function(){
+        alert("Now you're an American ;)");
+    });
+
+
+---------
+
 
 ## addOfferingWithInfo(offeringId, , itemIndex, expectedOrderFormSections)
 
@@ -109,43 +332,6 @@ Sends a request to remove an offering from the OrderForm.
 
 * **Promise** a promise for the updated OrderForm.
 
-## updateItems(items, expectedOrderFormSections)
-
-Sends a request to update the items in the OrderForm. Items that are omitted are not modified.
-
-### Params: 
-
-* **Array** *items* an array of objects representing the items in the OrderForm.
-* **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
-
-### Return:
-
-* **Promise** a promise for the updated OrderForm.
-
-## removeItems(items, expectedOrderFormSections)
-
-Sends a request to remove items from the OrderForm.
-
-### Params: 
-
-* **Array** *items* an array of objects representing the items to remove. These objects must have at least the `index` property.
-* **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
-
-### Return:
-
-* **Promise** a promise for the updated OrderForm.
-
-## removeAllItems(expectedOrderFormSections)
-
-Sends a request to remove all items from the OrderForm.
-
-### Params: 
-
-* **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
-
-### Return:
-
-* **Promise** a promise for the updated OrderForm.
 
 ## addDiscountCoupon(couponCode, expectedOrderFormSections)
 
@@ -213,42 +399,6 @@ Sends a request to add a gift message to the current OrderForm.
 
 * **Promise** a promise for the updated OrderForm.
 
-## calculateShipping(address)
-
-Sends a request to calculates shipping for the current OrderForm, given an address object.
-
-### Params: 
-
-* **Object** *address* an address object
-
-### Return:
-
-* **Promise** a promise for the updated OrderForm.
-
-## getAddressInformation(address)
-
-Given an address with postal code and a country, retrieves a complete address, when available.
-
-### Params: 
-
-* **Object** *address* an address that must contain the properties `postalCode` and `country`.
-
-### Return:
-
-* **Promise** a promise for the address.
-
-## getProfileByEmail(email, salesChannel)
-
-Sends a request to retrieve a user's profile.
-
-### Params: 
-
-* **String** *email* the user's email.
-* **Number|String** *salesChannel* the sales channel in which to look for the user's profile.
-
-### Return:
-
-* **Promise** a promise for the profile.
 
 ## startTransaction(value, referenceValue, interestValue, savePersonalData, optinNewsLetter, expectedOrderFormSections)
 
@@ -306,6 +456,3 @@ This method should be used to get the URL to redirect the user to when he choose
 ### Return:
 
 * **String** the URL.
-
-<!-- End /home/gberger/projects/vtex.js/src/checkout.coffee -->
-
