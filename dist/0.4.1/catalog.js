@@ -1,4 +1,4 @@
-/* vtex.js 0.4.0 */
+/* vtex.js 0.4.1 */
 (function() {
   var Catalog, _base,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -10,12 +10,14 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.4.0';
+    version = '0.4.1';
 
     function Catalog(options) {
       if (options == null) {
         options = {};
       }
+      this.getCurrentProductWithVariations = __bind(this.getCurrentProductWithVariations, this);
+      this.setProductWithVariationsCache = __bind(this.setProductWithVariationsCache, this);
       this.getProductWithVariations = __bind(this.getProductWithVariations, this);
       if (options.hostURL) {
         HOST_URL = options.hostURL;
@@ -34,14 +36,27 @@
     }
 
     Catalog.prototype.getProductWithVariations = function(productId) {
-      if (this.cache.productWithVariations[productId]) {
-        return this.promise(this.cache.productWithVariations[productId]);
+      return this.promise(this.cache.productWithVariations[productId] || $.ajax("" + this.BASE_ENDPOINT + "/products/variations/" + productId)).done((function(_this) {
+        return function(response) {
+          return _this.setProductWithVariationsCache(productId, response);
+        };
+      })(this));
+    };
+
+    Catalog.prototype.setProductWithVariationsCache = function(productId, apiResponse) {
+      return this.cache.productWithVariations[productId] = apiResponse;
+    };
+
+    Catalog.prototype.getCurrentProductWithVariations = function() {
+      var k, v, _ref;
+      if (window.skuJson) {
+        return this.promise(window.skuJson);
       } else {
-        return $.when(this.cache.productWithVariations[productId] || $.ajax("" + (this._getBaseCatalogSystemURL()) + "/products/variations/" + productId)).done((function(_this) {
-          return function(response) {
-            return _this.cache.productWithVariations[productId] = response;
-          };
-        })(this));
+        _ref = this.cache.productWithVariations;
+        for (k in _ref) {
+          v = _ref[k];
+          return this.promise(v);
+        }
       }
     };
 
