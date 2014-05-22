@@ -1,4 +1,65 @@
-/* vtex.js 0.3.0 */
+(function() {
+  var Catalog, _base,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+  (_base = window.location).origin || (_base.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : ''));
+
+  Catalog = (function() {
+    var HOST_URL, version;
+
+    HOST_URL = window.location.origin;
+
+    version = '0.4.0';
+
+    function Catalog(options) {
+      if (options == null) {
+        options = {};
+      }
+      this.getProductWithVariations = __bind(this.getProductWithVariations, this);
+      if (options.hostURL) {
+        HOST_URL = options.hostURL;
+      }
+      if (options.ajax) {
+        this.ajax = options.ajax;
+      } else if (window.AjaxQueue) {
+        this.ajax = window.AjaxQueue($.ajax);
+      } else {
+        this.ajax = $.ajax;
+      }
+      this.promise = options.promise || $.when;
+      this.cache = {
+        productWithVariations: {}
+      };
+    }
+
+    Catalog.prototype.getProductWithVariations = function(productId) {
+      if (this.cache.productWithVariations[productId]) {
+        return this.promise(this.cache.productWithVariations[productId]);
+      } else {
+        return $.when(this.cache.productWithVariations[productId] || $.ajax("" + (this._getBaseCatalogSystemURL()) + "/products/variations/" + productId)).done((function(_this) {
+          return function(response) {
+            return _this.cache.productWithVariations[productId] = response;
+          };
+        })(this));
+      }
+    };
+
+    Catalog.prototype._getBaseCatalogSystemURL = function() {
+      return HOST_URL + '/api/catalog_system/pub';
+    };
+
+    return Catalog;
+
+  })();
+
+  window.vtexjs || (window.vtexjs = {});
+
+  window.vtexjs.Catalog = Catalog;
+
+  window.vtexjs.catalog = new window.vtexjs.Catalog();
+
+}).call(this);
+
 (function() {
   var Checkout, mapize, readCookie, readCookies, readSubcookie, trim, urlParam, urlParams, _base,
     __slice = [].slice,
@@ -49,7 +110,7 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.3.0';
+    version = '0.4.0';
 
     function Checkout(options) {
       if (options == null) {
@@ -122,8 +183,7 @@
     };
 
     broadcastOrderForm = function(orderForm) {
-      $(window).trigger('vtex.checkout.orderform.update', orderForm);
-      return $(window).trigger('vtexjs.checkout.orderform.update', orderForm);
+      return $(window).trigger('orderFormUpdated.vtex', orderForm);
     };
 
     orderFormHasExpectedSections = function(sections) {
@@ -592,5 +652,58 @@
   window.vtexjs.Checkout = Checkout;
 
   window.vtexjs.checkout = new window.vtexjs.Checkout();
+
+}).call(this);
+
+(function() {
+  var AjaxQueue, uniqueHashcode;
+
+  uniqueHashcode = (function(_this) {
+    return function(str) {
+      var char, charcode, hash, _i, _len;
+      hash = 0;
+      for (_i = 0, _len = str.length; _i < _len; _i++) {
+        char = str[_i];
+        charcode = char.charCodeAt(0);
+        hash = ((hash << 5) - hash) + charcode;
+        hash = hash & hash;
+      }
+      return hash.toString();
+    };
+  })(this);
+
+  AjaxQueue = function(ajax) {
+    var theQueue;
+    theQueue = $({});
+    return function(ajaxOpts) {
+      var abortFunction, dfd, jqXHR, promise, requestFunction;
+      jqXHR = void 0;
+      dfd = $.Deferred();
+      promise = dfd.promise();
+      requestFunction = function(next) {
+        jqXHR = ajax(ajaxOpts);
+        return jqXHR.done(dfd.resolve).fail(dfd.reject).then(next, next);
+      };
+      abortFunction = function(statusText) {
+        var index, queue;
+        if (jqXHR) {
+          return jqXHR.abort(statusText);
+        } else {
+          queue = theQueue.queue();
+          index = [].indexOf.call(queue, requestFunction);
+          if (index > -1) {
+            queue.splice(index, 1);
+          }
+          dfd.rejectWith(ajaxOpts.context || ajaxOpts, [promise, statusText, ""]);
+          return promise;
+        }
+      };
+      theQueue.queue(requestFunction);
+      promise.abort = abortFunction;
+      return promise;
+    };
+  };
+
+  window.AjaxQueue = AjaxQueue;
 
 }).call(this);

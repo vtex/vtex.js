@@ -1,6 +1,6 @@
 {
   "name": "vtex.js",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "readmeFilename": "README.md",
   "description": "VTEX JS SDK",
   "deploy": "dist/",

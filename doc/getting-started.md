@@ -1,6 +1,19 @@
 # Getting Started
 
-Este artigo irá guiá-lo na construção de sua primeira aplicação usando o vtex.js.
+Este artigo irá introduzí-lo a:
+
+ - **Promises**, nosso jeito de lidar com resultados de operações assíncronas (como chamadas AJAX);
+ - **Eventos**, que são lançados pelo vtex.js e ajudam a manter seu componente atualizado com os dados mais recentes;
+ - **Templates**, nossa recomendação para uma experiência sem frustrações na construção do HTML do seu template;
+ - Os **Módulos** do vtex.js, e suas particularidades.
+
+## Promises
+
+
+## Eventos
+
+
+## Templates
 
 
 ## Módulos
@@ -16,9 +29,11 @@ Por exemplo, ao incluir o módulo do Checkout, você agora tem o objeto `vtexjs.
 
 O módulo Checkout manipula dados referentes à compra do cliente.
 
-O OrderForm é a principal estrutura de dados do Checkout.
+Naturalmente, o Checkout agrega os mais diversos dados necessários para o fechamento de uma compra: dados pessoais, de endereço, de frete, de items, entre outros.
+
+O OrderForm é a estrutura responsável por esse aglomerado de dados.
 Ele é composto de diversas seções, cada uma com informações úteis que podem ser acessadas, manipuladas e (possivelmente) alteradas.
-Se tiver qualquer dúvida quanto a suas seções, consulte a [documentação](orderform.md).
+Se tiver qualquer dúvida quanto a suas seções, consulte a [documentação do OrderForm](orderform.md).
 
 Veja a documentação completa de todos os métodos desse módulo [aqui](checkout.md).
 
