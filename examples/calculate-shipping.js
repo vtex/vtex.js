@@ -11,6 +11,6 @@ vtexjs.checkout.getOrderForm()
 //----------------------------
 
 
-$(window).on('vtexjs.checkout.orderform.update', function(orderForm){
+$(window).on('orderFormUpdated.vtex', function(orderForm){
   meuMinicart.update(orderForm);
 });
