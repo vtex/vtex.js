@@ -286,6 +286,26 @@ Não se esqueça de usar getOrderForm anteriormente.
         alert('Removido.');
     });
 
+
+### addDiscountCoupon(couponCode, expectedOrderFormSections)
+
+Sends a request to add a discount coupon to the OrderForm.
+
+ - **couponCode** `String`
+ - **Retorna** `Promise` para o orderForm.
+
+#### Exemplo
+
+
+### removeDiscountCoupon(expectedOrderFormSections)
+
+Sends a request to remove the discount coupon from the OrderForm.
+
+ - **Retorna** `Promise` para o orderForm
+
+#### Exemplo
+
+
 ### sendLocale(locale)
 
 Muda a locale do usuário.
@@ -346,32 +366,6 @@ Sends a request to remove an offering from the OrderForm.
 
 * **String|Number** *offeringId* the id of the offering.
 * **Number** *itemIndex* the index of the item for which the offering applies.
-* **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
-
-### Return:
-
-* **Promise** a promise for the updated OrderForm.
-
-
-## addDiscountCoupon(couponCode, expectedOrderFormSections)
-
-Sends a request to add a discount coupon to the OrderForm.
-
-### Params: 
-
-* **String** *couponCode* the coupon code to add.
-* **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
-
-### Return:
-
-* **Promise** a promise for the updated OrderForm.
-
-## removeDiscountCoupon(expectedOrderFormSections)
-
-Sends a request to remove the discount coupon from the OrderForm.
-
-### Params: 
-
 * **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
 
 ### Return:

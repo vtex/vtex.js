@@ -19,7 +19,7 @@ Pronto! Agora você tem nos objetos `vtexjs.catalog` e `vtexjs.checkout` acesso 
 
 ## Documentação
 
-Você pode ter acesso a guias, exemplos e documentação completa de todos os métodos do vtex.js [aqui](docs).
+Você pode ter acesso a guias, exemplos e documentação completa de todos os métodos do vtex.js [aqui](doc).
 
 Atenção: o vtex.js e sua documentação estão em constante melhorias.
 
