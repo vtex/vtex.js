@@ -22,14 +22,24 @@ class Catalog
 		@cache =
 			productWithVariations: {}
 
-	# Returns a promise .
+	# Gets a products' complete "skuJSON". Returns a promise.
 	getProductWithVariations: (productId) =>
-		if @cache.productWithVariations[productId]
-			return @promise(@cache.productWithVariations[productId])
-		else
-			$.when(@cache.productWithVariations[productId] or $.ajax("#{@_getBaseCatalogSystemURL()}/products/variations/#{productId}"))
+		@promise(@cache.productWithVariations[productId] or $.ajax("#{@BASE_ENDPOINT}/products/variations/#{productId}"))
 			.done (response) =>
-				@cache.productWithVariations[productId] = response
+				@setProductWithVariationsCache(productId, response)
+
+	# Private
+	setProductWithVariationsCache: (productId, apiResponse) =>
+		@cache.productWithVariations[productId] = apiResponse
+
+	# Get current product's complete "skuJSON". Returns a promise.
+	getCurrentProductWithVariations: =>
+		if window.skuJson
+			return @promise(window.skuJson)
+		else
+			for k, v of @cache.productWithVariations
+				return @promise(v)
+
 
 	# URL BUILDERS
 
