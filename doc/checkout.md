@@ -266,6 +266,26 @@ Não se esqueça de usar getOrderForm anteriormente.
         console.log(orderForm);
     });
 
+
+### removeAccountId(accountId)
+
+Em orderForm.paymentData.availableAccounts, você acha as contas de pagamento do usuário.
+Cada conta tem vários detalhes, e um deles é o accountId. Esse id pode ser usado nesse método para a remoção da conta de pagamento.
+
+Não se esqueça de usar getOrderForm anteriormente.
+
+ - **accountId** `String`
+ - **Retorna** `Promise` do sucesso
+
+#### Exemplo
+
+    vtexjs.checkout.getOrderForm().then(function(orderForm){
+        var accountId = orderForm.paymentData.availableAccounts[0].accountId;
+        return vtexjs.checkout.removeAccountId(accountId);
+    }).then(function(){
+        alert('Removido.');
+    });
+
 ### sendLocale(locale)
 
 Muda a locale do usuário.
@@ -432,18 +452,6 @@ Sends a request to retrieve the orders for a specific orderGroupId.
 ## clearMessages()
 
 Sends a request to clear the OrderForm messages.
-
-### Return:
-
-* **Promise** a promise for the success.
-
-## removeAccountId(accountId)
-
-Sends a request to remove a payment account from the OrderForm.
-
-### Params: 
-
-* **String** *accountId* the ID of the payment account.
 
 ### Return:
 
