@@ -289,22 +289,68 @@ Não se esqueça de usar getOrderForm anteriormente.
 
 ### addDiscountCoupon(couponCode, expectedOrderFormSections)
 
-Sends a request to add a discount coupon to the OrderForm.
+Adiciona um cupom de desconto ao orderForm.
+
+Só pode existir um cupom de desconto por compra.
+
+Não se esqueça de usar getOrderForm anteriormente.
 
  - **couponCode** `String`
  - **Retorna** `Promise` para o orderForm.
 
 #### Exemplo
 
+    vtexjs.checkout.getOrderForm().then(function(orderForm){
+        var code = 'ABC123';
+        return vtexjs.checkout.addDiscountCoupon(code);
+    }).then(function(orderForm){
+        alert('Cupom adicionado.');
+        console.log(orderForm);
+        console.log(orderForm.paymentData);
+        console.log(orderForm.totalizers);
+    });
+
 
 ### removeDiscountCoupon(expectedOrderFormSections)
 
-Sends a request to remove the discount coupon from the OrderForm.
+Remove o cupom de desconto do orderForm.
+
+Só pode existir um cupom de desconto por compra, então não há necessidade de especificar nada aqui.
+
+Não se esqueça de usar getOrderForm anteriormente.
 
  - **Retorna** `Promise` para o orderForm
 
 #### Exemplo
 
+    vtexjs.checkout.getOrderForm().then(function(orderForm){
+        return vtexjs.checkout.removeDiscountCoupon();
+    }).then(function(orderForm){
+        alert('Cupom removido.');
+        console.log(orderForm);
+        console.log(orderForm.paymentData);
+        console.log(orderForm.totalizers);
+    });
+
+### removeGiftRegistry(expectedOrderFormSections)
+
+Remove o gift registry do orderForm.
+
+Isso desvincula a lista de presente a que o orderForm está vinculado, se estiver.
+Se não estiver, não faz nada.
+
+Não se esqueça de usar getOrderForm anteriormente.
+
+ - **Retorna** `Promise` para o orderForm
+
+#### Exemplo
+
+    vtexjs.checkout.getOrderForm().then(function(orderForm){
+        return vtexjs.checkout.removeGiftRegistry();
+    }).then(function(orderForm){
+        alert('Lista de presente removida.');
+        console.log(orderForm);
+    });
 
 ### sendLocale(locale)
 
@@ -326,10 +372,73 @@ Não se esqueça de usar getOrderForm anteriormente.
     });
 
 
+#### clearMessages()
+
+Ocasionalmente, o orderForm tem sua seção `messages` preenchida com mensagens informativas ou de erro.
+
+Para limpar as mensagens, use esse método.
+
+Não se esqueça de usar getOrderForm anteriormente.
+
+ - **Retorna** `Promise` para o sucesso (nenhuma seção do orderForm é requisitada)
+
+#### Exemplo
+
+    vtexjs.checkout.getOrderForm().then(function(orderForm){
+        return vtexjs.checkout.clearMessages();
+    }).then(function(){
+        alert("Mensagens limpadas.");
+    });
+
+### getLogoutURL()
+
+Esse método retorna uma URL que desloga o usuário, porém mantendo seu carrinho.
+
+É sua responsabilidade executar esse redirecionamento.
+
+Não se esqueça de usar getOrderForm anteriormente.
+
+ - **Retorna** `String`
+
+#### Exemplo
+
+    $('.logout').on('click', function(){
+        vtexjs.checkout.getOrderForm().then(function(orderForm){
+            var logoutURL = vtexjs.checkout.getLogoutURL();
+            window.location = logoutURL;
+        });
+    });
+
+
+### getOrders(orderGroupId)
+
+Obtém os pedidos (order) contidos num grupo de pedidos (orderGroup).
+
+Se um pedido foi finalizado e será fornecido por múltiplos vendedores, ele será dividido em vários pedidos, um para cada vendedor.
+
+O orderGroupId é algo parecido com `v50123456abc` e agrupa pedidos `v50123456abc-01`, `v50123456abc-02`, etc.
+
+Na maioria dos casos, um orderGroup só conterá um pedido.
+
+Em termos de dados, um orderGroup é um array de objetos order.
+Uma order tem várias propriedades sobre a finalização da compra.
+Em breve, estará disponível a documentação completa deste objeto.
+
+ - **orderGroupId** `String`
+ - **Retorna** `Promise` para as orders
+
+#### Exemplo
+
+    var orderGroupId = 'v50123456abc';
+    vtexjs.checkout.getOrders(orderGroupId).then(function(orders){
+        console.log("Quantidade de pedidos nesse grupo: ", orders.length);
+        console.log(orders);
+    });
+
 ---------
 
 
-## addOfferingWithInfo(offeringId, , itemIndex, expectedOrderFormSections)
+## addOfferingWithInfo(offeringId, offeringInfo, itemIndex, expectedOrderFormSections)
 
 Sends a request to add an offering, along with its info, to the OrderForm.
 
@@ -371,14 +480,6 @@ Sends a request to remove an offering from the OrderForm.
 ### Return:
 
 * **Promise** a promise for the updated OrderForm.
-
-## removeGiftRegistry(expectedOrderFormSections)
-
-Sends a request to remove the gift registry for the current OrderForm.
-
-### Params: 
-
-* **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
 
 ### Return:
 
@@ -430,31 +531,3 @@ Sends a request to start the transaction. This is the final step in the checkout
 ### Return:
 
 * **Promise** a promise for the final OrderForm.
-
-## getOrders(orderGroupId)
-
-Sends a request to retrieve the orders for a specific orderGroupId.
-
-### Params: 
-
-* **String** *orderGroupId* the ID of the order group.
-
-### Return:
-
-* **Promise** a promise for the orders.
-
-## clearMessages()
-
-Sends a request to clear the OrderForm messages.
-
-### Return:
-
-* **Promise** a promise for the success.
-
-## getChangeToAnonymousUserURL()
-
-This method should be used to get the URL to redirect the user to when he chooses to logout.
-
-### Return:
-
-* **String** the URL.

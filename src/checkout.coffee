@@ -338,6 +338,7 @@ class Checkout
 	getChangeToAnonymousUserURL: =>
 		HOST_URL + '/checkout/changeToAnonymousUser/' + @_getOrderFormId()
 
+	getLogoutURL: @::getChangeToAnonymousUserURL()
 
 	# URL BUILDERS
 
