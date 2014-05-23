@@ -35,10 +35,10 @@ Dada essa explicação, não será mais explicado esse argumento na documentaç�
 ### Exemplo
 
 ```javascript
-    $(window).on('orderFormUpdated.vtex', function(evt, orderForm){
-      alert('Alguem atualizou o orderForm!');
-      console.log(orderForm);
-    });
+$(window).on('orderFormUpdated.vtex', function(evt, orderForm){
+  alert('Alguem atualizou o orderForm!');
+  console.log(orderForm);
+});
 ```
 
 ## Métodos
@@ -53,9 +53,11 @@ Esse é um dos métodos mais importantes: é essencial certificar-se de que haja
 
 #### Exemplo
 
-    vtexjs.checkout.getOrderForm().done(function(orderForm){
-        console.log(orderForm);
-    });
+```javascript
+vtexjs.checkout.getOrderForm().done(function(orderForm){
+    console.log(orderForm);
+});
+```
 
 
 ### sendAttachment(attachmentId, attachment, expectedOrderFormSections, options)
@@ -75,6 +77,8 @@ Não se esqueça de usar getOrderForm anteriormente.
  - **Retorna** `Promise` para o orderForm
 
 #### Exemplos
+
+Em breve.
 
 
 ### updateItems(items, expectedOrderFormSections)
@@ -96,16 +100,18 @@ Não se esqueça de usar getOrderForm anteriormente.
 
 Altera a quantidade e o seller do primeiro item.
 
-    vtexjs.checkout.getOrderForm().then(function(orderForm){
-        var item = orderForm.items[0];
-        item.index = 0;
-        item.quantity = 5;
-        item.seller = 2;
-        return vtexjs.checkout.updateItems([item]);
-    }).done(function(orderForm){
-        alert('Items atualizados!');
-        console.log(orderForm);
-    });
+```javascript
+vtexjs.checkout.getOrderForm().then(function(orderForm){
+    var item = orderForm.items[0];
+    item.index = 0;
+    item.quantity = 5;
+    item.seller = 2;
+    return vtexjs.checkout.updateItems([item]);
+}).done(function(orderForm){
+    alert('Items atualizados!');
+    console.log(orderForm);
+});
+```
 
 
 ### removeItems(items, expectedOrderFormSections)
@@ -123,14 +129,16 @@ Não se esqueça de usar getOrderForm anteriormente.
 
 Remove o primeiro item.
 
-    vtexjs.checkout.getOrderForm().then(function(orderForm){
-        var item = orderForm.items[0];
-        item.index = 0;
-        return vtexjs.checkout.removeItems([item]);
-    }).done(function(orderForm){
-        alert('Item removido!');
-        console.log(orderForm);
-    });
+```javascript
+vtexjs.checkout.getOrderForm().then(function(orderForm){
+    var item = orderForm.items[0];
+    item.index = 0;
+    return vtexjs.checkout.removeItems([item]);
+}).done(function(orderForm){
+    alert('Item removido!');
+    console.log(orderForm);
+});
+```
 
 
 ### removeAllItems(expectedOrderFormSections)
@@ -143,12 +151,14 @@ Não se esqueça de usar getOrderForm anteriormente.
 
 #### Exemplo
 
-    vtexjs.checkout.getOrderForm().then(function(orderForm){
-        return vtexjs.checkout.removeAllItems([item]);
-    }).done(function(orderForm){
-        alert('Carrinho esvaziado.');
-        console.log(orderForm);
-    });
+```javascript
+vtexjs.checkout.getOrderForm().then(function(orderForm){
+    return vtexjs.checkout.removeAllItems([item]);
+}).done(function(orderForm){
+    alert('Carrinho esvaziado.');
+    console.log(orderForm);
+});
+```
 
 
 ### calculateShipping(address)
@@ -164,17 +174,19 @@ Não se esqueça de usar getOrderForm anteriormente.
 
 #### Exemplo
 
-    vtexjs.checkout.getOrderForm().then(function(orderForm){
-        var postalCode = '22250-040';  // também pode ser sem o hífen
-        var country: 'Brazil';
-        var address = {postalCode: postalCode, country: country};
-        return vtexjs.checkout.calculateShipping(address)
-    })
-    .done(function(orderForm){
-        alert('Frete calculado.');
-        console.log(orderForm.shippingData);
-        console.log(orderForm.totalizers);
-    });
+```javascript
+vtexjs.checkout.getOrderForm().then(function(orderForm){
+    var postalCode = '22250-040';  // também pode ser sem o hífen
+    var country: 'Brazil';
+    var address = {postalCode: postalCode, country: country};
+    return vtexjs.checkout.calculateShipping(address)
+})
+.done(function(orderForm){
+    alert('Frete calculado.');
+    console.log(orderForm.shippingData);
+    console.log(orderForm.totalizers);
+});
+```
 
 
 ### simulateShipping(items, postalCode, country)
@@ -196,30 +208,32 @@ de nome, prazo de entrega e preço.
 
 #### Exemplo
 
-    // O `items` deve ser um array de objetos que contenham, no mínimo, as informações abaixo
-    var items = [{
-        id: 5987,  // sku do item
-        quantity: 1,
-        seller: 1
-    }];
+```javascript
+// O `items` deve ser um array de objetos que contenham, no mínimo, as informações abaixo
+var items = [{
+    id: 5987,  // sku do item
+    quantity: 1,
+    seller: 1
+}];
 
-    // O `postalCode` deve ser o CEP do cliente, no caso do Brasil
-    var postalCode = '22250-040';
-    // Desse jeito também funciona
-    // var postalCode = '22250040';
+// O `postalCode` deve ser o CEP do cliente, no caso do Brasil
+var postalCode = '22250-040';
+// Desse jeito também funciona
+// var postalCode = '22250040';
 
-    // O `country` deve ser a sigla de 3 letras do país
-    var country = 'BRA';
+// O `country` deve ser a sigla de 3 letras do país
+var country = 'BRA';
 
-    vtexjs.checkout.simulateShipping(items, postalCode, country).done(function(result){
-        /* `result.logisticsInfo` é um array de objetos.
-           Cada objeto corresponde às informações de logística (frete) para cada item,
-             na ordem em que os items foram enviados.
-           Por exemplo, em `result.logisticsInfo[0].slas` estarão as diferentes opções
-             de transportadora (com prazo e preço) para o primeiro item.
-           Para maiores detalhes, consulte a documentação do orderForm.
-        */
-    });
+vtexjs.checkout.simulateShipping(items, postalCode, country).done(function(result){
+    /* `result.logisticsInfo` é um array de objetos.
+       Cada objeto corresponde às informações de logística (frete) para cada item,
+         na ordem em que os items foram enviados.
+       Por exemplo, em `result.logisticsInfo[0].slas` estarão as diferentes opções
+         de transportadora (com prazo e preço) para o primeiro item.
+       Para maiores detalhes, consulte a documentação do orderForm.
+    */
+});
+```
 
 
 ### getAddressInformation(address)
@@ -231,19 +245,21 @@ Dado um endereço incompleto com postalCode e country, devolve um endereço comp
 
 #### Exemplo
 
-    // O `postalCode` deve ser o CEP do cliente, no caso do Brasil
-    var postalCode = '22250-040';
-    // Desse jeito também funciona
-    // var postalCode = '22250040';
+```javascript
+// O `postalCode` deve ser o CEP do cliente, no caso do Brasil
+var postalCode = '22250-040';
+// Desse jeito também funciona
+// var postalCode = '22250040';
 
-    // O `country` deve ser a sigla de 3 letras do país
-    var country = 'BRA';
+// O `country` deve ser a sigla de 3 letras do país
+var country = 'BRA';
 
-    var address = {postalCode: postalCode, country: country};
+var address = {postalCode: postalCode, country: country};
 
-    vtexjs.checkout.getAddressInformation(address).done(function(result){
-        console.log(result);
-    });
+vtexjs.checkout.getAddressInformation(address).done(function(result){
+    console.log(result);
+});
+```
 
 
 ### getProfileByEmail(email, salesChannel)
@@ -261,12 +277,14 @@ Não se esqueça de usar getOrderForm anteriormente.
 
 #### Exemplo
 
-    vtexjs.checkout.getOrderForm().then(function(orderForm){
-        var email = "exemplo@vtex.com.br";
-        return vtexjs.checkout.getProfileByEmail(email);
-    }).done(function(orderForm){
-        console.log(orderForm);
-    });
+```javascript
+vtexjs.checkout.getOrderForm().then(function(orderForm){
+    var email = "exemplo@vtex.com.br";
+    return vtexjs.checkout.getProfileByEmail(email);
+}).done(function(orderForm){
+    console.log(orderForm);
+});
+```
 
 
 ### removeAccountId(accountId)
@@ -281,12 +299,14 @@ Não se esqueça de usar getOrderForm anteriormente.
 
 #### Exemplo
 
-    vtexjs.checkout.getOrderForm().then(function(orderForm){
-        var accountId = orderForm.paymentData.availableAccounts[0].accountId;
-        return vtexjs.checkout.removeAccountId(accountId);
-    }).then(function(){
-        alert('Removido.');
-    });
+```javascript
+vtexjs.checkout.getOrderForm().then(function(orderForm){
+    var accountId = orderForm.paymentData.availableAccounts[0].accountId;
+    return vtexjs.checkout.removeAccountId(accountId);
+}).then(function(){
+    alert('Removido.');
+});
+```
 
 
 ### addDiscountCoupon(couponCode, expectedOrderFormSections)
@@ -302,15 +322,17 @@ Não se esqueça de usar getOrderForm anteriormente.
 
 #### Exemplo
 
-    vtexjs.checkout.getOrderForm().then(function(orderForm){
-        var code = 'ABC123';
-        return vtexjs.checkout.addDiscountCoupon(code);
-    }).then(function(orderForm){
-        alert('Cupom adicionado.');
-        console.log(orderForm);
-        console.log(orderForm.paymentData);
-        console.log(orderForm.totalizers);
-    });
+```javascript
+vtexjs.checkout.getOrderForm().then(function(orderForm){
+    var code = 'ABC123';
+    return vtexjs.checkout.addDiscountCoupon(code);
+}).then(function(orderForm){
+    alert('Cupom adicionado.');
+    console.log(orderForm);
+    console.log(orderForm.paymentData);
+    console.log(orderForm.totalizers);
+});
+```
 
 
 ### removeDiscountCoupon(expectedOrderFormSections)
@@ -325,14 +347,16 @@ Não se esqueça de usar getOrderForm anteriormente.
 
 #### Exemplo
 
-    vtexjs.checkout.getOrderForm().then(function(orderForm){
-        return vtexjs.checkout.removeDiscountCoupon();
-    }).then(function(orderForm){
-        alert('Cupom removido.');
-        console.log(orderForm);
-        console.log(orderForm.paymentData);
-        console.log(orderForm.totalizers);
-    });
+```javascript
+vtexjs.checkout.getOrderForm().then(function(orderForm){
+    return vtexjs.checkout.removeDiscountCoupon();
+}).then(function(orderForm){
+    alert('Cupom removido.');
+    console.log(orderForm);
+    console.log(orderForm.paymentData);
+    console.log(orderForm.totalizers);
+});
+```
 
 ### removeGiftRegistry(expectedOrderFormSections)
 
@@ -347,12 +371,14 @@ Não se esqueça de usar getOrderForm anteriormente.
 
 #### Exemplo
 
-    vtexjs.checkout.getOrderForm().then(function(orderForm){
-        return vtexjs.checkout.removeGiftRegistry();
-    }).then(function(orderForm){
-        alert('Lista de presente removida.');
-        console.log(orderForm);
-    });
+```javascript
+vtexjs.checkout.getOrderForm().then(function(orderForm){
+    return vtexjs.checkout.removeGiftRegistry();
+}).then(function(orderForm){
+    alert('Lista de presente removida.');
+    console.log(orderForm);
+});
+```
 
 ### sendLocale(locale)
 
@@ -367,11 +393,13 @@ Não se esqueça de usar getOrderForm anteriormente.
 
 #### Exemplo
 
-    vtexjs.checkout.getOrderForm().then(function(orderForm){
-        return vtexjs.checkout.sendLocale("en-US");
-    }).then(function(){
-        alert("Now you're an American ;)");
-    });
+```javascript
+vtexjs.checkout.getOrderForm().then(function(orderForm){
+    return vtexjs.checkout.sendLocale("en-US");
+}).then(function(){
+    alert("Now you're an American ;)");
+});
+```
 
 
 #### clearMessages()
@@ -386,11 +414,13 @@ Não se esqueça de usar getOrderForm anteriormente.
 
 #### Exemplo
 
-    vtexjs.checkout.getOrderForm().then(function(orderForm){
-        return vtexjs.checkout.clearMessages();
-    }).then(function(){
-        alert("Mensagens limpadas.");
-    });
+```javascript
+vtexjs.checkout.getOrderForm().then(function(orderForm){
+    return vtexjs.checkout.clearMessages();
+}).then(function(){
+    alert("Mensagens limpadas.");
+});
+```
 
 ### getLogoutURL()
 
@@ -404,12 +434,14 @@ Não se esqueça de usar getOrderForm anteriormente.
 
 #### Exemplo
 
-    $('.logout').on('click', function(){
-        vtexjs.checkout.getOrderForm().then(function(orderForm){
-            var logoutURL = vtexjs.checkout.getLogoutURL();
-            window.location = logoutURL;
-        });
+```javascript
+$('.logout').on('click', function(){
+    vtexjs.checkout.getOrderForm().then(function(orderForm){
+        var logoutURL = vtexjs.checkout.getLogoutURL();
+        window.location = logoutURL;
     });
+});
+```
 
 
 ### getOrders(orderGroupId)
@@ -431,11 +463,13 @@ Em breve, estará disponível a documentação completa deste objeto.
 
 #### Exemplo
 
-    var orderGroupId = 'v50123456abc';
-    vtexjs.checkout.getOrders(orderGroupId).then(function(orders){
-        console.log("Quantidade de pedidos nesse grupo: ", orders.length);
-        console.log(orders);
-    });
+```javascript
+var orderGroupId = 'v50123456abc';
+vtexjs.checkout.getOrders(orderGroupId).then(function(orders){
+    console.log("Quantidade de pedidos nesse grupo: ", orders.length);
+    console.log(orders);
+});
+```
 
 ---------
 
