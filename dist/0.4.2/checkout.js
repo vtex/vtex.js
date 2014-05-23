@@ -1,80 +1,4 @@
-(function() {
-  var Catalog, _base,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-
-  (_base = window.location).origin || (_base.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : ''));
-
-  Catalog = (function() {
-    var HOST_URL, version;
-
-    HOST_URL = window.location.origin;
-
-    version = '0.4.1';
-
-    function Catalog(options) {
-      if (options == null) {
-        options = {};
-      }
-      this.getCurrentProductWithVariations = __bind(this.getCurrentProductWithVariations, this);
-      this.setProductWithVariationsCache = __bind(this.setProductWithVariationsCache, this);
-      this.getProductWithVariations = __bind(this.getProductWithVariations, this);
-      if (options.hostURL) {
-        HOST_URL = options.hostURL;
-      }
-      if (options.ajax) {
-        this.ajax = options.ajax;
-      } else if (window.AjaxQueue) {
-        this.ajax = window.AjaxQueue($.ajax);
-      } else {
-        this.ajax = $.ajax;
-      }
-      this.promise = options.promise || $.when;
-      this.cache = {
-        productWithVariations: {}
-      };
-    }
-
-    Catalog.prototype.getProductWithVariations = function(productId) {
-      return this.promise(this.cache.productWithVariations[productId] || $.ajax("" + this.BASE_ENDPOINT + "/products/variations/" + productId)).done((function(_this) {
-        return function(response) {
-          return _this.setProductWithVariationsCache(productId, response);
-        };
-      })(this));
-    };
-
-    Catalog.prototype.setProductWithVariationsCache = function(productId, apiResponse) {
-      return this.cache.productWithVariations[productId] = apiResponse;
-    };
-
-    Catalog.prototype.getCurrentProductWithVariations = function() {
-      var k, v, _ref;
-      if (window.skuJson) {
-        return this.promise(window.skuJson);
-      } else {
-        _ref = this.cache.productWithVariations;
-        for (k in _ref) {
-          v = _ref[k];
-          return this.promise(v);
-        }
-      }
-    };
-
-    Catalog.prototype._getBaseCatalogSystemURL = function() {
-      return HOST_URL + '/api/catalog_system/pub';
-    };
-
-    return Catalog;
-
-  })();
-
-  window.vtexjs || (window.vtexjs = {});
-
-  window.vtexjs.Catalog = Catalog;
-
-  window.vtexjs.catalog = new window.vtexjs.Catalog();
-
-}).call(this);
-
+/* vtex.js 0.4.2 */
 (function() {
   var Checkout, mapize, readCookie, readCookies, readSubcookie, trim, urlParam, urlParams, _base,
     __slice = [].slice,
@@ -125,7 +49,7 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.4.1';
+    version = '0.4.2';
 
     function Checkout(options) {
       if (options == null) {
@@ -564,6 +488,8 @@
       return HOST_URL + '/checkout/changeToAnonymousUser/' + this._getOrderFormId();
     };
 
+    Checkout.prototype.getLogoutURL = Checkout.prototype.getChangeToAnonymousUserURL();
+
     Checkout.prototype._getOrderFormId = function() {
       return this.orderFormId || this._getOrderFormIdFromCookie() || this._getOrderFormIdFromURL() || '';
     };
@@ -667,58 +593,5 @@
   window.vtexjs.Checkout = Checkout;
 
   window.vtexjs.checkout = new window.vtexjs.Checkout();
-
-}).call(this);
-
-(function() {
-  var AjaxQueue, uniqueHashcode;
-
-  uniqueHashcode = (function(_this) {
-    return function(str) {
-      var char, charcode, hash, _i, _len;
-      hash = 0;
-      for (_i = 0, _len = str.length; _i < _len; _i++) {
-        char = str[_i];
-        charcode = char.charCodeAt(0);
-        hash = ((hash << 5) - hash) + charcode;
-        hash = hash & hash;
-      }
-      return hash.toString();
-    };
-  })(this);
-
-  AjaxQueue = function(ajax) {
-    var theQueue;
-    theQueue = $({});
-    return function(ajaxOpts) {
-      var abortFunction, dfd, jqXHR, promise, requestFunction;
-      jqXHR = void 0;
-      dfd = $.Deferred();
-      promise = dfd.promise();
-      requestFunction = function(next) {
-        jqXHR = ajax(ajaxOpts);
-        return jqXHR.done(dfd.resolve).fail(dfd.reject).then(next, next);
-      };
-      abortFunction = function(statusText) {
-        var index, queue;
-        if (jqXHR) {
-          return jqXHR.abort(statusText);
-        } else {
-          queue = theQueue.queue();
-          index = [].indexOf.call(queue, requestFunction);
-          if (index > -1) {
-            queue.splice(index, 1);
-          }
-          dfd.rejectWith(ajaxOpts.context || ajaxOpts, [promise, statusText, ""]);
-          return promise;
-        }
-      };
-      theQueue.queue(requestFunction);
-      promise.abort = abortFunction;
-      return promise;
-    };
-  };
-
-  window.AjaxQueue = AjaxQueue;
 
 }).call(this);
