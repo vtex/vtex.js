@@ -66,6 +66,8 @@ Envia um attachment para a orderForm atual. (Um attachment é uma seção.)
 
 Isso possibilita atualizar essa seção, enviando novas informações, alterando, ou retirando.
 
+**Atenção**: é necessário mandar o attachment por completo. Veja os exemplos.
+
 Veja a [documentação do OrderForm](orderform.md) para descobrir quais são as seções.
 
 Não se esqueça de usar getOrderForm anteriormente.
@@ -78,7 +80,20 @@ Não se esqueça de usar getOrderForm anteriormente.
 
 #### Exemplos
 
-Em breve.
+Alterar o primeiro nome do cliente.
+Vamos alterar a propriedade `firstName` de `clientProfileData`.
+
+```javascript
+vtexjs.checkout.getOrderForm().then(function(orderForm){
+    var clientProfileData = orderForm.clientProfileData;
+    clientProfileData.firstName = 'Guilherme';
+    return vtexjs.checkout.sendAttachment('clientProfileData', clientProfileData)
+}).dond(function(orderForm){
+    alert("Nome alterado!");
+    console.log(orderForm);
+    console.log(orderForm.clientProfileData);
+})
+```
 
 
 ### updateItems(items, expectedOrderFormSections)
