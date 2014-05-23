@@ -34,10 +34,12 @@ Dada essa explicação, não será mais explicado esse argumento na documentaç�
 
 ### Exemplo
 
+```javascript
     $(window).on('orderFormUpdated.vtex', function(evt, orderForm){
       alert('Alguem atualizou o orderForm!');
       console.log(orderForm);
     });
+```
 
 ## Métodos
 
