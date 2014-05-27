@@ -89,7 +89,12 @@ As propriedades com `…` serão melhor explicadas em [Seções](#secoes).
     "detailUrl": "/racao-royal-canin-club-performance-junior/p",
     "components": [],
     "bundleItems": [],
-    "offerings": [],
+    "offerings": [{
+      "id": "1033",
+      "name": "A Oferta Magnifica",
+      "price": 100,
+      "type": "idk"
+    }],
     "priceTags": [],
     "availability": "available",
     "measurementUnit": "un",
@@ -400,8 +405,8 @@ Um objeto pequeno contendo preferências do cliente.
 ```json
 {
   "attachmentId": "clientPreferencesData",
-  "locale":"pt-BR",
-  "optinNewsLetter":true
+  "locale": "pt-BR",
+  "optinNewsLetter": true
 }
 ```
 

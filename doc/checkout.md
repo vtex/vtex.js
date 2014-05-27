@@ -395,6 +395,136 @@ vtexjs.checkout.getOrderForm().then(function(orderForm){
 });
 ```
 
+### addOffering(offeringId, itemIndex, expectedOrderFormSections)
+
+Adiciona uma oferta ao orderForm.
+
+Cada item do orderForm pode possuir uma lista de `offerings`. Estes são ofertas vinculadas ao item, por exemplo, garantia estendida ou serviço de instalação.
+
+Quando uma oferta é adicionada, ela figurará no campo `bundleItems` do item.
+
+Não se esqueça de usar getOrderForm anteriormente.
+
+ - **String|Number** `offeringId` pode ser encontrado na propriedade `id` da offering
+ - **Number** `itemIndex` o índice do item ao qual a oferta se aplica
+ - **Retorna** `Promise` para o orderForm
+
+#### Exemplo
+
+```javascript
+// Considerando a seguinte estrutura (resumida) de items:
+var items = [{
+              "id": "2004075",
+              "productId": "4741",
+              "name": "Ração",
+              "skuName": "Ração 3 kg",
+              "quantity": 3,
+              "seller": "1",
+              "bundleItems": [],
+              "offerings": [{
+                "id": "1033",
+                "name": "A Oferta Magnifica",
+                "price": 100,
+                "type": "idk"
+              }],
+              "availability": "available"
+            }];
+
+var offeringId = items[0].offerings[0].id;
+var itemIndex = 0;
+
+vtexjs.checkout.getOrderForm().then(function(){
+    return vtexjs.checkout.addOffering(offeringId, itemIndex);
+}).done(function(orderForm){
+    // Oferta adicionada!
+    console.log(orderForm);
+});
+
+```
+
+
+### removeOffering(offeringId, itemIndex, expectedOrderFormSections)
+
+Remove uma oferta.
+
+Não se esqueça de usar getOrderForm anteriormente.
+
+ - **String|Number** `offeringId` pode ser encontrado na propriedade `id` da offering
+ - **Number** `itemIndex` o índice do item ao qual a oferta se aplica
+ - **Retorna** `Promise` para o orderForm
+
+#### Exemplo
+
+```javascript
+// Considerando a seguinte estrutura (resumida) de items:
+var items = [{
+              "id": "2004075",
+              "productId": "4741",
+              "name": "Ração",
+              "skuName": "Ração 3 kg",
+              "quantity": 3,
+              "seller": "1",
+              "bundleItems": [{
+                "id": "1033",
+                "name": "A Oferta Magnifica",
+                "price": 100,
+                "type": "idk"
+              }],
+              "offerings": [{
+                "id": "1033",
+                "name": "A Oferta Magnifica",
+                "price": 100,
+                "type": "idk"
+              }],
+              "availability": "available"
+            }];
+
+var offeringId = items[0].bundleItems[0].id;
+var itemIndex = 0;
+
+vtexjs.checkout.getOrderForm().then(function(){
+    return vtexjs.checkout.removeOffering(offeringId, itemIndex);
+}).done(function(orderForm){
+    // Oferta removida!
+    console.log(orderForm);
+});
+
+```
+
+
+### addGiftMessage(itemIndex, bundleItemId, giftMessage, expectedOrderFormSections)
+
+Verifique a documentação de addOffering antes de ler este método.
+
+Esse método se aplica a bundleItems, uma lista presente em cada item. Essa lista refere-se às ofertas referentes aquele item que foram aceitas.
+
+Se uma offering permite mensagem de presente, terá sua propriedade `allowGiftMessage` como `true`.
+
+Nesse caso, é possível usar este método para anexar uma mensagem à oferta.
+
+Não necessariamente essa mensagem será "de presente". A semântica depende da oferta.
+Por exemplo, para um serviço manual, pode indicar preferências.
+
+Não se esqueça de usar getOrderForm anteriormente.
+
+ - **Number** `itemIndex` o índice do item ao qual a oferta se aplica
+ - **String|Number** `bundleId` pode ser encontrado na propriedade `id` do bundleItem
+ - **String** `giftMessage`
+ - **Retorna** `Promise` para o orderForm
+
+
+### removeGiftMessage(itemIndex, bundleItemId, expectedOrderFormSections)
+
+Remove a mensagem de presente de um bundleItem de um item.
+
+Não se esqueça de usar getOrderForm anteriormente.
+
+ - **Number** `itemIndex` o índice do item ao qual a oferta se aplica
+ - **String|Number** `bundleId` pode ser encontrado na propriedade `id` do bundleItem
+ - **String** `giftMessage`
+ - **Retorna** `Promise` para o orderForm
+
+
 ### sendLocale(locale)
 
 Muda a locale do usuário.
@@ -417,7 +547,7 @@ vtexjs.checkout.getOrderForm().then(function(orderForm){
 ```
 
 
-#### clearMessages()
+### clearMessages()
 
 Ocasionalmente, o orderForm tem sua seção `messages` preenchida com mensagens informativas ou de erro.
 
@@ -489,81 +619,7 @@ vtexjs.checkout.getOrders(orderGroupId).then(function(orders){
 ---------
 
 
-## addOfferingWithInfo(offeringId, offeringInfo, itemIndex, expectedOrderFormSections)
 
-Sends a request to add an offering, along with its info, to the OrderForm.
-
-### Params: 
-
-* **String|Number** *offeringId* the id of the offering.
-* **offeringInfo** ** 
-* **Number** *itemIndex* the index of the item for which the offering applies.
-* **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
-
-### Return:
-
-* **Promise** a promise for the updated OrderForm.
-
-## addOffering(offeringId, itemIndex, expectedOrderFormSections)
-
-Sends a request to add an offering to the OrderForm.
-
-### Params: 
-
-* **String|Number** *offeringId* the id of the offering.
-* **Number** *itemIndex* the index of the item for which the offering applies.
-* **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
-
-### Return:
-
-* **Promise** a promise for the updated OrderForm.
-
-## removeOffering(offeringId, itemIndex, expectedOrderFormSections)
-
-Sends a request to remove an offering from the OrderForm.
-
-### Params: 
-
-* **String|Number** *offeringId* the id of the offering.
-* **Number** *itemIndex* the index of the item for which the offering applies.
-* **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
-
-### Return:
-
-* **Promise** a promise for the updated OrderForm.
-
-### Return:
-
-* **Promise** a promise for the updated OrderForm.
-
-## addGiftMessage(itemIndex, bundleItemId, giftMessage, expectedOrderFormSections)
-
-Sends a request to add a gift message to the current OrderForm.
-
-### Params: 
-
-* **Number** *itemIndex* the index of the item for which the gift message applies.
-* **Number** *bundleItemId* the bundle item for which the gift message applies.
-* **String** *giftMessage* the gift message.
-* **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
-
-### Return:
-
-* **Promise** a promise for the updated OrderForm.
-
-## removeGiftMessage(itemIndex, bundleItemId, expectedOrderFormSections)
-
-Sends a request to add a gift message to the current OrderForm.
-
-### Params: 
-
-* **Number** *itemIndex* the index of the item for which the gift message applies.
-* **Number** *bundleItemId* the bundle item for which the gift message applies.
-* **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
-
-### Return:
-
-* **Promise** a promise for the updated OrderForm.
 
 
 ## startTransaction(value, referenceValue, interestValue, savePersonalData, optinNewsLetter, expectedOrderFormSections)
