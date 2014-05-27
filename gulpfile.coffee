@@ -1,5 +1,3 @@
-spawn   = require('child_process').spawn
-fs      = require 'fs'
 gulp    = require 'gulp'
 gutil   = require 'gulp-util'
 clean   = require 'gulp-clean'
@@ -15,9 +13,11 @@ noDebug = require 'gulp-strip-debug'
 knox    = require 'knox'
 Deploy  = require 'deploy-s3'
 
-readJson = require('jsonfile').readFileSync
-pkg = readJson 'package.json'
+pkg = require './package.json'
 
+version =
+	complete: pkg.version
+[version.major, version.minor, version.patch] = version.complete.split('.')
 
 gulp.task 'clean-build', ->
 	gulp.src './build/*', read: false
@@ -34,30 +34,34 @@ gulp.task 'clean-doc', ->
 
 gulp.task 'js', ['clean-build'], ->
 	gulp.src './src/*.coffee'
-		.pipe replace(/VERSION_REPLACE/, "#{pkg.version}")
+		.pipe replace(/VERSION_REPLACE/, "#{version.complete}")
 		.pipe coffee().on('error', gutil.log)
 		.pipe gulp.dest './build'
 
-gulp.task 'dist', ['js', 'clean-dist'], ->
+gulp.task 'dist-mmp', ['js', 'clean-dist'], ->
 	gulp.src './build/*'
 		.pipe noDebug()
-		.pipe header("/* vtex.js #{pkg.version} */\n")
-		.pipe gulp.dest "./dist/#{pkg.version}"
+		.pipe header("/* vtex.js #{version.complete} */\n")
+		.pipe gulp.dest "./dist/#{version.complete}"
 		.pipe rename extname: ".min.js"
 		.pipe uglify outSourceMap: true
-		.pipe gulp.dest "./dist/#{pkg.version}"
+		.pipe gulp.dest "./dist/#{version.complete}"
 	gulp.src './build/*'
 		.pipe noDebug()
 		.pipe concat("vtex.js")
-		.pipe gulp.dest "./dist/#{pkg.version}"
-		.pipe header("/* vtex.js #{pkg.version} */\n")
+		.pipe gulp.dest "./dist/#{version.complete}"
+		.pipe header("/* vtex.js #{version.complete} */\n")
 		.pipe rename extname: '.min.js'
 		.pipe uglify outSourceMap: true
-		.pipe gulp.dest "./dist/#{pkg.version}"
+		.pipe gulp.dest "./dist/#{version.complete}"
 
+gulp.task 'dist', ['dist-mmp'], ->
+	gulp.src "./dist/#{version.complete}/*"
+		.pipe gulp.dest "./dist/#{version.major}"
+		.pipe gulp.dest "./dist/#{version.major}.#{version.minor}"
 
 gulp.task 'vtex_deploy', (cb) ->
-	credentials = JSON.parse fs.readFileSync '/credentials.json'
+	credentials = require './credentials.json'
 	credentials.bucket = 'vtex-io'
 	client = knox.createClient credentials
 	deployer = new Deploy(pkg, client, dryrun: false)
