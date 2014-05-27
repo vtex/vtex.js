@@ -61,7 +61,7 @@ gulp.task 'dist', ['dist-mmp'], ->
 		.pipe gulp.dest "./dist/#{version.major}.#{version.minor}"
 
 gulp.task 'vtex_deploy', (cb) ->
-	credentials = require './credentials.json'
+	credentials = require '/credentials.json'
 	credentials.bucket = 'vtex-io'
 	client = knox.createClient credentials
 	deployer = new Deploy(pkg, client, dryrun: false)
