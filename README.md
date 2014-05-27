@@ -8,14 +8,16 @@ O vtex.js depende do jQuery, então certifique-se que ele está incluído na pá
 
 Você pode incluir, em sua loja, todos os módulos do vtex.js:
 
-    <script src="//io.vtex.com.br/vtex.js/0.4.1/vtex.min.js"></script>
+    <script src="//io.vtex.com.br/vtex.js/0/vtex.min.js"></script>
 
 Ou incluir módulos individualmente:
 
-    <script src="//io.vtex.com.br/vtex.js/0.4.1/catalog.min.js"></script>
-    <script src="//io.vtex.com.br/vtex.js/0.4.1/checkout.min.js"></script>
+    <script src="//io.vtex.com.br/vtex.js/0/catalog.min.js"></script>
+    <script src="//io.vtex.com.br/vtex.js/0/checkout.min.js"></script>
 
 Pronto! Agora você tem nos objetos `vtexjs.catalog` e `vtexjs.checkout` acesso a vários métodos para acesso às APIs da VTEX.
+
+**O fragmento `/0/` na URL indica que você aceita qualquer versão 0.x.y. Você pode indicar uma versão mais específica com `/0.5/` ou `/0.5.1/`, por exemplo.**
 
 ## Documentação
 
