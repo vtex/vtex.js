@@ -59,4 +59,4 @@ Ou incluir módulos individualmente:
 
 Pronto! Agora você tem nos objetos `vtexjs.catalog` e `vtexjs.checkout` acesso a vários métodos para acesso às APIs da VTEX.
 
-**O fragmento `/0/` na URL indica que você aceita qualquer versão 0.x.y. Você pode indicar uma versão mais específica com `/0.5/` ou `/0.5.1`, por exemplo.**
+**O fragmento `/0/` na URL indica que você aceita qualquer versão 0.x.y. Você pode indicar uma versão mais específica com `/0.5/`, por exemplo.**

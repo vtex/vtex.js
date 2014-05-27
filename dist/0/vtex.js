@@ -9,7 +9,7 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.5.1';
+    version = '0.6.0';
 
     function Catalog(options) {
       if (options == null) {
@@ -125,7 +125,7 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.5.1';
+    version = '0.6.0';
 
     function Checkout(options) {
       if (options == null) {

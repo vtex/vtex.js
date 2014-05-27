@@ -10,8 +10,9 @@ concat  = require 'gulp-concat'
 header  = require 'gulp-header'
 markdox = require 'gulp-markdox'
 noDebug = require 'gulp-strip-debug'
-knox    = require 'knox'
-Deploy  = require 'deploy-s3'
+
+sys = require('sys')
+exec = require('child_process').exec;
 
 pkg = require './package.json'
 
@@ -38,37 +39,30 @@ gulp.task 'js', ['clean-build'], ->
 		.pipe coffee().on('error', gutil.log)
 		.pipe gulp.dest './build'
 
-gulp.task 'dist-mmp', ['js', 'clean-dist'], ->
+gulp.task 'dist-base', ['js', 'clean-dist'], ->
 	gulp.src './build/*'
 		.pipe noDebug()
 		.pipe header("/* vtex.js #{version.complete} */\n")
-		.pipe gulp.dest "./dist/#{version.complete}"
+		.pipe gulp.dest "./dist/#{version.major}"
 		.pipe rename extname: ".min.js"
 		.pipe uglify outSourceMap: true
-		.pipe gulp.dest "./dist/#{version.complete}"
+		.pipe gulp.dest "./dist/#{version.major}"
 	gulp.src './build/*'
 		.pipe noDebug()
 		.pipe concat("vtex.js")
-		.pipe gulp.dest "./dist/#{version.complete}"
-		.pipe header("/* vtex.js #{version.complete} */\n")
+		.pipe gulp.dest "./dist/#{version.major}"
+		.pipe header("/* vtex.js #{version.major} */\n")
 		.pipe rename extname: '.min.js'
 		.pipe uglify outSourceMap: true
-		.pipe gulp.dest "./dist/#{version.complete}"
-
-gulp.task 'dist', ['dist-mmp'], ->
-	gulp.src "./dist/#{version.complete}/*"
 		.pipe gulp.dest "./dist/#{version.major}"
+
+gulp.task 'dist', ['dist-base'], ->
+	gulp.src "./dist/#{version.major}/*"
 		.pipe gulp.dest "./dist/#{version.major}.#{version.minor}"
 
-gulp.task 'vtex_deploy', (cb) ->
-	credentials = require '/credentials.json'
-	credentials.bucket = 'vtex-io'
-	client = knox.createClient credentials
-	deployer = new Deploy(pkg, client, dryrun: false)
-	deployer.deploy().then ->
-		cb()
-	, null, console.log
-	return undefined
+gulp.task 'vtex_deploy', ->
+	puts = (error, stdout, stderr) -> sys.puts(stdout)
+	exec("AWS_CONFIG_FILE=/.aws-config-front aws s3 sync --size-only #{pkg.deploy} s3://vtex-io/#{pkg.name}/", puts)
 
 gulp.task 'watch', ->
   gulp.watch './src/*.coffee', ['js']
