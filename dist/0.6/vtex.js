@@ -9,7 +9,7 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.6.0';
+    version = '0.6.1';
 
     function Catalog(options) {
       if (options == null) {
@@ -125,7 +125,7 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.6.0';
+    version = '0.6.1';
 
     function Checkout(options) {
       if (options == null) {
@@ -564,7 +564,7 @@
       return HOST_URL + '/checkout/changeToAnonymousUser/' + this._getOrderFormId();
     };
 
-    Checkout.prototype.getLogoutURL = Checkout.prototype.getChangeToAnonymousUserURL();
+    Checkout.prototype.getLogoutURL = Checkout.prototype.getChangeToAnonymousUserURL;
 
     Checkout.prototype._getOrderFormId = function() {
       return this.orderFormId || this._getOrderFormIdFromCookie() || this._getOrderFormIdFromURL() || '';
