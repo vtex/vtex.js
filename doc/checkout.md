@@ -616,25 +616,4 @@ vtexjs.checkout.getOrders(orderGroupId).then(function(orders){
 });
 ```
 
----------
-
-
-
-
-
-## startTransaction(value, referenceValue, interestValue, savePersonalData, optinNewsLetter, expectedOrderFormSections)
-
-Sends a request to start the transaction. This is the final step in the checkout process.
-
-### Params: 
-
-* **String|Number** *value* 
-* **String|Number** *referenceValue* 
-* **String|Number** *interestValue* 
-* **Boolean** *savePersonalData* (default = false) whether to save the user's data for using it later in another order.
-* **Boolean** *optinNewsLetter* (default = true) whether to subscribe the user to the store newsletter.
-* **Array** *expectedOrderFormSections* (default = *all*) an array of attachment names.
-
-### Return:
-
-* **Promise** a promise for the final OrderForm.
+-----
