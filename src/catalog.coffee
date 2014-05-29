@@ -24,7 +24,7 @@ class Catalog
 
 	# Gets a products' complete "skuJSON". Returns a promise.
 	getProductWithVariations: (productId) =>
-		@promise(@cache.productWithVariations[productId] or $.ajax("#{@BASE_ENDPOINT}/products/variations/#{productId}"))
+		@promise(@cache.productWithVariations[productId] or $.ajax("#{@_getBaseCatalogSystemURL()}/products/variations/#{productId}"))
 			.done (response) =>
 				@setProductWithVariationsCache(productId, response)
 
