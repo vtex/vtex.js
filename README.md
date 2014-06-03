@@ -19,7 +19,7 @@ Pronto! Agora você tem nos objetos `vtexjs.catalog` e `vtexjs.checkout` acesso 
 
 ## Documentação Completa
 
-Você pode ter acesso a guias, exemplos e documentação completa de todos os métodos do vtex.js [aqui](http://lab.vtex.com/docs/vtex.js/lib/latest/checkout).
+Você pode ter acesso a guias, exemplos e documentação completa de todos os métodos do vtex.js [aqui](http://lab.vtex.com/docs/vtex.js/lib/latest/getting-started/index.html).
 
 Atenção: o vtex.js e sua documentação estão em constante melhorias.
 
