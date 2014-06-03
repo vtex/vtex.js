@@ -41,10 +41,10 @@ gulp.task 'js', ['clean-build'], ->
 gulp.task 'dist-base', ['js', 'clean-dist'], ->
 	gulp.src './build/*'
 		.pipe noDebug()
-		.pipe header("/* vtex.js #{version.complete} */\n")
+		.pipe header("/*! vtex.js #{version.complete} */\n")
 		.pipe gulp.dest "./dist/#{version.major}"
 		.pipe rename extname: ".min.js"
-		.pipe uglify outSourceMap: true
+		.pipe uglify outSourceMap: true, preserveComments: 'some'
 		.pipe gulp.dest "./dist/#{version.major}"
 	gulp.src './build/*'
 		.pipe noDebug()

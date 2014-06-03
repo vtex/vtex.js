@@ -1,4 +1,4 @@
-/* vtex.js 0.6.3 */
+/*! vtex.js 0.6.3 */
 (function() {
   var Checkout, mapize, readCookie, readCookies, readSubcookie, trim, urlParam, urlParams, _base,
     __slice = [].slice,

@@ -1,4 +1,4 @@
-/* vtex.js 0.6.3 */
+/*! vtex.js 0.6.3 */
 (function() {
   var Catalog, _base,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
