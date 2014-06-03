@@ -1,4 +1,4 @@
-/* vtex.js 0.6.2 */
+/* vtex.js 0.6.3 */
 (function() {
   var Catalog, _base,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -10,7 +10,7 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.6.2';
+    version = '0.6.3';
 
     function Catalog(options) {
       if (options == null) {

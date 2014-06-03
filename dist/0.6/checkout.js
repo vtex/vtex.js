@@ -1,4 +1,4 @@
-/* vtex.js 0.6.2 */
+/* vtex.js 0.6.3 */
 (function() {
   var Checkout, mapize, readCookie, readCookies, readSubcookie, trim, urlParam, urlParams, _base,
     __slice = [].slice,
@@ -49,7 +49,7 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.6.2';
+    version = '0.6.3';
 
     function Checkout(options) {
       if (options == null) {
