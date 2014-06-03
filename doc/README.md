@@ -1,0 +1,1 @@
+A documentação encontra-se em [http://lab.vtex.com/docs/vtex.js/lib/latest/checkout](http://lab.vtex.com/docs/vtex.js/lib/latest/checkout)
