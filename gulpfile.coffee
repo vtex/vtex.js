@@ -8,7 +8,6 @@ uglify  = require 'gulp-uglify'
 rename  = require 'gulp-rename'
 concat  = require 'gulp-concat'
 header  = require 'gulp-header'
-markdox = require 'gulp-markdox'
 noDebug = require 'gulp-strip-debug'
 
 sys = require('sys')
