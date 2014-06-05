@@ -49,6 +49,7 @@ class Checkout
 		@orderForm = undefined
 		@orderFormId = undefined
 		@_requestingItem = undefined
+		@_requestingSelectableGifts = undefined
 		@_subjectToJqXHRMap = {}
 		@_allOrderFormSections =
 			[
@@ -174,6 +175,26 @@ class Checkout
 			dataType: 'json'
 			data: JSON.stringify(updateItemsRequest)
 		.done(=> @_requestingItem = undefined)
+		.done(@_cacheOrderForm)
+		.done(broadcastOrderForm)
+
+	# Sends a request to select an available gift
+	updateSelectableGifts: (list, selectedGifts, expectedOrderFormSections = @_allOrderFormSections) =>
+		updateSelectableGiftsRequest =
+			id: list
+			selectedGifts: selectedGifts
+			expectedOrderFormSections: expectedOrderFormSections
+
+		if @_requestingSelectableGifts isnt undefined
+			@_requestingSelectableGifts.abort()
+
+		return @_requestingSelectableGifts = @ajax
+			url: @_getUpdateSelectableGifts(list)
+			type: 'POST'
+			contentType: 'application/json; charset=utf-8'
+			dataType: 'json'
+			data: JSON.stringify(updateSelectableGiftsRequest)
+		.done(=> @_requestingSelectableGifts = undefined)
 		.done(@_cacheOrderForm)
 		.done(broadcastOrderForm)
 
@@ -385,6 +406,9 @@ class Checkout
 
 	_getUpdateItemURL: =>
 		@_getOrderFormURL() + '/items/update/'
+
+	_getUpdateSelectableGifts: (list) =>
+		@_getOrderFormURL() + '/selectable-gifts/' + list
 
 	_getRemoveGiftRegistryURL: =>
 		@_getBaseOrderFormURL() + "/giftRegistry/#{@_getOrderFormId()}/remove"
