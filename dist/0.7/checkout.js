@@ -1,4 +1,4 @@
-/*! vtex.js 0.6.3 */
+/*! vtex.js 0.7.0 */
 (function() {
   var Checkout, mapize, readCookie, readCookies, readSubcookie, trim, urlParam, urlParams, _base,
     __slice = [].slice,
@@ -49,7 +49,7 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.6.3';
+    version = '0.7.0';
 
     function Checkout(options) {
       if (options == null) {
@@ -64,8 +64,8 @@
       this._getUpdateItemURL = __bind(this._getUpdateItemURL, this);
       this._startTransactionURL = __bind(this._startTransactionURL, this);
       this._getAddCouponURL = __bind(this._getAddCouponURL, this);
-      this._getRemoveGiftMessageURL = __bind(this._getRemoveGiftMessageURL, this);
-      this._getAddGiftMessageURL = __bind(this._getAddGiftMessageURL, this);
+      this._getItemAttachmentURL = __bind(this._getItemAttachmentURL, this);
+      this._getBundleItemAttachmentURL = __bind(this._getBundleItemAttachmentURL, this);
       this._getRemoveOfferingsURL = __bind(this._getRemoveOfferingsURL, this);
       this._getAddOfferingsURL = __bind(this._getAddOfferingsURL, this);
       this._getSaveAttachmentURL = __bind(this._getSaveAttachmentURL, this);
@@ -82,8 +82,8 @@
       this.getAddressInformation = __bind(this.getAddressInformation, this);
       this.simulateShipping = __bind(this.simulateShipping, this);
       this.calculateShipping = __bind(this.calculateShipping, this);
-      this.removeGiftMessage = __bind(this.removeGiftMessage, this);
-      this.addGiftMessage = __bind(this.addGiftMessage, this);
+      this.removeItemAttachment = __bind(this.removeItemAttachment, this);
+      this.addItemAttachment = __bind(this.addItemAttachment, this);
       this.removeGiftRegistry = __bind(this.removeGiftRegistry, this);
       this.removeDiscountCoupon = __bind(this.removeDiscountCoupon, this);
       this.addDiscountCoupon = __bind(this.addDiscountCoupon, this);
@@ -334,43 +334,39 @@
       }).done(this._cacheOrderForm).done(broadcastOrderForm);
     };
 
-    Checkout.prototype.addGiftMessage = function(itemIndex, bundleItemId, giftMessage, expectedOrderFormSections) {
-      var addGiftMessageRequest;
-      if (expectedOrderFormSections == null) {
-        expectedOrderFormSections = this._allOrderFormSections;
+    Checkout.prototype.addItemAttachment = function(itemIndex, attachmentName, content, expectedFormSections) {
+      var dataRequest;
+      if (expectedFormSections == null) {
+        expectedFormSections = this._allOrderFormSections;
       }
-      addGiftMessageRequest = {
-        content: {
-          'gift-message': giftMessage
-        },
+      dataRequest = {
+        content: content,
         expectedOrderFormSections: expectedOrderFormSections
       };
       return this.ajax({
-        url: this._getAddGiftMessageURL(itemIndex, bundleItemId),
+        url: this._getItemAttachmentURL(itemIndex, attachmentName),
         type: 'POST',
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        data: JSON.stringify(addGiftMessageRequest)
+        data: JSON.stringify(dataRequest)
       }).done(this._cacheOrderForm).done(broadcastOrderForm);
     };
 
-    Checkout.prototype.removeGiftMessage = function(itemIndex, bundleItemId, expectedOrderFormSections) {
-      var removeGiftMessageRequest;
-      if (expectedOrderFormSections == null) {
-        expectedOrderFormSections = this._allOrderFormSections;
+    Checkout.prototype.removeItemAttachment = function(itemIndex, attachmentName, content, expectedFormSections) {
+      var dataRequest;
+      if (expectedFormSections == null) {
+        expectedFormSections = this._allOrderFormSections;
       }
-      removeGiftMessageRequest = {
-        content: {
-          'gift-message': ''
-        },
+      dataRequest = {
+        content: content,
         expectedOrderFormSections: expectedOrderFormSections
       };
       return this.ajax({
-        url: this._getRemoveGiftMessageURL(itemIndex, bundleItemId),
-        type: 'POST',
+        url: this._getItemAttachmentURL(itemIndex, attachmentName),
+        type: 'DELETE',
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        data: JSON.stringify(removeGiftMessageRequest)
+        data: JSON.stringify(dataRequest)
       }).done(this._cacheOrderForm).done(broadcastOrderForm);
     };
 
@@ -534,12 +530,12 @@
       return this._getOrderFormURL() + '/items/' + itemIndex + '/offerings/' + offeringId + '/remove';
     };
 
-    Checkout.prototype._getAddGiftMessageURL = function(itemIndex, bundleItemId) {
-      return this._getOrderFormURL() + '/items/' + itemIndex + '/itemAttachment/bundles/' + bundleItemId;
+    Checkout.prototype._getBundleItemAttachmentURL = function(itemIndex, attachmentName, bundleItemId) {
+      return this._getOrderFormURL() + '/items/' + itemIndex + '/bundles/' + bundleItemId + '/attachments/' + attachmentName;
     };
 
-    Checkout.prototype._getRemoveGiftMessageURL = function(itemIndex, bundleItemId) {
-      return this._getOrderFormURL() + '/items/' + itemIndex + '/itemAttachment/bundles/' + bundleItemId + '/remove';
+    Checkout.prototype._getItemAttachmentURL = function(itemIndex, attachmentName) {
+      return this._getOrderFormURL() + '/items/' + itemIndex + '/attachments/' + attachmentName;
     };
 
     Checkout.prototype._getAddCouponURL = function() {
