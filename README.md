@@ -17,9 +17,9 @@ Ou incluir módulos individualmente:
 
 Pronto! Agora você tem nos objetos `vtexjs.catalog` e `vtexjs.checkout` acesso a vários métodos para acesso às APIs da VTEX.
 
-## Documentação Completa
+## [Documentação Completa](http://lab.vtex.com/docs/vtex.js/lib/latest/getting-started/index.html)
 
-Você pode ter acesso a guias, exemplos e documentação completa de todos os métodos do vtex.js [aqui](http://lab.vtex.com/docs/vtex.js/lib/latest/getting-started/index.html).
+[Guias, exemplos e documentação completa de todos os métodos do vtex.js.](http://lab.vtex.com/docs/vtex.js/lib/latest/getting-started/index.html)
 
 Atenção: o vtex.js e sua documentação estão em constante melhorias.
 
