@@ -9,7 +9,7 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.7.0';
+    version = '0.8.0';
 
     function Catalog(options) {
       if (options == null) {
@@ -125,7 +125,7 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.7.0';
+    version = '0.8.0';
 
     function Checkout(options) {
       if (options == null) {
@@ -137,6 +137,7 @@
       this._getSimulationURL = __bind(this._getSimulationURL, this);
       this._getOrdersURL = __bind(this._getOrdersURL, this);
       this._getRemoveGiftRegistryURL = __bind(this._getRemoveGiftRegistryURL, this);
+      this._getUpdateSelectableGifts = __bind(this._getUpdateSelectableGifts, this);
       this._getUpdateItemURL = __bind(this._getUpdateItemURL, this);
       this._startTransactionURL = __bind(this._startTransactionURL, this);
       this._getAddCouponURL = __bind(this._getAddCouponURL, this);
@@ -165,6 +166,7 @@
       this.addDiscountCoupon = __bind(this.addDiscountCoupon, this);
       this.removeAllItems = __bind(this.removeAllItems, this);
       this.removeItems = __bind(this.removeItems, this);
+      this.updateSelectableGifts = __bind(this.updateSelectableGifts, this);
       this.updateItems = __bind(this.updateItems, this);
       this.removeOffering = __bind(this.removeOffering, this);
       this.addOffering = __bind(this.addOffering, this);
@@ -188,6 +190,7 @@
       this.orderForm = void 0;
       this.orderFormId = void 0;
       this._requestingItem = void 0;
+      this._requestingSelectableGifts = void 0;
       this._subjectToJqXHRMap = {};
       this._allOrderFormSections = ['items', 'totalizers', 'clientProfileData', 'shippingData', 'paymentData', 'sellers', 'messages', 'marketingData', 'clientPreferencesData', 'storePreferencesData', 'giftRegistryData', 'ratesAndBenefitsData', 'openTextField'];
     }
@@ -336,6 +339,32 @@
       }).done((function(_this) {
         return function() {
           return _this._requestingItem = void 0;
+        };
+      })(this)).done(this._cacheOrderForm).done(broadcastOrderForm);
+    };
+
+    Checkout.prototype.updateSelectableGifts = function(list, selectedGifts, expectedOrderFormSections) {
+      var updateSelectableGiftsRequest;
+      if (expectedOrderFormSections == null) {
+        expectedOrderFormSections = this._allOrderFormSections;
+      }
+      updateSelectableGiftsRequest = {
+        id: list,
+        selectedGifts: selectedGifts,
+        expectedOrderFormSections: expectedOrderFormSections
+      };
+      if (this._requestingSelectableGifts !== void 0) {
+        this._requestingSelectableGifts.abort();
+      }
+      return this._requestingSelectableGifts = this.ajax({
+        url: this._getUpdateSelectableGifts(list),
+        type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        data: JSON.stringify(updateSelectableGiftsRequest)
+      }).done((function(_this) {
+        return function() {
+          return _this._requestingSelectableGifts = void 0;
         };
       })(this)).done(this._cacheOrderForm).done(broadcastOrderForm);
     };
@@ -624,6 +653,10 @@
 
     Checkout.prototype._getUpdateItemURL = function() {
       return this._getOrderFormURL() + '/items/update/';
+    };
+
+    Checkout.prototype._getUpdateSelectableGifts = function(list) {
+      return this._getOrderFormURL() + '/selectable-gifts/' + list;
     };
 
     Checkout.prototype._getRemoveGiftRegistryURL = function() {
