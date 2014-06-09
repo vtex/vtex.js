@@ -246,7 +246,7 @@ class Checkout
 	addItemAttachment: (itemIndex, attachmentName, content, expectedFormSections = @_allOrderFormSections) =>
 		dataRequest =
 			content: content
-			expectedOrderFormSections: expectedOrderFormSections
+			expectedOrderFormSections: expectedFormSections
 
 		@ajax
 			url: @_getItemAttachmentURL(itemIndex, attachmentName)
@@ -261,7 +261,7 @@ class Checkout
 	removeItemAttachment: (itemIndex, attachmentName, content, expectedFormSections = @_allOrderFormSections) =>
 		dataRequest =
 			content: content
-			expectedOrderFormSections: expectedOrderFormSections
+			expectedOrderFormSections: expectedFormSections
 
 		@ajax
 			url: @_getItemAttachmentURL(itemIndex, attachmentName)
