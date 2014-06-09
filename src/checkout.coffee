@@ -272,6 +272,36 @@ class Checkout
 		.done(@_cacheOrderForm)
 		.done(broadcastOrderForm)
 
+	# Send a request to add an attachment to a bunle item
+	addBundleItemAttachment: (itemIndex, bundleItemId, attachmentName, content, expectedFormSections = @_allOrderFormSections) =>
+		dataRequest =
+			content: content
+			expectedOrderFormSections: expectedFormSections
+
+		@ajax
+			url: @_getBundleItemAttachmentURL(itemIndex, bundleItemId, attachmentName)
+			type: 'POST'
+			contentType: 'application/json; charset=utf-8'
+			dataType: 'json'
+			data: JSON.stringify(dataRequest)
+		.done(@_cacheOrderForm)
+		.done(broadcastOrderForm)
+
+	# Sends a request to remove an attachmetn from a bundle item
+	removeBundleItemAttachment: (itemIndex, bundleItemId, attachmentName, content, expectedFormSections = @_allOrderFormSections) =>
+		dataRequest =
+			content: content
+			expectedOrderFormSections: expectedFormSections
+
+		@ajax
+			url: @_getBundleItemAttachmentURL(itemIndex, bundleItemId, attachmentName)
+			type: 'DELETE'
+			contentType: 'application/json; charset=utf-8'
+			dataType: 'json'
+			data: JSON.stringify(dataRequest)
+		.done(@_cacheOrderForm)
+		.done(broadcastOrderForm)
+
 	# Sends a request to calculates shipping for the current OrderForm, given a COMPLETE address object.
 	calculateShipping: (address) =>
 		@sendAttachment('shippingData', {address: address})
@@ -392,7 +422,7 @@ class Checkout
 	_getRemoveOfferingsURL: (itemIndex, offeringId) =>
 		@_getOrderFormURL() + '/items/' + itemIndex + '/offerings/' + offeringId + '/remove'
 
-	_getBundleItemAttachmentURL: (itemIndex, attachmentName, bundleItemId) =>
+	_getBundleItemAttachmentURL: (itemIndex, bundleItemId, attachmentName) =>
 		@_getOrderFormURL() + '/items/' + itemIndex + '/bundles/' + bundleItemId + '/attachments/' + attachmentName
 
 	_getItemAttachmentURL: (itemIndex, attachmentName) =>
