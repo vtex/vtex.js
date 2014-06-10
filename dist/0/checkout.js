@@ -1,4 +1,4 @@
-/*! vtex.js 0.8.0 */
+/*! vtex.js 0.9.0 */
 (function() {
   var Checkout, mapize, readCookie, readCookies, readSubcookie, trim, urlParam, urlParams, _base,
     __slice = [].slice,
@@ -49,7 +49,7 @@
 
     HOST_URL = window.location.origin;
 
-    version = '0.8.0';
+    version = '0.9.0';
 
     function Checkout(options) {
       if (options == null) {
@@ -83,6 +83,8 @@
       this.getAddressInformation = __bind(this.getAddressInformation, this);
       this.simulateShipping = __bind(this.simulateShipping, this);
       this.calculateShipping = __bind(this.calculateShipping, this);
+      this.removeBundleItemAttachment = __bind(this.removeBundleItemAttachment, this);
+      this.addBundleItemAttachment = __bind(this.addBundleItemAttachment, this);
       this.removeItemAttachment = __bind(this.removeItemAttachment, this);
       this.addItemAttachment = __bind(this.addItemAttachment, this);
       this.removeGiftRegistry = __bind(this.removeGiftRegistry, this);
@@ -370,7 +372,7 @@
       }
       dataRequest = {
         content: content,
-        expectedOrderFormSections: expectedOrderFormSections
+        expectedOrderFormSections: expectedFormSections
       };
       return this.ajax({
         url: this._getItemAttachmentURL(itemIndex, attachmentName),
@@ -388,10 +390,46 @@
       }
       dataRequest = {
         content: content,
-        expectedOrderFormSections: expectedOrderFormSections
+        expectedOrderFormSections: expectedFormSections
       };
       return this.ajax({
         url: this._getItemAttachmentURL(itemIndex, attachmentName),
+        type: 'DELETE',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        data: JSON.stringify(dataRequest)
+      }).done(this._cacheOrderForm).done(broadcastOrderForm);
+    };
+
+    Checkout.prototype.addBundleItemAttachment = function(itemIndex, bundleItemId, attachmentName, content, expectedFormSections) {
+      var dataRequest;
+      if (expectedFormSections == null) {
+        expectedFormSections = this._allOrderFormSections;
+      }
+      dataRequest = {
+        content: content,
+        expectedOrderFormSections: expectedFormSections
+      };
+      return this.ajax({
+        url: this._getBundleItemAttachmentURL(itemIndex, bundleItemId, attachmentName),
+        type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        data: JSON.stringify(dataRequest)
+      }).done(this._cacheOrderForm).done(broadcastOrderForm);
+    };
+
+    Checkout.prototype.removeBundleItemAttachment = function(itemIndex, bundleItemId, attachmentName, content, expectedFormSections) {
+      var dataRequest;
+      if (expectedFormSections == null) {
+        expectedFormSections = this._allOrderFormSections;
+      }
+      dataRequest = {
+        content: content,
+        expectedOrderFormSections: expectedFormSections
+      };
+      return this.ajax({
+        url: this._getBundleItemAttachmentURL(itemIndex, bundleItemId, attachmentName),
         type: 'DELETE',
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
@@ -559,7 +597,7 @@
       return this._getOrderFormURL() + '/items/' + itemIndex + '/offerings/' + offeringId + '/remove';
     };
 
-    Checkout.prototype._getBundleItemAttachmentURL = function(itemIndex, attachmentName, bundleItemId) {
+    Checkout.prototype._getBundleItemAttachmentURL = function(itemIndex, bundleItemId, attachmentName) {
       return this._getOrderFormURL() + '/items/' + itemIndex + '/bundles/' + bundleItemId + '/attachments/' + attachmentName;
     };
 
