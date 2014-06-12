@@ -15,9 +15,6 @@ exec = require('child_process').exec;
 
 pkg = require './package.json'
 
-version =
-	complete: pkg.version
-[version.major, version.minor, version.patch] = version.complete.split('.')
 
 gulp.task 'clean-build', ->
 	gulp.src './build/*', read: false
@@ -34,30 +31,20 @@ gulp.task 'clean-doc', ->
 
 gulp.task 'js', ['clean-build'], ->
 	gulp.src './src/*.coffee'
-		.pipe replace(/VERSION_REPLACE/, "#{version.complete}")
+		.pipe replace(/VERSION_REPLACE/, "#{pkg.version}")
 		.pipe coffee().on('error', gutil.log)
 		.pipe gulp.dest './build'
 
-gulp.task 'dist-base', ['js', 'clean-dist'], ->
+gulp.task 'dist', ['js', 'clean-dist'], ->
+	gulp.src './package.json'
+		.pipe gulp.dest "./dist/#{pkg.version}"
 	gulp.src './build/*'
 		.pipe noDebug()
-		.pipe header("/*! vtex.js #{version.complete} */\n")
-		.pipe gulp.dest "./dist/#{version.major}"
+		.pipe header "/*! vtex.js #{pkg.version} */\n"
+		.pipe gulp.dest "./dist/#{pkg.version}"
 		.pipe rename extname: ".min.js"
 		.pipe uglify outSourceMap: true, preserveComments: 'some'
-		.pipe gulp.dest "./dist/#{version.major}"
-	gulp.src './build/*'
-		.pipe noDebug()
-		.pipe concat("vtex.js")
-		.pipe gulp.dest "./dist/#{version.major}"
-		.pipe header("/* vtex.js #{version.major} */\n")
-		.pipe rename extname: '.min.js'
-		.pipe uglify outSourceMap: true
-		.pipe gulp.dest "./dist/#{version.major}"
-
-gulp.task 'dist', ['dist-base'], ->
-	gulp.src "./dist/#{version.major}/*"
-		.pipe gulp.dest "./dist/#{version.major}.#{version.minor}"
+		.pipe gulp.dest "./dist/#{pkg.version}"
 
 gulp.task 'vtex_deploy', ->
 	puts = (error, stdout, stderr) -> sys.puts(stdout)
