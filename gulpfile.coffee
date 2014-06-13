@@ -45,6 +45,15 @@ gulp.task 'dist', ['js', 'clean-dist'], ->
 		.pipe rename extname: ".min.js"
 		.pipe uglify outSourceMap: true, preserveComments: 'some'
 		.pipe gulp.dest "./dist/#{pkg.version}"
+	gulp.src './build/*'
+		.pipe noDebug()
+		.pipe concat "vtex.js"
+		.pipe header "/*! vtex.js #{pkg.version} */\n"
+		.pipe gulp.dest "./dist/#{pkg.version}"
+		.pipe rename extname: '.min.js'
+		.pipe uglify outSourceMap: true, preserveComments: 'some'
+		.pipe gulp.dest "./dist/#{pkg.version}"
+
 
 gulp.task 'vtex_deploy', ->
 	puts = (error, stdout, stderr) -> sys.puts(stdout)
