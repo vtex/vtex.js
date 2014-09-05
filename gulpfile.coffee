@@ -57,9 +57,15 @@ gulp.task 'dist', ['js', 'clean-dist'], ->
 
 gulp.task 'vtex_deploy', ->
 	puts = (error, stdout, stderr) -> sys.puts(stdout)
-	exec("AWS_CONFIG_FILE=/.aws-config-front aws s3 sync --size-only #{pkg.deploy} s3://vtex-io/#{pkg.name}/", puts)
+	deployCommand = "AWS_CONFIG_FILE=/.aws-config-front aws s3 sync --size-only #{pkg.deploy} s3://vtex-io-us/#{pkg.name}/"
+	deployCommandFallback = "AWS_CONFIG_FILE=/.aws-config-front aws s3 sync --size-only #{pkg.deploy} s3://vtex-io/#{pkg.name}/"
+
+	exec deployCommand, (error, stdout, stderr) ->
+		puts(error, stdout, stderr)
+		# deploy fallback
+		exec deployCommandFallback, puts
 
 gulp.task 'watch', ->
-  gulp.watch './src/*.coffee', ['js']
+	gulp.watch './src/*.coffee', ['js']
 
 gulp.task 'default', ['js', 'watch']
