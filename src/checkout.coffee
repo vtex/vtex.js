@@ -31,7 +31,6 @@ window.location.origin or= window.location.protocol + "//" + window.location.hos
 class Checkout
 
 	HOST_URL = window.location.origin
-	version = 'VERSION_REPLACE'
 
 	constructor: (options = {}) ->
 		HOST_URL = options.hostURL if options.hostURL
