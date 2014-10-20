@@ -457,8 +457,6 @@ class Checkout
 	_getGatewayCallbackURL: =>
 		HOST_URL + '/checkout/gatewayCallback/{0}/{1}/{2}'
 
-
-
 window.vtexjs or= {}
 window.vtexjs.Checkout = Checkout
 window.vtexjs.checkout = new window.vtexjs.Checkout()
