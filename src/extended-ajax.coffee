@@ -1,11 +1,3 @@
-uniqueHashcode = (str) =>
-	hash = 0
-	for char in str
-		charcode = char.charCodeAt(0)
-		hash = ((hash << 5) - hash) + charcode
-		hash = hash & hash # Convert to 32bit integer
-	hash.toString()
-
 AjaxQueue = (ajax) ->
 	theQueue = $({})
 
