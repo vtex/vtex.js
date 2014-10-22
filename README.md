@@ -11,6 +11,13 @@ Atenção: o vtex.js e sua documentação estão em constante melhorias.
 Veja também os [slides da apresentação](http://goo.gl/tYT23t)
 sobre o vtex.js que rolou no VTEX Day 2014.
 
+## Desenvolvimento
+
+Para desenvolver rodando os testes, instale as dependências e use o script test-watch:
+
+    npm i
+    npm run-script test-watch
+
 ------
 
 VTEX - 2014
