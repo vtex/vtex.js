@@ -82,12 +82,10 @@ class Checkout
 
   # Sends an idempotent request to retrieve the current OrderForm.
   getOrderForm: (expectedFormSections = @_allOrderFormSections) =>
-    console.log "OLAR"
     if orderFormHasExpectedSections(expectedFormSections)
       return @promise(@orderForm)
     else
       checkoutRequest = { expectedOrderFormSections: expectedFormSections }
-      console.log "OLAR"
       @ajax
         url: @_getBaseOrderFormURL()
         type: 'POST'
