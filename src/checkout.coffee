@@ -74,15 +74,16 @@ class Checkout
   broadcastOrderForm = (orderForm) ->
     $(window).trigger('orderFormUpdated.vtex', orderForm)
 
-  orderFormHasExpectedSections = (sections) ->
-    if not @orderForm or not @orderForm instanceof Object
+  orderFormHasExpectedSections = (orderForm, sections) ->
+    if not orderForm or not orderForm instanceof Object
       return false
     for section in sections
       return false if not orderForm[section]
+    return true
 
   # Sends an idempotent request to retrieve the current OrderForm.
   getOrderForm: (expectedFormSections = @_allOrderFormSections) =>
-    if orderFormHasExpectedSections(expectedFormSections)
+    if orderFormHasExpectedSections(@orderForm, expectedFormSections)
       return @promise(@orderForm)
     else
       checkoutRequest = { expectedOrderFormSections: expectedFormSections }
@@ -204,7 +205,7 @@ class Checkout
 
   # Sends a request to remove all items from the OrderForm.
   removeAllItems: (expectedOrderFormSections = @_allOrderFormSections)=>
-    orderFormPromise = if orderFormHasExpectedSections(['items']) then @promise(@orderForm) else @getOrderForm(['items'])
+    orderFormPromise = @getOrderForm(['items'])
     orderFormPromise.then (orderForm) =>
       items = orderForm.items
       item.quantity = 0 for item in items
