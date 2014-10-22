@@ -32,6 +32,9 @@ class Checkout
 
   HOST_URL = window.location.origin
 
+  events =
+    ORDER_FORM_UPDATED: 'orderFormUpdated.vtex'
+
   constructor: (options = {}) ->
     HOST_URL = options.hostURL if options.hostURL
 
@@ -67,34 +70,51 @@ class Checkout
         'openTextField'
       ]
 
+  ###
+  PRIVATE METHODS
+  ###
+
   _cacheOrderForm: (data) =>
     @orderFormId = data.orderFormId
     @orderForm = data
 
-  broadcastOrderForm = (orderForm) ->
-    $(window).trigger('orderFormUpdated.vtex', orderForm)
+  _triggerEvent: (event) -> (orderForm) ->
+    $(window).trigger(event, orderForm)
 
-  orderFormHasExpectedSections = (orderForm, sections) ->
+  _orderFormHasExpectedSections: (orderForm, sections) ->
     if not orderForm or not orderForm instanceof Object
       return false
     for section in sections
       return false if not orderForm[section]
     return true
 
+  # $.ajax wrapper with common defaults.
+  # Used to encapsulate requests which have side effects and should broadcast results
+  _updateOrderForm: (options) =>
+    throw new Error("options.url is required when sending request") unless options?.url
+
+    # Defaults
+    options.type or= 'POST'
+    options.contentType or= 'application/json; charset=utf-8'
+    options.dataType or= 'json'
+
+    @ajax(options)
+      .done(@_cacheOrderForm)
+      .done(@_triggerEvent(events.ORDER_FORM_UPDATED))
+
+  ###
+  PUBLIC METHODS
+  ###
+
   # Sends an idempotent request to retrieve the current OrderForm.
   getOrderForm: (expectedFormSections = @_allOrderFormSections) =>
-    if orderFormHasExpectedSections(@orderForm, expectedFormSections)
+    if @_orderFormHasExpectedSections(@orderForm, expectedFormSections)
       return @promise(@orderForm)
     else
       checkoutRequest = { expectedOrderFormSections: expectedFormSections }
-      @ajax
+      @_updateOrderForm
         url: @_getBaseOrderFormURL()
-        type: 'POST'
-        contentType: 'application/json; charset=utf-8'
-        dataType: 'json'
         data: JSON.stringify(checkoutRequest)
-      .done(@_cacheOrderForm)
-      .done(broadcastOrderForm)
 
   # Sends an OrderForm attachment to the current OrderForm, possibly updating it.
   sendAttachment: (attachmentId, attachment, expectedOrderFormSections = @_allOrderFormSections, options = {}) =>
@@ -105,14 +125,9 @@ class Checkout
 
     attachment['expectedOrderFormSections'] = expectedOrderFormSections
 
-    xhr = @ajax
+    xhr = @_updateOrderForm
       url: @_getSaveAttachmentURL(attachmentId)
-      type: 'POST'
-      contentType: 'application/json; charset=utf-8'
-      dataType: 'json'
       data: JSON.stringify(attachment)
-    .done(@_cacheOrderForm)
-    .done(broadcastOrderForm)
 
     if options.abort and options.subject
       @_subjectToJqXHRMap[options.subject]?.abort()
@@ -131,14 +146,9 @@ class Checkout
       info: offeringInfo
       expectedOrderFormSections: expectedOrderFormSections
 
-    @ajax
+    @_updateOrderForm
       url: @_getAddOfferingsURL(itemIndex)
-      type: 'POST'
-      contentType: 'application/json; charset=utf-8'
-      dataType: 'json'
       data: JSON.stringify(updateItemsRequest)
-    .done(@_cacheOrderForm)
-    .done(broadcastOrderForm)
 
   # Sends a request to add an offering to the OrderForm.
   addOffering: (offeringId, itemIndex, expectedOrderFormSections) =>
@@ -150,14 +160,9 @@ class Checkout
       Id: offeringId
       expectedOrderFormSections: expectedOrderFormSections
 
-    @ajax
+    @_updateOrderForm
       url: @_getRemoveOfferingsURL(itemIndex, offeringId)
-      type: 'POST'
-      contentType: 'application/json; charset=utf-8'
-      dataType: 'json'
       data: JSON.stringify(updateItemsRequest)
-    .done(@_cacheOrderForm)
-    .done(broadcastOrderForm)
 
   # Sends a request to update the items in the OrderForm. Items that are omitted are not modified.
   updateItems: (items, expectedOrderFormSections = @_allOrderFormSections) =>
@@ -168,15 +173,10 @@ class Checkout
     if @_requestingItem isnt undefined
       @_requestingItem.abort()
 
-    return @_requestingItem = @ajax
+    return @_requestingItem = @_updateOrderForm
       url: @_getUpdateItemURL()
-      type: 'POST'
-      contentType: 'application/json; charset=utf-8'
-      dataType: 'json'
       data: JSON.stringify(updateItemsRequest)
     .done(=> @_requestingItem = undefined)
-    .done(@_cacheOrderForm)
-    .done(broadcastOrderForm)
 
   # Sends a request to select an available gift
   updateSelectableGifts: (list, selectedGifts, expectedOrderFormSections = @_allOrderFormSections) =>
@@ -188,15 +188,10 @@ class Checkout
     if @_requestingSelectableGifts isnt undefined
       @_requestingSelectableGifts.abort()
 
-    return @_requestingSelectableGifts = @ajax
+    return @_requestingSelectableGifts = @_updateOrderForm
       url: @_getUpdateSelectableGifts(list)
-      type: 'POST'
-      contentType: 'application/json; charset=utf-8'
-      dataType: 'json'
       data: JSON.stringify(updateSelectableGiftsRequest)
     .done(=> @_requestingSelectableGifts = undefined)
-    .done(@_cacheOrderForm)
-    .done(broadcastOrderForm)
 
   # Sends a request to remove items from the OrderForm.
   removeItems: (items, expectedOrderFormSections = @_allOrderFormSections) =>
@@ -217,14 +212,9 @@ class Checkout
       text: couponCode
       expectedOrderFormSections: expectedOrderFormSections
 
-    @ajax
+    @_updateOrderForm
       url: @_getAddCouponURL()
-      type: 'POST'
-      contentType: 'application/json; charset=utf-8'
-      dataType: 'json'
       data: JSON.stringify couponCodeRequest
-    .done(@_cacheOrderForm)
-    .done(broadcastOrderForm)
 
   # Sends a request to remove the discount coupon from the OrderForm.
   removeDiscountCoupon: (expectedOrderFormSections) =>
@@ -233,14 +223,9 @@ class Checkout
   # Sends a request to remove the gift registry for the current OrderForm.
   removeGiftRegistry: (expectedFormSections = @_allOrderFormSections) =>
     checkoutRequest = { expectedOrderFormSections: expectedFormSections }
-    @ajax
+    @_updateOrderForm
       url: @_getRemoveGiftRegistryURL()
-      type: 'POST'
-      contentType: 'application/json; charset=utf-8'
-      dataType: 'json'
       data: JSON.stringify(checkoutRequest)
-    .done(@_cacheOrderForm)
-    .done(broadcastOrderForm)
 
   # Sends a request to add an attachment to a specific item
   addItemAttachment: (itemIndex, attachmentName, content, expectedFormSections = @_allOrderFormSections) =>
@@ -248,14 +233,9 @@ class Checkout
       content: content
       expectedOrderFormSections: expectedFormSections
 
-    @ajax
+    @_updateOrderForm
       url: @_getItemAttachmentURL(itemIndex, attachmentName)
-      type: 'POST'
-      contentType: 'application/json; charset=utf-8'
-      dataType: 'json'
       data: JSON.stringify(dataRequest)
-    .done(@_cacheOrderForm)
-    .done(broadcastOrderForm)
 
   # Sends a request to remove an attachment of a specific item
   removeItemAttachment: (itemIndex, attachmentName, content, expectedFormSections = @_allOrderFormSections) =>
@@ -263,14 +243,10 @@ class Checkout
       content: content
       expectedOrderFormSections: expectedFormSections
 
-    @ajax
+    @_updateOrderForm
       url: @_getItemAttachmentURL(itemIndex, attachmentName)
       type: 'DELETE'
-      contentType: 'application/json; charset=utf-8'
-      dataType: 'json'
       data: JSON.stringify(dataRequest)
-    .done(@_cacheOrderForm)
-    .done(broadcastOrderForm)
 
   # Send a request to add an attachment to a bunle item
   addBundleItemAttachment: (itemIndex, bundleItemId, attachmentName, content, expectedFormSections = @_allOrderFormSections) =>
@@ -278,14 +254,9 @@ class Checkout
       content: content
       expectedOrderFormSections: expectedFormSections
 
-    @ajax
+    @_updateOrderForm
       url: @_getBundleItemAttachmentURL(itemIndex, bundleItemId, attachmentName)
-      type: 'POST'
-      contentType: 'application/json; charset=utf-8'
-      dataType: 'json'
       data: JSON.stringify(dataRequest)
-    .done(@_cacheOrderForm)
-    .done(broadcastOrderForm)
 
   # Sends a request to remove an attachmetn from a bundle item
   removeBundleItemAttachment: (itemIndex, bundleItemId, attachmentName, content, expectedFormSections = @_allOrderFormSections) =>
@@ -293,14 +264,10 @@ class Checkout
       content: content
       expectedOrderFormSections: expectedFormSections
 
-    @ajax
+    @_updateOrderForm
       url: @_getBundleItemAttachmentURL(itemIndex, bundleItemId, attachmentName)
       type: 'DELETE'
-      contentType: 'application/json; charset=utf-8'
-      dataType: 'json'
       data: JSON.stringify(dataRequest)
-    .done(@_cacheOrderForm)
-    .done(broadcastOrderForm)
 
   # Sends a request to calculates shipping for the current OrderForm, given a COMPLETE address object.
   calculateShipping: (address) =>
@@ -308,7 +275,7 @@ class Checkout
 
   # Simulates shipping using a list of items, a postal code and a country.
   simulateShipping: (items, postalCode, country) =>
-    data =
+    dataRequest =
       items: items
       postalCode: postalCode
       country: country
@@ -318,7 +285,7 @@ class Checkout
       type: 'POST'
       contentType: 'application/json; charset=utf-8'
       dataType: 'json'
-      data: JSON.stringify(data)
+      data: JSON.stringify(dataRequest)
 
   # Given an address with postal code and a country, retrieves a complete address, when available.
   getAddressInformation: (address) =>
@@ -345,15 +312,9 @@ class Checkout
       interestValue: interestValue
       expectedOrderFormSections : expectedOrderFormSections
     }
-    # TODO 'falhar' a promise caso a propriedade 'receiverUri' esteja null
-    @ajax
+    @_updateOrderForm
       url: @_startTransactionURL(),
-      type: 'POST',
-      contentType: 'application/json; charset=utf-8',
-      dataType: 'json',
       data: JSON.stringify(transactionRequest)
-    .done(@_cacheOrderForm)
-    .done(broadcastOrderForm)
 
   # Sends a request to retrieve the orders for a specific orderGroupId.
   getOrders: (orderGroupId) =>
@@ -376,11 +337,8 @@ class Checkout
   # Sends a request to remove a payment account from the OrderForm.
   removeAccountId: (accountId) =>
     removeAccountIdRequest = { expectedOrderFormSections: [] }
-    @ajax
+    @_updateOrderForm
       url: @_getOrderFormURL() + '/paymentAccount/' + accountId + '/remove'
-      type: 'POST'
-      contentType: 'application/json; charset=utf-8'
-      dataType: 'json'
       data: JSON.stringify removeAccountIdRequest
 
   # URL to redirect the user to when he chooses to logout.
