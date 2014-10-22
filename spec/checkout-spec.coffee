@@ -13,6 +13,9 @@ describe 'VTEX JS Checkout Module', ->
     expect(vtexjs.checkout.getOrderForm).to.be.a('function')
     expect(vtexjs.checkout._getBaseOrderFormURL()).to.equal(mock.API_URL)
 
+  it 'should have empty orderform', ->
+    expect(vtexjs.checkout.orderForm).to.not.exist
+
   it 'should get orderform', (done) ->
     xhr = vtexjs.checkout.getOrderForm()
     xhr.done (orderForm) ->
@@ -20,3 +23,6 @@ describe 'VTEX JS Checkout Module', ->
       done()
     xhr.fail (jqXHR) ->
       done(jqXHR)
+
+  it 'should have orderform', ->
+    expect(vtexjs.checkout.orderForm).to.deep.equal(mock.orderform.empty)
