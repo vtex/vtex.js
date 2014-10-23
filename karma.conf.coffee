@@ -6,11 +6,14 @@ module.exports = (config) ->
       'spec/lib/jquery.js'
       'spec/lib/jquery.mockjax.js'
       'spec/mock/*.coffee'
-      'src/*.coffee'
+      'src/catalog.coffee'
+      'src/extended-ajax.coffee'
+      'src/checkout.coffee'
       'spec/*.coffee'
     ]
+    reporters: ['mocha']
     client:
       mocha:
-        ui: 'tdd'
+        ui: 'bdd'
     preprocessors:
       '**/*.coffee': ['coffee']

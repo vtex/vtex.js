@@ -2,9 +2,9 @@ mock = {}
 
 mock.API_URL = window.location.origin + '/api/checkout/pub/orderForm'
 
-mock.orderform = {}
+mock.orderForm = {}
 
-mock.orderform.empty = {
+mock.orderForm.simple = {
   "orderFormId": "5c5214990aaf4a7499ce4fc58d3ec9e2",
   "salesChannel": "1",
   "loggedIn": false,
@@ -71,34 +71,17 @@ mock.orderform.empty = {
   "ratesAndBenefitsData": null
 }
 
-mock.orderform.profile = {
+mock.orderForm.first = {
   "orderFormId": "5c5214990aaf4a7499ce4fc58d3ec9e2",
-  "salesChannel": "1",
-  "loggedIn": false,
-  "canEditData": true,
-  "userProfileId": null,
-  "userType": null,
-  "ignoreProfileData": false,
-  "value": 0,
-  "messages": [],
-  "items": [],
-  "selectableGifts": [],
-  "products": [],
-  "totalizers": [],
-  "clientProfileData": {
-    "attachmentId": "clientProfileData",
-    "email": null,
-    "firstName": null,
-    "lastName": null,
-    "document": null,
-    "documentType": null,
-    "phone": null,
-    "corporateName": null,
-    "tradeName": null,
-    "corporateDocument": null,
-    "stateInscription": null,
-    "corporatePhone": null,
-    "isCorporate": false
-  },
-  "sellers": []
+  "request": 1
+}
+
+mock.orderForm.second = {
+  "orderFormId": "5c5214990aaf4a7499ce4fc58d3ec9e2",
+  "request": 2
+}
+
+mock.orderForm.third = {
+  "orderFormId": "5c5214990aaf4a7499ce4fc58d3ec9e2",
+  "request": 3
 }

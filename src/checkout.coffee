@@ -34,6 +34,8 @@ class Checkout
 
   events =
     ORDER_FORM_UPDATED: 'orderFormUpdated.vtex'
+    REQUEST_BEGIN: 'checkoutRequestBegin.vtex'
+    REQUEST_END: 'checkoutRequestEnd.vtex'
 
   constructor: (options = {}) ->
     HOST_URL = options.hostURL if options.hostURL
@@ -50,9 +52,8 @@ class Checkout
     @CHECKOUT_ID = 'checkout'
     @orderForm = undefined
     @orderFormId = undefined
-    @_requestingItem = undefined
-    @_requestingSelectableGifts = undefined
-    @_subjectToJqXHRMap = {}
+    @_pendingRequestCounter = 0
+    @_urlToRequestMap = {}
     @_allOrderFormSections =
       [
         'items'
@@ -78,8 +79,17 @@ class Checkout
     @orderFormId = data.orderFormId
     @orderForm = data
 
-  _triggerEvent: (event) -> (orderForm) ->
-    $(window).trigger(event, orderForm)
+  _increasePendingRequests: (options) =>
+    @_pendingRequestCounter++
+    $(window).trigger(events.REQUEST_BEGIN, [options])
+
+  _decreasePendingRequests: =>
+    @_pendingRequestCounter--
+    $(window).trigger(events.REQUEST_END, arguments)
+
+  _broadcastOrderFormUnlessPendingRequests: (orderForm) =>
+    return unless @_pendingRequestCounter is 0
+    $(window).trigger(events.ORDER_FORM_UPDATED, [orderForm])
 
   _orderFormHasExpectedSections: (orderForm, sections) ->
     if not orderForm or not orderForm instanceof Object
@@ -98,9 +108,21 @@ class Checkout
     options.contentType or= 'application/json; charset=utf-8'
     options.dataType or= 'json'
 
-    @ajax(options)
-      .done(@_cacheOrderForm)
-      .done(@_triggerEvent(events.ORDER_FORM_UPDATED))
+    @_increasePendingRequests(options)
+    xhr = @ajax(options)
+
+    # Abort current call to this URL
+    @_urlToRequestMap[options.url]?.abort()
+    # Save this request
+    @_urlToRequestMap[options.url] = xhr
+    # Delete request from map upon completion
+    xhr.always(=> delete @_urlToRequestMap[options.url])
+
+    xhr.always(@_decreasePendingRequests)
+    xhr.done(@_cacheOrderForm)
+    xhr.done(@_broadcastOrderFormUnlessPendingRequests)
+
+    return xhr
 
   ###
   PUBLIC METHODS
@@ -117,7 +139,7 @@ class Checkout
         data: JSON.stringify(checkoutRequest)
 
   # Sends an OrderForm attachment to the current OrderForm, possibly updating it.
-  sendAttachment: (attachmentId, attachment, expectedOrderFormSections = @_allOrderFormSections, options = {}) =>
+  sendAttachment: (attachmentId, attachment, expectedOrderFormSections = @_allOrderFormSections) =>
     if attachmentId is undefined or attachment is undefined
       d = $.Deferred()
       d.reject("Invalid arguments")
@@ -125,15 +147,9 @@ class Checkout
 
     attachment['expectedOrderFormSections'] = expectedOrderFormSections
 
-    xhr = @_updateOrderForm
+    @_updateOrderForm
       url: @_getSaveAttachmentURL(attachmentId)
       data: JSON.stringify(attachment)
-
-    if options.abort and options.subject
-      @_subjectToJqXHRMap[options.subject]?.abort()
-      @_subjectToJqXHRMap[options.subject] = xhr
-
-    return xhr
 
   # Sends a request to set the used locale.
   sendLocale: (locale='pt-BR') =>
