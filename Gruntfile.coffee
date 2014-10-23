@@ -6,14 +6,13 @@ module.exports = (grunt) ->
   replaceMap = {}
 
   config = GruntVTEX.generateConfig grunt, pkg,
-    relativePath: '/'
     replaceMap: replaceMap
 
   config.coffee.main.files = [
     expand: true
     cwd: 'src'
     src: ['**/*.coffee']
-    dest: "build/"
+    dest: "build/<%= relativePath %>/"
     rename: (path, filename) ->
       path + filename.replace("coffee", "js")
   ]
@@ -21,19 +20,25 @@ module.exports = (grunt) ->
   config.concat =
     main:
       files:
-        'build/vtex.js': ['build/*.js']
+        'build/<%=relativePath%>/vtex.js': [
+          'build/<%= relativePath %>/extended-ajax.js'
+          'build/<%= relativePath %>/catalog.js'
+          'build/<%= relativePath %>/checkout.js'
+        ]
 
   config.uglify =
     main:
       files: [
         expand: true
-        cwd: 'build/'
+        cwd: 'build/<%=relativePath%>/'
         src: '*.js'
-        dest: 'build'
+        dest: 'build/<%=relativePath%>/'
         rename: (dest, src) -> dest + '/' + src.replace('.js', '.min.js')
       ]
       options:
         sourceMap: true
+
+  config.watch.coffee.files = ['src/*.coffee']
 
   tasks =
   # Building block tasks
@@ -44,7 +49,8 @@ module.exports = (grunt) ->
     test: []
     vtex_deploy: ['shell:cp', 'shell:cp_br']
   # Development tasks
-    default: ['build', 'watch']
+    dev: ['nolr', 'build', 'watch']
+    default: ['dev']
 
   # Project configuration.
   grunt.initConfig config
