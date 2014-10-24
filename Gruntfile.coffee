@@ -49,7 +49,7 @@ module.exports = (grunt) ->
     test: []
     vtex_deploy: ['shell:cp', 'shell:cp_br']
   # Development tasks
-    dev: ['nolr', 'build', 'watch']
+    dev: ['nolr', 'build', 'min', 'watch']
     default: ['dev']
 
   # Project configuration.
