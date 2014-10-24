@@ -2,9 +2,9 @@
 
 Biblioteca JavaScript para acessar APIs da VTEX
 
-## [Documentação Completa](http://lab.vtex.com/docs/vtex.js/lib/latest/getting-started/index.html)
+## [Documentação Completa](http://lab.vtex.com/docs/vtex.js/lib/2/getting-started/index.html)
 
-[Guias, exemplos e documentação completa de todos os métodos do vtex.js.](http://lab.vtex.com/docs/vtex.js/lib/latest/getting-started/index.html)
+[Guias, exemplos e documentação completa de todos os métodos do vtex.js.](http://lab.vtex.com/docs/vtex.js/lib/2/getting-started/index.html)
 
 Atenção: o vtex.js e sua documentação estão em constante melhorias.
 
@@ -17,6 +17,14 @@ Para desenvolver rodando os testes, instale as dependências e use o script test
 
     npm i
     npm run-script test-watch
+
+## CHANGELOG
+
+### v2.0.0
+
+- Introdução dos eventos `checkoutRequestBegin.vtex` e `checkoutRequestEnd.vtex`
+- Evento `orderFormUpdated.vtex` só é emitido quando todos os requests pendentes são resolvidos.
+- Ao enviar mais de um request para a mesma operação, todos os anteriores que não foram resolvidos serão abortados. Dessa forma, apenas o último request vai valer.
 
 ------
 
