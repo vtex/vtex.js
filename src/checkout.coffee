@@ -186,13 +186,9 @@ class Checkout
       orderItems: items
       expectedOrderFormSections: expectedOrderFormSections
 
-    if @_requestingItem isnt undefined
-      @_requestingItem.abort()
-
-    return @_requestingItem = @_updateOrderForm
+    @_updateOrderForm
       url: @_getUpdateItemURL()
       data: JSON.stringify(updateItemsRequest)
-    .done(=> @_requestingItem = undefined)
 
   # Sends a request to select an available gift
   updateSelectableGifts: (list, selectedGifts, expectedOrderFormSections = @_allOrderFormSections) =>
@@ -201,13 +197,9 @@ class Checkout
       selectedGifts: selectedGifts
       expectedOrderFormSections: expectedOrderFormSections
 
-    if @_requestingSelectableGifts isnt undefined
-      @_requestingSelectableGifts.abort()
-
-    return @_requestingSelectableGifts = @_updateOrderForm
+    @_updateOrderForm
       url: @_getUpdateSelectableGifts(list)
       data: JSON.stringify(updateSelectableGiftsRequest)
-    .done(=> @_requestingSelectableGifts = undefined)
 
   # Sends a request to remove items from the OrderForm.
   removeItems: (items, expectedOrderFormSections = @_allOrderFormSections) =>
@@ -216,8 +208,7 @@ class Checkout
 
   # Sends a request to remove all items from the OrderForm.
   removeAllItems: (expectedOrderFormSections = @_allOrderFormSections)=>
-    orderFormPromise = @getOrderForm(['items'])
-    orderFormPromise.then (orderForm) =>
+    @getOrderForm(['items']).then (orderForm) =>
       items = orderForm.items
       item.quantity = 0 for item in items
       @updateItems(items, expectedOrderFormSections)
