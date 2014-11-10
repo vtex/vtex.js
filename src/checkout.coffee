@@ -134,9 +134,15 @@ class Checkout
       return @promise(@orderForm)
     else
       checkoutRequest = { expectedOrderFormSections: expectedFormSections }
-      @_updateOrderForm
+      xhr = @ajax
         url: @_getBaseOrderFormURL()
+        type: 'POST'
+        contentType: 'application/json; charset=utf-8'
+        dataType: 'json'
         data: JSON.stringify(checkoutRequest)
+
+      xhr.done(@_cacheOrderForm)
+      xhr.done(@_broadcastOrderFormUnlessPendingRequests)
 
   # Sends an OrderForm attachment to the current OrderForm, possibly updating it.
   sendAttachment: (attachmentId, attachment, expectedOrderFormSections = @_allOrderFormSections) =>

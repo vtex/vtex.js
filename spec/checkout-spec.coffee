@@ -110,6 +110,9 @@ describe 'VTEX JS Checkout Module', ->
     $.mockjax
       url: mock.API_URL
       responseText: mock.orderForm.simple
+    $.mockjax
+      url: "#{mock.API_URL}/#{mock.orderForm.simple.orderFormId}/attachments/clientPreferencesData"
+      responseText: mock.orderForm.simple
 
     requestBeginCalled = false
 
@@ -117,13 +120,17 @@ describe 'VTEX JS Checkout Module', ->
       requestBeginCalled = true
 
     vtexjs.checkout.getOrderForm().done ->
-      expect(requestBeginCalled).to.be.true
-      done()
+      vtexjs.checkout.sendLocale('en-US').done ->
+        expect(requestBeginCalled).to.be.true
+        done()
 
   it 'should trigger request end event after request begin event', (done) ->
     # Arrange
     $.mockjax
       url: mock.API_URL
+      responseText: mock.orderForm.simple
+    $.mockjax
+      url: "#{mock.API_URL}/#{mock.orderForm.simple.orderFormId}/attachments/clientPreferencesData"
       responseText: mock.orderForm.simple
 
     requestBeginCalled = false
@@ -135,7 +142,8 @@ describe 'VTEX JS Checkout Module', ->
       expect(requestBeginCalled).to.be.true
       done()
 
-    vtexjs.checkout.getOrderForm()
+    vtexjs.checkout.getOrderForm().done ->
+      vtexjs.checkout.sendLocale('en-US')
 
   it 'should trigger one request begin/end event pair for each request', (done) ->
     # Arrange

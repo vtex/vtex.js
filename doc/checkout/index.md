@@ -18,12 +18,27 @@ Se tiver qualquer dúvida quanto a suas seções, consulte a [documentação do 
 
 ## Comportamento de requests sucessivos à API
 
-O módulo `checkout` encapsula todos os requests que modificam o orderForm e adiciona dois comportamentos:
+O módulo `checkout` encapsula todos os requests que modificam o orderForm e adiciona um comportamento de cancelamento de requests sucessivos.
 
-- Requests sucessivos para realizar a mesma operação causam o `abort` do request anterior para a mesma operação.
+Isto é, requests sucessivos para realizar a mesma operação causam o `abort` do request anterior para a mesma operação.
 Isso significa que, ao fazer 3 requests sucessivos para a mesma operação, os 2 primeiros serão abortados e apenas o terceiro será considerado.
+Por esse motivo, se a mesma instância de Checkout for utilizada mais de um consumidor, é possível que requests sejam abortados de forma não intencional.
 
-- Se utilizar o `extended-ajax.js` (utilizado por default no bundle), todos os requests são enfileirados, ou seja, não acontecem de forma paralela.
+Considere o seguinte cenário:
+
+- Aplicativo A cria variável API = new vtexjs.Checkout()
+- Plugin B utiliza API.sendAttachment() para enviar endereço
+- Plugin C utiliza API.sendAttachment() para enviar outro endereço, simultâneamente
+- Resultado: Chamada de B vai ser abortada e substituida por chamada de C. Isso é esperado.
+Entretanto, se o código de Plugin B estiver esperando a resolução da **promise** da chamada (e.g. usando `done()`), ela nunca vai receber o sucesso pois o request "falhou" (foi abortado).
+
+Existem duas formas de resolver essa situação:
+
+- Cada plugin utiliza sua própria instância de Checkout, e.g. var APIInternaDoPluginA = new vtexjs.Checkout()
+- Utilize o handler de evento `orderFormUpdated.vtex` para receber notificações de sucesso nas modificações ao Checkout.
+
+É recomendado utilizar o `extended-ajax.js` (utilizado por default no bundle).
+Dessa forma, todos os requests são enfileirados, ou seja, não acontecem de forma paralela.
 
 ## Eventos
 {: #Eventos .slug-text.omit-parens }
