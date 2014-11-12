@@ -76,8 +76,9 @@ class Checkout
   ###
 
   _cacheOrderForm: (data) =>
-    @orderFormId = data.orderFormId
-    @orderForm = data
+    if data and data.orderFormId # Only cache if this is an orderForm
+      @orderFormId = data.orderFormId
+      @orderForm = data
 
   _increasePendingRequests: (options) =>
     @_pendingRequestCounter++
