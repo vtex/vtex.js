@@ -85,6 +85,78 @@ describe 'VTEX JS Checkout Module', ->
     xhr.fail (jqXHR) ->
       done(jqXHR)
 
+  it 'should send default expectedOrderFormSections on clearMessages', (done) ->
+    # Arrange
+    $.mockjax
+      url: mock.API_URL + "/#{mock.orderForm.simple.orderFormId}/messages/clear"
+      data: JSON.stringify({ expectedOrderFormSections: vtexjs.checkout._allOrderFormSections })
+      responseText: mock.orderForm.simple
+
+    vtexjs.checkout.orderFormId = mock.orderForm.simple.orderFormId
+
+    # Act
+    xhr = vtexjs.checkout.clearMessages()
+    xhr.done (orderForm) ->
+      # Assert
+      expect(orderForm).to.deep.equal(mock.orderForm.simple)
+      done()
+    xhr.fail (jqXHR) ->
+      done(jqXHR)
+
+  it 'should send custom expectedOrderFormSections on clearMessages', (done) ->
+    # Arrange
+    $.mockjax
+      url: mock.API_URL + "/#{mock.orderForm.simple.orderFormId}/messages/clear"
+      data: JSON.stringify({ expectedOrderFormSections: ["shippingData"] })
+      responseText: mock.orderForm.simple
+
+    vtexjs.checkout.orderFormId = mock.orderForm.simple.orderFormId
+
+    # Act
+    xhr = vtexjs.checkout.clearMessages(["shippingData"])
+    xhr.done (orderForm) ->
+      # Assert
+      expect(orderForm).to.deep.equal(mock.orderForm.simple)
+      done()
+    xhr.fail (jqXHR) ->
+      done(jqXHR)
+
+  it 'should send default expectedOrderFormSections on removeAccountId', (done) ->
+    # Arrange
+    $.mockjax
+      url: mock.API_URL + "/#{mock.orderForm.simple.orderFormId}/paymentAccount/1/remove"
+      data: JSON.stringify({ expectedOrderFormSections: vtexjs.checkout._allOrderFormSections })
+      responseText: mock.orderForm.simple
+
+    vtexjs.checkout.orderFormId = mock.orderForm.simple.orderFormId
+
+    # Act
+    xhr = vtexjs.checkout.removeAccountId(1)
+    xhr.done (orderForm) ->
+      # Assert
+      expect(orderForm).to.deep.equal(mock.orderForm.simple)
+      done()
+    xhr.fail (jqXHR) ->
+      done(jqXHR)
+
+  it 'should send custom expectedOrderFormSections on removeAccountId', (done) ->
+    # Arrange
+    $.mockjax
+      url: mock.API_URL + "/#{mock.orderForm.simple.orderFormId}/paymentAccount/1/remove"
+      data: JSON.stringify({ expectedOrderFormSections: ["shippingData"] })
+      responseText: mock.orderForm.simple
+
+    vtexjs.checkout.orderFormId = mock.orderForm.simple.orderFormId
+
+    # Act
+    xhr = vtexjs.checkout.removeAccountId(1, ["shippingData"])
+    xhr.done (orderForm) ->
+      # Assert
+      expect(orderForm).to.deep.equal(mock.orderForm.simple)
+      done()
+    xhr.fail (jqXHR) ->
+      done(jqXHR)
+
   it 'should broadcast orderform before promise resolution', (done) ->
     # Arrange
     $.mockjax

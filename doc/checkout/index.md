@@ -443,7 +443,7 @@ vtexjs.checkout.getOrderForm().then(function(orderForm){
 {% endhighlight %}
 
 
-## removeAccountId(accountId)
+## removeAccountId(accountId, expectedOrderFormSections)
 {: #removeAccountId .slug-text.omit-parens }
 
 Em orderForm.paymentData.availableAccounts, você acha as contas de pagamento do usuário.
@@ -852,7 +852,7 @@ vtexjs.checkout.getOrderForm().then(function(orderForm){
 {% endhighlight %}
 
 
-## clearMessages()
+## clearMessages(expectedOrderFormSections)
 {: #clearMessages .slug-text.omit-parens }
 
 Ocasionalmente, o orderForm tem sua seção `messages` preenchida com mensagens informativas ou de erro.

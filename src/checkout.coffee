@@ -338,8 +338,8 @@ class Checkout
       dataType: 'json'
 
   # Sends a request to clear the OrderForm messages.
-  clearMessages: =>
-    clearMessagesRequest = { expectedOrderFormSections: [] }
+  clearMessages: (expectedOrderFormSections = @_allOrderFormSections) =>
+    clearMessagesRequest = { expectedOrderFormSections: expectedOrderFormSections }
     @ajax
       url: @_getOrderFormURL() + '/messages/clear'
       type: 'POST'
@@ -348,8 +348,8 @@ class Checkout
       data: JSON.stringify clearMessagesRequest
 
   # Sends a request to remove a payment account from the OrderForm.
-  removeAccountId: (accountId) =>
-    removeAccountIdRequest = { expectedOrderFormSections: [] }
+  removeAccountId: (accountId, expectedOrderFormSections = @_allOrderFormSections) =>
+    removeAccountIdRequest = { expectedOrderFormSections: expectedOrderFormSections }
     @_updateOrderForm
       url: @_getOrderFormURL() + '/paymentAccount/' + accountId + '/remove'
       data: JSON.stringify removeAccountIdRequest
