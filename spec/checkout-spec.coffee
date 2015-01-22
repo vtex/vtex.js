@@ -361,3 +361,17 @@ describe 'VTEX JS Checkout Module', ->
       expect(vtexjs.checkout._urlToRequestMap["#{mock.API_URL}/#{mock.orderForm.simple.orderFormId}/attachments/shippingData"]).to.exist
       vtexjs.checkout.calculateShipping({postalCode: '22030030', country: 'BRA'})
     , 120
+
+  it 'should save orderForm on storage', (done) ->
+    $.mockjax
+      url: mock.API_URL
+      responseText: mock.orderForm.simple
+    $.mockjax
+      url: "#{mock.API_URL}/#{mock.orderForm.simple.orderFormId}/items/update/"
+      responseText: mock.orderForm.second
+
+    vtexjs.checkout.getOrderForm().done ->
+      vtexjs.checkout.updateItems([{index: 0, quantity: 1}]).done ->
+        orderForm = window.localStorage.getItem('vtex.orderForm')
+        expect(orderForm).to.equal(JSON.stringify(mock.orderForm.second))
+        done()

@@ -47,6 +47,9 @@ class Checkout
     else
       @ajax = $.ajax
 
+    if options.crossTab isnt false and window.localStorage?
+      @_initCrossTabCommunication()
+
     @promise = options.promise or $.when
 
     @CHECKOUT_ID = 'checkout'
@@ -78,6 +81,17 @@ class Checkout
   _cacheOrderForm: (data) =>
     @orderFormId = data.orderFormId
     @orderForm = data
+
+  _storageOrderForm: (data) =>
+    if window.localStorage?
+      window.localStorage.setItem('vtex.orderForm', JSON.stringify(data))
+
+  _initCrossTabCommunication: =>
+    window.addEventListener 'storage', (ev) =>
+      if ev.key is 'vtex.orderForm'
+        orderForm = JSON.parse(ev.newValue)
+        @_cacheOrderForm(orderForm)
+        @_broadcastOrderFormUnlessPendingRequests(orderForm)
 
   _increasePendingRequests: (options) =>
     @_pendingRequestCounter++
@@ -120,6 +134,7 @@ class Checkout
 
     xhr.always(@_decreasePendingRequests)
     xhr.done(@_cacheOrderForm)
+    xhr.done(@_storageOrderForm)
     xhr.done(@_broadcastOrderFormUnlessPendingRequests)
 
     return xhr
