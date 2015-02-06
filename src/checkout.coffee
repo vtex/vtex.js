@@ -87,9 +87,9 @@ class Checkout
       window.localStorage.setItem('vtex.orderForm', JSON.stringify(data))
 
   _initCrossTabCommunication: =>
-    window.addEventListener 'storage', (ev) =>
-      if ev.key is 'vtex.orderForm'
-        orderForm = JSON.parse(ev.newValue)
+    $(window).on 'storage', (ev) =>
+      if ev.originalEvent?.key is 'vtex.orderForm'
+        orderForm = JSON.parse(ev.originalEvent.newValue)
         @_cacheOrderForm(orderForm)
         @_broadcastOrderFormUnlessPendingRequests(orderForm)
 
