@@ -100,7 +100,7 @@ class Checkout
 
   # $.ajax wrapper with common defaults.
   # Used to encapsulate requests which have side effects and should broadcast results
-  _updateOrderForm: (options) =>
+  _updateOrderForm: (options, cacheable = true) =>
     throw new Error("options.url is required when sending request") unless options?.url
 
     # Defaults
@@ -360,6 +360,16 @@ class Checkout
 
   getLogoutURL: @::getChangeToAnonymousUserURL
 
+  # Sends a request to add an item in the OrderForm.
+  addToCart: (items, expectedOrderFormSections = @_allOrderFormSections) =>
+    addToCartRequest = 
+      orderItems: items
+      expectedOrderFormSections: expectedOrderFormSections
+
+    @_updateOrderForm 
+      url: @_getAddToCartURL()
+      data: JSON.stringify addToCartRequest
+
   # URL BUILDERS
 
   _getOrderFormId: =>
@@ -414,6 +424,9 @@ class Checkout
   _getRemoveGiftRegistryURL: =>
     @_getBaseOrderFormURL() + "/giftRegistry/#{@_getOrderFormId()}/remove"
 
+  _getAddToCartURL: =>
+    @_getOrderFormURL() + '/items'
+
   _getOrdersURL: (orderGroupId) =>
     HOST_URL + '/api/checkout/pub/orders/order-group/' + orderGroupId
 
@@ -428,6 +441,7 @@ class Checkout
 
   _getGatewayCallbackURL: =>
     HOST_URL + '/checkout/gatewayCallback/{0}/{1}/{2}'
+
 
 window.vtexjs or= {}
 window.vtexjs.Checkout = Checkout
