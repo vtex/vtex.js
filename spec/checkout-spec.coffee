@@ -157,23 +157,23 @@ describe 'VTEX JS Checkout Module', ->
     xhr.fail (jqXHR) ->
       done(jqXHR)
 
-  # it 'should add an item on orderForm', (done) ->
-  #   # Arrange
-  #   $.mockjax
-  #     url: mock.API_URL + "/#{mock.orderForm.simple.orderFormId}/items"
-  #     data: JSON.stringify({ orderItems: [{ id: 2000017893, quantity: 1, seller: 1 }], expectedOrderFormSections: vtexjs.checkout._allOrderFormSections })
-  #     responseText: mock.orderForm.addItem
+  it 'should add an item on orderForm', (done) ->
+    # Arrange
+    $.mockjax
+      url: mock.API_URL + "/#{mock.orderForm.simple.orderFormId}/items"
+      data: JSON.stringify({ orderItems: [{ id: 2000017893, quantity: 1, seller: 1 }], expectedOrderFormSections: vtexjs.checkout._allOrderFormSections })
+      responseText: mock.orderForm.addItem
 
-  #   vtexjs.checkout.orderFormId = mock.orderForm.simple.orderFormId
+    vtexjs.checkout.orderFormId = mock.orderForm.simple.orderFormId
 
-  #   # Act
-  #   xhr = vtexjs.checkout.addToCart([{ id: 2000017893, quantity: 1, seller: 1 }])
-  #   xhr.done (orderForm) ->
-  #     # Assert
-  #     expect(orderForm).to.deep.equal(mock.orderForm.addItem)
-  #     done()
-  #   xhr.fail (jqXHR) ->
-  #     done(jqXHR)
+    # Act
+    xhr = vtexjs.checkout.addToCart([{ id: 2000017893, quantity: 1, seller: 1 }])
+    xhr.done (orderForm) ->
+      # Assert
+      expect(orderForm).to.deep.equal(mock.orderForm.addItem)
+      done()
+    xhr.fail (jqXHR) ->
+      done(jqXHR)
 
   it 'should broadcast orderform before promise resolution', (done) ->
     # Arrange
