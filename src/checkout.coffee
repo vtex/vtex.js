@@ -100,7 +100,7 @@ class Checkout
 
   # $.ajax wrapper with common defaults.
   # Used to encapsulate requests which have side effects and should broadcast results
-  _updateOrderForm: (options, cacheable = true) =>
+  _updateOrderForm: (options) =>
     throw new Error("options.url is required when sending request") unless options?.url
 
     # Defaults
