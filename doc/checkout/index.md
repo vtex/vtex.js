@@ -174,7 +174,7 @@ vtexjs.checkout.getOrderForm().then(function(orderForm){
 
 Adiciona itens no orderForm.
 
-Um item é identificado pela sua propriedade `id`. No catalog, essa propriedade pode ser obtida observando o itemId do item no Array de items do produto.
+Um item a ser adicionado é obrigatoriamente composto por: `id`, `quantity` e `seller`. A propriedade `id` pode ser obtida pelo [Catalog](../catalog/index.md), observando o itemId do item no Array de items do produto.
 
 Itens que já estiverem no orderForm permanecerão inalterados.
 
