@@ -169,6 +169,45 @@ vtexjs.checkout.getOrderForm().then(function(orderForm){
 {% endhighlight %}
 
 
+## addToCart(items, expectedOrderFormSections)
+{: #addToCart .slug-text.omit-parens }
+
+Adiciona itens no orderForm.
+
+Um item a ser adicionado é obrigatoriamente composto por: `id`, `quantity` e `seller`. A propriedade `id` pode ser obtida pelo [Catalog](../catalog/index.md), observando o itemId do item no Array de items do produto.
+
+Itens que já estiverem no orderForm permanecerão inalterados.
+
+### Retorna
+
+`Promise` para o orderForm
+
+
+### Argumentos
+
+| Nome                    | Tipo                          |
+| -----------------------:| :-----------------------------|
+| **items** | **Array** <br> o conjunto de items que vão ser adicionados. Mesmo que só haja um item, deve ser envolto num Array.|
+{: .doc-api-table }
+
+
+### Exemplo
+
+Adiciona um item de itemId 2000017893.
+
+{% highlight javascript %}
+item = {
+    id: 2000017893,
+    quantity: 1,
+    seller: 1,
+};
+vtexjs.checkout.addToCart([item]).done(function(orderForm){
+    alert('Item adicionado!');
+    console.log(orderForm);
+});
+{% endhighlight %}
+
+
 ## updateItems(items, expectedOrderFormSections)
 {: #updateItems .slug-text.omit-parens }
 
