@@ -196,10 +196,10 @@ Itens que já estiverem no orderForm permanecerão inalterados.
 Adiciona um item de itemId 2000017893.
 
 {% highlight javascript %}
-item = {
+var item = {
     id: 2000017893,
     quantity: 1,
-    seller: 1,
+    seller: 1
 };
 vtexjs.checkout.addToCart([item]).done(function(orderForm){
     alert('Item adicionado!');
