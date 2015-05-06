@@ -175,6 +175,47 @@ describe 'VTEX JS Checkout Module', ->
     xhr.fail (jqXHR) ->
       done(jqXHR)
 
+  it 'should set a manualPrice for an item on orderForm', (done) ->
+    # Arrange
+    $.mockjax
+      url: mock.API_URL + "/#{mock.orderForm.simple.orderFormId}/items/0/price"
+      type: 'PUT'
+      contentType: 'application/json; charset=utf-8'
+      dataType: 'json'
+      data: JSON.stringify({ price: 8000 })
+      responseText: mock.orderForm.setManualPrice
+
+    vtexjs.checkout.orderFormId = mock.orderForm.simple.orderFormId
+
+    # Act
+    xhr = vtexjs.checkout.setManualPrice(0, 8000)
+    xhr.done (orderForm) ->
+      # Assert
+      expect(orderForm).to.deep.equal(mock.orderForm.setManualPrice)
+      done()
+    xhr.fail (jqXHR) ->
+      done(jqXHR)
+
+  it 'should remove a manualPrice for an item on orderForm', (done) ->
+    # Arrange
+    $.mockjax
+      url: mock.API_URL + "/#{mock.orderForm.simple.orderFormId}/items/0/price"
+      type: 'DELETE'
+      contentType: 'application/json; chartset=utf-8'
+      dataType: 'json'
+      responseText: mock.orderForm.removeManualPrice
+
+    vtexjs.checkout.orderFormId = mock.orderForm.simple.orderFormId
+
+    # Act
+    xhr = vtexjs.checkout.removeManualPrice(0)
+    xhr.done (orderForm) ->
+      # Assert
+      expect(orderForm).to.deep.equal(mock.orderForm.removeManualPrice)
+      done()
+    xhr.fail (jqXHR) ->
+      done(jqXHR)
+
   it 'should broadcast orderform before promise resolution', (done) ->
     # Arrange
     $.mockjax
