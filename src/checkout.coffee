@@ -370,6 +370,27 @@ class Checkout
       url: @_getAddToCartURL()
       data: JSON.stringify addToCartRequest
 
+  # Sends a request to change the price of an item, updating manualPrice on the orderForm
+  # Only possible if allowManualPrice is true
+  setManualPrice: (itemIndex, manualPrice) =>
+    setManualPriceRequest = 
+      price: manualPrice
+
+    @_updateOrderForm
+      url: @_manualPriceURL(itemIndex)
+      type: 'PUT'
+      contentType: 'application/json; charset=utf-8'
+      dataType: 'json'
+      data: JSON.stringify setManualPriceRequest
+
+  # Sends a request to remove the manualPrice of an item, updating manualPrice on the orderForm
+  removeManualPrice: (itemIndex) =>
+    @_updateOrderForm
+      url: @_manualPriceURL(itemIndex)
+      type: 'DELETE'
+      contentType: 'application/json; charset=utf-8'
+      dataType: 'json'
+
   # URL BUILDERS
 
   _getOrderFormId: =>
@@ -426,6 +447,9 @@ class Checkout
 
   _getAddToCartURL: =>
     @_getOrderFormURL() + '/items'
+
+  _manualPriceURL: (itemIndex) =>
+    @_getOrderFormURL() + '/items/' + itemIndex + '/price'
 
   _getOrdersURL: (orderGroupId) =>
     HOST_URL + '/api/checkout/pub/orders/order-group/' + orderGroupId
