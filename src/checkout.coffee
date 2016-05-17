@@ -361,19 +361,23 @@ class Checkout
   getLogoutURL: @::getChangeToAnonymousUserURL
 
   # Sends a request to add an item in the OrderForm.
-  addToCart: (items, expectedOrderFormSections = @_allOrderFormSections) =>
-    addToCartRequest = 
+  addToCart: (items, expectedOrderFormSections = @_allOrderFormSections, salesChannel) =>
+    addToCartRequest =
       orderItems: items
       expectedOrderFormSections: expectedOrderFormSections
 
-    @_updateOrderForm 
-      url: @_getAddToCartURL()
+    salesChannelQueryString = ''
+    if salesChannel
+      salesChannelQueryString = '?sc=' + salesChannel
+
+    @_updateOrderForm
+      url: @_getAddToCartURL() + salesChannelQueryString
       data: JSON.stringify addToCartRequest
 
   # Sends a request to change the price of an item, updating manualPrice on the orderForm
   # Only possible if allowManualPrice is true
   setManualPrice: (itemIndex, manualPrice) =>
-    setManualPriceRequest = 
+    setManualPriceRequest =
       price: manualPrice
 
     @_updateOrderForm

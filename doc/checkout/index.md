@@ -169,7 +169,7 @@ vtexjs.checkout.getOrderForm().then(function(orderForm){
 {% endhighlight %}
 
 
-## addToCart(items, expectedOrderFormSections)
+## addToCart(items, expectedOrderFormSections, salesChannel)
 {: #addToCart .slug-text.omit-parens }
 
 Adiciona itens no orderForm.
@@ -188,12 +188,13 @@ Itens que já estiverem no orderForm permanecerão inalterados.
 | Nome                    | Tipo                          |
 | -----------------------:| :-----------------------------|
 | **items** | **Array** <br> o conjunto de items que vão ser adicionados. Mesmo que só haja um item, deve ser envolto num Array.|
+| **salesChannel** | **Number ou String** <br> (default = `1`) |
 {: .doc-api-table }
 
 
 ### Exemplo
 
-Adiciona um item de itemId 2000017893.
+Adiciona um item de itemId 2000017893 do sales channel 3.
 
 {% highlight javascript %}
 var item = {
@@ -201,7 +202,7 @@ var item = {
     quantity: 1,
     seller: 1
 };
-vtexjs.checkout.addToCart([item]).done(function(orderForm){
+vtexjs.checkout.addToCart([item], null, 3).done(function(orderForm){
     alert('Item adicionado!');
     console.log(orderForm);
 });
@@ -727,7 +728,7 @@ vtexjs.checkout.getOrderForm().then(function(){
 ## addItemAttachment(itemIndex, attachmentName, content, expectedOrderFormSections)
 {: #addItemAttachment .slug-text.omit-parens }
 
-Esse método adiciona um anexo (attachment) a um item no carrinho. Com isso, você pode adicionar informações extras ao item. 
+Esse método adiciona um anexo (attachment) a um item no carrinho. Com isso, você pode adicionar informações extras ao item.
 
 Você pode associar um anexo ao sku pela interface administrativa. Para verificar quais anexos podem ser inseridos, verifique a propriedade `attachmentOfferings` do item.
 
@@ -978,4 +979,3 @@ vtexjs.checkout.getOrders(orderGroupId).then(function(orders){
     console.log(orders);
 });
 {% endhighlight %}
-
