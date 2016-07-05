@@ -6,7 +6,7 @@ Naturalmente, o Checkout agrega os mais diversos dados necessários para o fecha
 
 O OrderForm é a estrutura responsável por esse aglomerado de dados.
 Ele é composto de diversas seções, cada uma com informações úteis que podem ser acessadas, manipuladas e (possivelmente) alteradas.
-Se tiver qualquer dúvida quanto a suas seções, consulte a [documentação do OrderForm](orderform.md).
+Se tiver qualquer dúvida quanto a suas seções, consulte a [documentação do OrderForm](order-form.md).
 
 ## Comportamento de requests sucessivos à API
 
@@ -144,7 +144,7 @@ vtexjs.checkout.getOrderForm().then(function(orderForm){
 #### Alterar openTextField
 
 O openTextField é um campo destinado a observações e comentários.
-Consulte a [documentação do OrderForm](orderform.md) para mais detalhes sobre ele.
+Consulte a [documentação do OrderForm](order-form.md) para mais detalhes sobre ele.
 
 ```js
 vtexjs.checkout.getOrderForm().then(function(orderForm){
@@ -160,7 +160,7 @@ vtexjs.checkout.getOrderForm().then(function(orderForm){
 
 Adiciona itens no orderForm.
 
-Um item a ser adicionado é obrigatoriamente composto por: `id`, `quantity` e `seller`. A propriedade `id` pode ser obtida pelo [Catalog](../catalog/index.md), observando o itemId do item no Array de items do produto.
+Um item a ser adicionado é obrigatoriamente composto por: `id`, `quantity` e `seller`. A propriedade `id` pode ser obtida pelo [Catalog](../catalog/), observando o itemId do item no Array de items do produto.
 
 Itens que já estiverem no orderForm permanecerão inalterados.
 
@@ -425,7 +425,7 @@ vtexjs.checkout.getAddressInformation(address).done(function(result){
 Faz o login parcial do usuário usando o email.
 
 As informações provavelmente vão vir mascaradas e não será possível editá-las, caso o usuário já exista. Para isso, é necessário autenticar-se com VTEX ID.
-Certifique-se disso com a propriedade canEditData do orderForm. Veja a [documentação do OrderForm](orderform.md).
+Certifique-se disso com a propriedade canEditData do orderForm. Veja a [documentação do OrderForm](order-form.md).
 
 Não se esqueça de usar getOrderForm anteriormente.
 
