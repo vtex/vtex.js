@@ -2,9 +2,7 @@
 
 Biblioteca JavaScript para acessar APIs da VTEX
 
-## [Documentação Completa](http://lab.vtex.com/docs/vtex.js/lib/latest/checkout/index.html)
-
-[Guias, exemplos e documentação completa de todos os métodos do vtex.js.](http://lab.vtex.com/docs/vtex.js/lib/latest/checkout/index.html)
+[Guias, exemplos e documentação completa de todos os métodos do vtex.js.](/docs)
 
 Atenção: o vtex.js e sua documentação estão em constante melhorias.
 

@@ -1,11 +1,3 @@
----
-layout: docs
-title: Módulo Checkout
-application: vtex.js
-docType: lib
-version: 2
----
-
 # Módulo Checkout
 
 O módulo Checkout manipula dados referentes à compra do cliente.
@@ -41,7 +33,6 @@ Existem duas formas de resolver essa situação:
 Dessa forma, todos os requests são enfileirados, ou seja, não acontecem de forma paralela.
 
 ## Eventos
-{: #Eventos .slug-text.omit-parens }
 
 ### `orderFormUpdated.vtex [orderForm]`
 
@@ -64,7 +55,6 @@ Note que o argumento pode ser um `orderForm`, em caso de sucesso, ou um `jqXHR`,
 Não é recomendado usar este request para detectar mudanças no orderForm. Ao invés disso, use `orderFormUpdated.vtex`.
 
 ## expectedOrderFormSections
-{: #expectedOrderFormSections .slug-text.omit-parens }
 
 Você vai reparar que grande parte dos métodos requerem um argumento `expectedOrderFormSections`.
 
@@ -81,15 +71,14 @@ Dada essa explicação, não será mais explicado esse argumento na documentaç�
 
 ### Exemplo
 
-{% highlight javascript %}
+```js
 $(window).on('orderFormUpdated.vtex', function(evt, orderForm){
   alert('Alguem atualizou o orderForm!');
   console.log(orderForm);
 });
-{% endhighlight %}
+```
 
 ## getOrderForm(expectedOrderFormSections)
-{: #getOrderForm .slug-text.omit-parens }
 
 Pega o orderForm atual.
 
@@ -101,15 +90,14 @@ Esse é um dos métodos mais importantes: é essencial certificar-se de que haja
 
 ### Exemplo
 
-{% highlight javascript %}
+```js
 vtexjs.checkout.getOrderForm().done(function(orderForm){
     console.log(orderForm);
 });
-{% endhighlight %}
+```
 
 
 ## sendAttachment(attachmentId, attachment, expectedOrderFormSections)
-{: #sendAttachment .slug-text.omit-parens }
 
 Envia um attachment para a orderForm atual. (Um attachment é uma seção.)
 
@@ -132,7 +120,6 @@ Não se esqueça de usar getOrderForm anteriormente.
 | -----------------------:| :-----------------------------|
 | **attachmentId** | **String** <br> o nome do attachment sendo enviado. |
 | **attachment** | **Object** <br> o attachment em si. |
-{: .doc-api-table }
 
 
 ### Exemplos
@@ -142,7 +129,7 @@ Não se esqueça de usar getOrderForm anteriormente.
 Alterar o primeiro nome do cliente.
 Vamos alterar a propriedade `firstName` de `clientProfileData`.
 
-{% highlight javascript %}
+```js
 vtexjs.checkout.getOrderForm().then(function(orderForm){
     var clientProfileData = orderForm.clientProfileData;
     clientProfileData.firstName = 'Guilherme';
@@ -152,25 +139,24 @@ vtexjs.checkout.getOrderForm().then(function(orderForm){
     console.log(orderForm);
     console.log(orderForm.clientProfileData);
 })
-{% endhighlight %}
+```
 
 #### Alterar openTextField
 
 O openTextField é um campo destinado a observações e comentários.
 Consulte a [documentação do OrderForm](orderform.md) para mais detalhes sobre ele.
 
-{% highlight javascript %}
+```js
 vtexjs.checkout.getOrderForm().then(function(orderForm){
     var obs = 'Sem cebola!'
     return vtexjs.checkout.sendAttachment('openTextField', {value: obs});
 }).done(function(orderForm){
   console.log("openTextField preenchido com: ", orderForm.openTextField);
 });
-{% endhighlight %}
+```
 
 
 ## addToCart(items, expectedOrderFormSections, salesChannel)
-{: #addToCart .slug-text.omit-parens }
 
 Adiciona itens no orderForm.
 
@@ -189,14 +175,13 @@ Itens que já estiverem no orderForm permanecerão inalterados.
 | -----------------------:| :-----------------------------|
 | **items** | **Array** <br> o conjunto de items que vão ser adicionados. Mesmo que só haja um item, deve ser envolto num Array.|
 | **salesChannel** | **Number ou String** <br> (default = `1`) |
-{: .doc-api-table }
 
 
 ### Exemplo
 
 Adiciona um item de itemId 2000017893 do sales channel 3.
 
-{% highlight javascript %}
+```js
 var item = {
     id: 2000017893,
     quantity: 1,
@@ -206,11 +191,10 @@ vtexjs.checkout.addToCart([item], null, 3).done(function(orderForm){
     alert('Item adicionado!');
     console.log(orderForm);
 });
-{% endhighlight %}
+```
 
 
 ## updateItems(items, expectedOrderFormSections)
-{: #updateItems .slug-text.omit-parens }
 
 Atualiza items no orderForm.
 
@@ -232,14 +216,13 @@ Não se esqueça de usar getOrderForm anteriormente.
 | Nome                    | Tipo                          |
 | -----------------------:| :-----------------------------|
 | **items** | **Array** <br> o conjunto de items que vão ser atualizados. Mesmo que só haja um item, deve ser envolto num Array.|
-{: .doc-api-table }
 
 
 ### Exemplo
 
 Altera a quantidade e o seller do primeiro item.
 
-{% highlight javascript %}
+```js
 vtexjs.checkout.getOrderForm().then(function(orderForm){
     var item = orderForm.items[0];
     item.index = 0;
@@ -250,11 +233,10 @@ vtexjs.checkout.getOrderForm().then(function(orderForm){
     alert('Items atualizados!');
     console.log(orderForm);
 });
-{% endhighlight %}
+```
 
 
 ## removeItems(items, expectedOrderFormSections)
-{: #removeItems .slug-text.omit-parens }
 
 Remove items no orderForm.
 
@@ -272,13 +254,12 @@ Não se esqueça de usar getOrderForm anteriormente.
 | Nome                    | Tipo                          |
 | -----------------------:| :-----------------------------|
 | **items** | **Array** <br> o conjunto de items que vão ser retirados. Mesmo que só haja um item, deve ser envolto num Array.|
-{: .doc-api-table }
 
 ### Exemplo
 
 Remove o primeiro item.
 
-{% highlight javascript %}
+```js
 vtexjs.checkout.getOrderForm().then(function(orderForm){
     var item = orderForm.items[0];
     item.index = 0;
@@ -287,11 +268,10 @@ vtexjs.checkout.getOrderForm().then(function(orderForm){
     alert('Item removido!');
     console.log(orderForm);
 });
-{% endhighlight %}
+```
 
 
 ## removeAllItems(expectedOrderFormSections)
-{: #removeAllItems .slug-text.omit-parens }
 
 Remove todos os items presentes no orderForm.
 
@@ -303,18 +283,17 @@ Não se esqueça de usar getOrderForm anteriormente.
 
 ### Exemplo
 
-{% highlight javascript %}
+```js
 vtexjs.checkout.getOrderForm().then(function(orderForm){
     return vtexjs.checkout.removeAllItems([item]);
 }).done(function(orderForm){
     alert('Carrinho esvaziado.');
     console.log(orderForm);
 });
-{% endhighlight %}
+```
 
 
 ## calculateShipping(address)
-{: #calculateShipping .slug-text.omit-parens }
 
 Recebendo um endereço, registra o endereço no shippingData do usuário.
 
@@ -332,12 +311,11 @@ Não se esqueça de usar getOrderForm anteriormente.
 | Nome                    | Tipo                          |
 | -----------------------:| :-----------------------------|
 | **address** | **Object** <br> o endereço deve ter, no mínimo, postalCode e country. Com essas duas propriedades, as outras serão inferidas. |
-{: .doc-api-table }
 
 
 ### Exemplo
 
-{% highlight javascript %}
+```js
 vtexjs.checkout.getOrderForm().then(function(orderForm){
     var postalCode = '22250-040';  // também pode ser sem o hífen
     var country: 'Brazil';
@@ -349,11 +327,10 @@ vtexjs.checkout.getOrderForm().then(function(orderForm){
     console.log(orderForm.shippingData);
     console.log(orderForm.totalizers);
 });
-{% endhighlight %}
+```
 
 
 ## simulateShipping(items, postalCode, country)
-{: #simulateShipping .slug-text.omit-parens }
 
 Recebendo uma lista de items, seu postalCode e country, simula frete desses items para este endereço.
 
@@ -377,12 +354,10 @@ de nome, prazo de entrega e preço.
 | **items** | **Array** <br> de objetos que contenham no mínimo, `id`, `quantity` e `seller`. |
 | **postalCode** | **String** <br> no caso do Brasil é o CEP do cliente |
 | **country** | **String** <br> a sigla de 3 letras do país, por exemplo, "BRA" |
-{: .doc-api-table }
-
 
 ### Exemplo
 
-{% highlight javascript %}
+```js
 // O `items` deve ser um array de objetos que contenham, no mínimo, as informações abaixo
 var items = [{
     id: 5987,  // sku do item
@@ -407,11 +382,10 @@ vtexjs.checkout.simulateShipping(items, postalCode, country).done(function(resul
        Para maiores detalhes, consulte a documentação do orderForm.
     */
 });
-{% endhighlight %}
+```
 
 
 ## getAddressInformation(address)
-{: #getAddressInformation .slug-text.omit-parens }
 
 Dado um endereço incompleto com postalCode e country, devolve um endereço completo, com cidade, estado, rua, e quaisquer outras informações disponíveis.
 
@@ -425,12 +399,11 @@ Dado um endereço incompleto com postalCode e country, devolve um endereço comp
 | Nome                    | Tipo                          |
 | -----------------------:| :-----------------------------|
 | **address** | **Object** <br> o endereço deve ter, no mínimo, postalCode e country. Com essas duas propriedades, as outras serão inferidas. |
-{: .doc-api-table }
 
 
 ### Exemplo
 
-{% highlight javascript %}
+```js
 // O `postalCode` deve ser o CEP do cliente, no caso do Brasil
 var postalCode = '22250-040';
 // Desse jeito também funciona
@@ -444,11 +417,10 @@ var address = {postalCode: postalCode, country: country};
 vtexjs.checkout.getAddressInformation(address).done(function(result){
     console.log(result);
 });
-{% endhighlight %}
+```
 
 
 ## getProfileByEmail(email, salesChannel)
-{: #getProfileByEmail .slug-text.omit-parens }
 
 Faz o login parcial do usuário usando o email.
 
@@ -468,23 +440,21 @@ Não se esqueça de usar getOrderForm anteriormente.
 | -----------------------:| :-----------------------------|
 | **email** | **String** <br> |
 | **salesChannel** | **Number ou String** <br> (default = `1`) |
-{: .doc-api-table }
 
 
 ### Exemplo
 
-{% highlight javascript %}
+```js
 vtexjs.checkout.getOrderForm().then(function(orderForm){
     var email = "exemplo@vtex.com.br";
     return vtexjs.checkout.getProfileByEmail(email);
 }).done(function(orderForm){
     console.log(orderForm);
 });
-{% endhighlight %}
+```
 
 
 ## removeAccountId(accountId, expectedOrderFormSections)
-{: #removeAccountId .slug-text.omit-parens }
 
 Em orderForm.paymentData.availableAccounts, você acha as contas de pagamento do usuário.
 Cada conta tem vários detalhes, e um deles é o accountId. Esse id pode ser usado nesse método para a remoção da conta de pagamento.
@@ -501,23 +471,21 @@ Não se esqueça de usar getOrderForm anteriormente.
 | Nome                    | Tipo                          |
 | -----------------------:| :-----------------------------|
 | **accountId** | **String** <br> |
-{: .doc-api-table }
 
 
 ### Exemplo
 
-{% highlight javascript %}
+```js
 vtexjs.checkout.getOrderForm().then(function(orderForm){
     var accountId = orderForm.paymentData.availableAccounts[0].accountId;
     return vtexjs.checkout.removeAccountId(accountId);
 }).then(function(){
     alert('Removido.');
 });
-{% endhighlight %}
+```
 
 
 ## addDiscountCoupon(couponCode, expectedOrderFormSections)
-{: #addDiscountCoupon .slug-text.omit-parens }
 
 Adiciona um cupom de desconto ao orderForm.
 
@@ -535,12 +503,11 @@ Não se esqueça de usar getOrderForm anteriormente.
 | Nome                    | Tipo                          |
 | -----------------------:| :-----------------------------|
 | **couponCode** | **String** <br> |
-{: .doc-api-table }
 
 
 ### Exemplo
 
-{% highlight javascript %}
+```js
 vtexjs.checkout.getOrderForm().then(function(orderForm){
     var code = 'ABC123';
     return vtexjs.checkout.addDiscountCoupon(code);
@@ -550,11 +517,10 @@ vtexjs.checkout.getOrderForm().then(function(orderForm){
     console.log(orderForm.paymentData);
     console.log(orderForm.totalizers);
 });
-{% endhighlight %}
+```
 
 
 ## removeDiscountCoupon(expectedOrderFormSections)
-{: #removeDiscountCoupon .slug-text.omit-parens }
 
 Remove o cupom de desconto do orderForm.
 
@@ -569,7 +535,7 @@ Não se esqueça de usar getOrderForm anteriormente.
 
 ### Exemplo
 
-{% highlight javascript %}
+```js
 vtexjs.checkout.getOrderForm().then(function(orderForm){
     return vtexjs.checkout.removeDiscountCoupon();
 }).then(function(orderForm){
@@ -578,10 +544,9 @@ vtexjs.checkout.getOrderForm().then(function(orderForm){
     console.log(orderForm.paymentData);
     console.log(orderForm.totalizers);
 });
-{% endhighlight %}
+```
 
 ## removeGiftRegistry(expectedOrderFormSections)
-{: #removeGiftRegistry .slug-text.omit-parens }
 
 Remove o gift registry do orderForm.
 
@@ -597,17 +562,16 @@ Não se esqueça de usar getOrderForm anteriormente.
 
 ### Exemplo
 
-{% highlight javascript %}
+```js
 vtexjs.checkout.getOrderForm().then(function(orderForm){
     return vtexjs.checkout.removeGiftRegistry();
 }).then(function(orderForm){
     alert('Lista de presente removida.');
     console.log(orderForm);
 });
-{% endhighlight %}
+```
 
 ## addOffering(offeringId, itemIndex, expectedOrderFormSections)
-{: #addOffering .slug-text.omit-parens }
 
 Adiciona uma oferta ao orderForm.
 
@@ -628,12 +592,11 @@ Não se esqueça de usar getOrderForm anteriormente.
 | -----------------------:| :-----------------------------|
 | **offeringId** | **String ou Number** <br> pode ser encontrado na propriedade `id` da offering |
 | **itemIndex** | **Number** <br> o índice do item ao qual a oferta se aplica |
-{: .doc-api-table }
 
 
 ### Exemplo
 
-{% highlight javascript %}
+```js
 // Considerando a seguinte estrutura (resumida) de items:
 var items = [{
               "id": "2004075",
@@ -662,11 +625,10 @@ vtexjs.checkout.getOrderForm().then(function(){
     console.log(orderForm);
 });
 
-{% endhighlight %}
+```
 
 
 ## removeOffering(offeringId, itemIndex, expectedOrderFormSections)
-{: #removeOffering .slug-text.omit-parens }
 
 Remove uma oferta.
 
@@ -683,12 +645,11 @@ Não se esqueça de usar getOrderForm anteriormente.
 | -----------------------:| :-----------------------------|
 | **offeringId** | **String ou Number** <br> pode ser encontrado na propriedade `id` da offering |
 | **itemIndex** | **Number** <br> o índice do item ao qual a oferta se aplica |
-{: .doc-api-table }
 
 
 ### Exemplo
 
-{% highlight javascript %}
+```js
 // Considerando a seguinte estrutura (resumida) de items:
 var items = [{
               "id": "2004075",
@@ -722,11 +683,10 @@ vtexjs.checkout.getOrderForm().then(function(){
     console.log(orderForm);
 });
 
-{% endhighlight %}
+```
 
 
 ## addItemAttachment(itemIndex, attachmentName, content, expectedOrderFormSections)
-{: #addItemAttachment .slug-text.omit-parens }
 
 Esse método adiciona um anexo (attachment) a um item no carrinho. Com isso, você pode adicionar informações extras ao item.
 
@@ -748,11 +708,10 @@ Não se esqueça de usar getOrderForm anteriormente.
 | **itemIndex** | **Number** <br> o índice do item a ser incluído o anexo |
 | **attachmentName**  | **String**  <br> pode ser encontrado na propriedade `name` em attachmentOfferings dentro do objeto do item |
 | **content** | **Object** um objeto que respeite o schema descrito na propriedade `schema` em attachmentOfferings <br> |
-{: .doc-api-table }
 
 ### Exemplo
 
-{% highlight javascript %}
+```js
 var itemIndex = 0;
 var attachmentName = 'personalizacao';
 var content = {
@@ -766,11 +725,10 @@ vtexjs.checkout.getOrderForm().then(function(){
     console.log(orderForm);
 });
 
-{% endhighlight %}
+```
 
 
 ## removeItemAttachment(itemIndex, attachmentName, content, expectedOrderFormSections)
-{: #removeItemAttachment .slug-text.omit-parens }
 
 Remove um anexo de item no carrinho.
 
@@ -789,11 +747,8 @@ Não se esqueça de usar getOrderForm anteriormente.
 | **attachmentName**  | **String**  <br> pode ser encontrado na propriedade `name` em attachmentOfferings dentro do objeto do item |
 | **content** | **Object** um objeto que respeite o schema descrito na propriedade `schema` em attachmentOfferings <br> |
 
-{: .doc-api-table }
-
 
 ## addBundleItemAttachment(itemIndex, bundleItemId, attachmentName, content, expectedOrderFormSections)
-{: #addBundleItemAttachment .slug-text.omit-parens }
 
 Esse método adiciona um anexo a um serviço (bundleItem) de um item no carrinho.
 
@@ -814,11 +769,10 @@ Não se esqueça de usar getOrderForm anteriormente.
 | **bundleId**  | **String ou Number**  <br> pode ser encontrado na propriedade `id` do bundleItem |
 | **attachmentName**  | **String**  <br> pode ser encontrado na propriedade `name` em attachmentOfferings dentro do objeto do serviço |
 | **content** | **Object** um objeto que respeite o schema descrito na propriedade `schema` em attachmentOfferings <br> |
-{: .doc-api-table }
 
 ### Exemplo
 
-{% highlight javascript %}
+```js
 var itemIndex = 0;
 var bundleItemId = 5;
 var attachmentName = 'message';
@@ -833,11 +787,10 @@ vtexjs.checkout.getOrderForm().then(function(){
     console.log(orderForm);
 });
 
-{% endhighlight %}
+```
 
 
 ## removeBundleItemAttachment(itemIndex, bundleItemId, attachmentName, content, expectedOrderFormSections)
-{: #removeBundleItemAttachment .slug-text.omit-parens }
 
 Remove um anexo de um serviço.
 
@@ -856,11 +809,9 @@ Não se esqueça de usar getOrderForm anteriormente.
 | **bundleId**  | **String ou Number**  <br> pode ser encontrado na propriedade `id` do bundleItem |
 | **attachmentName**  | **String**  <br> pode ser encontrado na propriedade `name` em attachmentOfferings dentro do objeto do serviço |
 | **content** | **Object** um objeto que respeite o schema descrito na propriedade `schema` em attachmentOfferings <br> |
-{: .doc-api-table }
 
 
 ## sendLocale(locale)
-{: #sendLocale .slug-text.omit-parens }
 
 Muda a locale do usuário.
 
@@ -878,22 +829,20 @@ Não se esqueça de usar getOrderForm anteriormente.
 | Nome                    | Tipo                          |
 | -----------------------:| :-----------------------------|
 | **locale** | **String** <br> exemplos: "pt-BR", "en-US" |
-{: .doc-api-table }
 
 
 ### Exemplo
 
-{% highlight javascript %}
+```js
 vtexjs.checkout.getOrderForm().then(function(orderForm){
     return vtexjs.checkout.sendLocale("en-US");
 }).then(function(){
     alert("Now you're an American ;)");
 });
-{% endhighlight %}
+```
 
 
 ## clearMessages(expectedOrderFormSections)
-{: #clearMessages .slug-text.omit-parens }
 
 Ocasionalmente, o orderForm tem sua seção `messages` preenchida com mensagens informativas ou de erro.
 
@@ -908,16 +857,15 @@ Não se esqueça de usar getOrderForm anteriormente.
 
 ### Exemplo
 
-{% highlight javascript %}
+```js
 vtexjs.checkout.getOrderForm().then(function(orderForm){
     return vtexjs.checkout.clearMessages();
 }).then(function(){
     alert("Mensagens limpadas.");
 });
-{% endhighlight %}
+```
 
 ## getLogoutURL()
-{: #getLogoutURL .slug-text.omit-parens }
 
 Esse método retorna uma URL que desloga o usuário, porém mantendo seu carrinho.
 
@@ -932,18 +880,17 @@ Não se esqueça de usar getOrderForm anteriormente.
 
 ### Exemplo
 
-{% highlight javascript %}
+```js
 $('.logout').on('click', function(){
     vtexjs.checkout.getOrderForm().then(function(orderForm){
         var logoutURL = vtexjs.checkout.getLogoutURL();
         window.location = logoutURL;
     });
 });
-{% endhighlight %}
+```
 
 
 ## getOrders(orderGroupId)
-{: #getOrders .slug-text.omit-parens }
 
 Obtém os pedidos (order) contidos num grupo de pedidos (orderGroup).
 
@@ -967,15 +914,14 @@ Em breve, estará disponível a documentação completa deste objeto.
 | Nome                    | Tipo                          |
 | -----------------------:| :-----------------------------|
 | **orderGroupId** | **String** <br> |
-{: .doc-api-table }
 
 
 ### Exemplo
 
-{% highlight javascript %}
+```js
 var orderGroupId = 'v50123456abc';
 vtexjs.checkout.getOrders(orderGroupId).then(function(orders){
     console.log("Quantidade de pedidos nesse grupo: ", orders.length);
     console.log(orders);
 });
-{% endhighlight %}
+```

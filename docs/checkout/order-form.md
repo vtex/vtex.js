@@ -1,11 +1,3 @@
----
-layout: docs
-title: OrderForm
-application: vtex.js
-docType: lib
-version: 2
----
-
 # OrderForm
 
 O OrderForm é o principal conjunto de dados do processo de Checkout.
@@ -20,7 +12,7 @@ Ele é constituído de várias [seções](#secoes). A maioria das chamadas à AP
 
 As propriedades com `…` serão melhor explicadas em [Seções](#secoes).
 
-{% highlight json %}
+```json
 {
   "canEditData": true,
   "clientPreferencesData": …,
@@ -41,7 +33,7 @@ As propriedades com `…` serão melhor explicadas em [Seções](#secoes).
   "userType": null,
   "value": 20980
 }
-{% endhighlight %}
+```
 
 ## Convenções
 
@@ -64,13 +56,12 @@ Seções que não foram pedidas à API são retornadas com valor `null`.
 - [giftRegistryData](#giftRegistryData)
 
 ### items
-{: #items .slug-text}
 
 É um array de objetos **item**. Cada **item** possui informações sobre um produto que está no carrinho do cliente, como nome, preço e quantidade.
 
 #### Exemplo
 
-{% highlight json %}
+```json
 [
   {
     "id": "2004075",
@@ -110,16 +101,15 @@ Seções que não foram pedidas à API são retornadas com valor `null`.
     "unitMultiplier": 1
   }
 ]
-{% endhighlight %}
+```
 
 ### totalizers
-{: #totalizers .slug-text}
 
 É um array de objetos **totalizer**. Cada **totalizer** possui um `id` único, um `name` descritivo, e um `value`.
 
 #### Exemplo
 
-{% highlight json %}
+```json
 [
   {
     "id": "Items"
@@ -131,10 +121,9 @@ Seções que não foram pedidas à API são retornadas com valor `null`.
     "value": 399
   }
 ]
-{% endhighlight %}
+```
 
 ### clientProfileData
-{: #clientProfileData .slug-text}
 
 É um objeto que representa dados do cliente.
 
@@ -144,7 +133,7 @@ Caso o email do cliente não tenha sido confirmado, vários dados pessoais serã
 
 #### Exemplo
 
-{% highlight json %}
+```json
 {
   "attachmentId": "clientProfileData",
   "email": "gadr90@gmail.com",
@@ -160,10 +149,9 @@ Caso o email do cliente não tenha sido confirmado, vários dados pessoais serã
   "corporatePhone": null,
   "isCorporate": false
 }
-{% endhighlight %}
+```
 
 ### shippingData
-{: #shippingData .slug-text}
 
 É um objeto que contém:
 
@@ -177,7 +165,7 @@ Caso o email do cliente não tenha sido confirmado, vários dados pessoais serã
 
 #### Exemplo
 
-{% highlight json %}
+```json
 {
   "attachmentId": "shippingData",
   "address": {
@@ -270,10 +258,9 @@ Caso o email do cliente não tenha sido confirmado, vários dados pessoais serã
     }
   ]
 }
-{% endhighlight %}
+```
 
 ### paymentData
-{: #paymentData .slug-text}
 
 É um objeto que contém:
 
@@ -293,7 +280,7 @@ Caso o email do cliente não tenha sido confirmado, vários dados pessoais serã
 
 #### Exemplo
 
-{% highlight json %}
+```json
 {
   "giftCards": [
     {
@@ -365,16 +352,15 @@ Caso o email do cliente não tenha sido confirmado, vários dados pessoais serã
     }
   ]
 }
-{% endhighlight %}
+```
 
 ### sellers
-{: #sellers .slug-text}
 
 É um array de objetos **seller**. Cada **seller** possui informações simples sobre um vendedor que atua no marketplace da loja.
 
 #### Exemplo
 
-{% highlight json %}
+```json
 [
   {
     "id": "1",
@@ -382,59 +368,55 @@ Caso o email do cliente não tenha sido confirmado, vários dados pessoais serã
     "logo": "http://portal.vtexcommerce.com.br/arquivos/logo.jpg"
   }
 ]
-{% endhighlight %}
+```
 
 ### messages
-{: #messages .slug-text}
 
 Um array de mensagens referentes à chamada feita à API.
 
 #### Exemplo
 
-{% highlight json %}
+```json
 [
   {
-    "code": null
-    "status": "error"
+    "code": null,
+    "status": "error",
     "text": "O vale compra de código AAAA-BBBB-CCCC-DDDD não foi encontrado no sistema"
   }
 ]
-{% endhighlight %}
+```
 
 ### marketingData
-{: #marketingData .slug-text}
 
 **PENDING**
 
 #### Exemplo
 
-{% highlight json %}
+```json
 null
-{% endhighlight %}
+```
 
 ### clientPreferencesData
-{: #clientPreferencesData .slug-text}
 
 Um objeto pequeno contendo preferências do cliente.
 
 #### Exemplo
 
-{% highlight json %}
+```json
 {
   "attachmentId": "clientPreferencesData",
   "locale": "pt-BR",
   "optinNewsLetter": true
 }
-{% endhighlight %}
+```
 
 ### storePreferencesData
-{: #storePreferencesData .slug-text}
 
 Um objeto simples contendo preferências da loja.
 
 #### Exemplo
 
-{% highlight json %}
+```json
 {
   "countryCode": "BRA",
   "checkToSavePersonDataByDefault": true,
@@ -453,15 +435,14 @@ Um objeto simples contendo preferências da loja.
     "startsWithCurrencySymbol": true
   }
 }
-{% endhighlight %}
+```
 
 ### giftRegistryData
-{: #giftRegistryData .slug-text}
 
 **PENDING**
 
 #### Exemplo
 
-{% highlight json %}
+```json
 null
-{% endhighlight %}
+```

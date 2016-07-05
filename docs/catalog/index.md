@@ -1,17 +1,8 @@
----
-layout: docs
-title: Módulo Catalog
-application: vtex.js
-docType: lib
-version: 2
----
-
 # Módulo Catalog
 
 O módulo Catalog obtém dados referentes aos produtos da loja.
 
 ## getProductWithVariations(productId)
-{: #getProductWithVariations .slug-text.omit-parens }
 
 Veja mais abaixo um exemplo do objeto resultante.
 
@@ -24,18 +15,17 @@ Veja mais abaixo um exemplo do objeto resultante.
 | Nome                    | Tipo                          |
 | -----------------------:| :-----------------------------|
 | **productId**           | **String ou Number** <br> O ID do produto. (Não é o SKU!) |
-{: .doc-api-table }
+
 
 ### Exemplo
 
-{% highlight javascript %}
+```js
 vtexjs.catalog.getProductWithVariations(1000).done(function(product){
     console.log(product);
 });
-{% endhighlight %}
+```
 
 ## getCurrentProductWithVariations
-{: #getCurrentProductWithVariations .slug-text.omit-parens }
 
 Similar a `getProductWithVariations`, mas detecta automaticamente o productId.
 
@@ -49,15 +39,15 @@ Deve ser chamado somente em uma página de produto.
 
 **Chamada**
 
-{% highlight javascript %}
+```js
 vtexjs.catalog.getCurrentProductWithVariations().done(function(product){
     console.log(product);
 });
-{% endhighlight %}
+```
 
 **Objeto resultante**
 
-{% highlight javascript %}
+```js
 {
     "productId": 4741,
     "name": "Ração Club Performance Junior Royal Canin",
@@ -123,6 +113,4 @@ vtexjs.catalog.getCurrentProductWithVariations().done(function(product){
         "rewardValue": 319
     }]
 }
-{% endhighlight %}
-
-
+```
