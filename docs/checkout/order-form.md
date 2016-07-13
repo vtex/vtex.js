@@ -277,6 +277,7 @@ Caso o email do cliente não tenha sido confirmado, vários dados pessoais serã
   - `installments`: um array de objetos. Cada objeto representa uma opção de parcelamento para esse sistema de pagamento, conténdo informações como número de parcelas, juros e valores.
 
 - `paymentSystems`: um array de objetos **paymentSystem**. Cada **paymentSystem** contém informações como identificador, tipo, nome e validadores de cartão de crédito.
+- `payments`: um array de objetos de **payments**. Cada **payment** contém informações sobre a forma de pagamento ativa, como valor do pagamento, valor do pagamento sem juros, quantidade de parcelas escolhida, paymentSystem, BIN do cartão e accountId (id do cartão salvo).
 
 #### Exemplo
 
@@ -349,6 +350,16 @@ Caso o email do cliente não tenha sido confirmado, vários dados pessoais serã
       "selected": false,
       "isCustom": false,
       "description": null
+    }
+  ],
+  "payments": [
+    {
+      "accountId": null,
+      "bin: null,
+      "installments": 2,
+      "paymentSystem": "12",
+      "referenceValue": 16175,
+      "value": 16175
     }
   ]
 }
