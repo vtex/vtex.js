@@ -753,7 +753,8 @@ Não se esqueça de usar chamar o getOrderForm pelo menos uma vez anteriormente.
 var itemIndex = 0;
 var attachmentName = 'Customização';
 var content = {
-    "Frente": "10"
+    Nome: 'Ronaldo',
+    Numero: '10'
 };
 
 vtexjs.checkout.addItemAttachment(itemIndex, attachmentName, content).done(function(orderForm){
