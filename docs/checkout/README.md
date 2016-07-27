@@ -694,7 +694,42 @@ Você pode associar um anexo ao sku pela interface administrativa. Para verifica
 
 Por exemplo: ao adicionar uma camiseta do Brasil ao carrinho, você pode adicionar o anexo de 'personalizacao' para que o cliente possa escolher o número a ser impresso na camiseta.
 
-Não se esqueça de usar getOrderForm anteriormente.
+Caso o attachment tenha mais de uma propriedade em seu objeto, você deverá enviar o objeto completo mesmo que só tenha mudado apenas um campo. 
+
+Exemplo:
+
+O item possui um `attachmentOffering` da seguinte maneira:
+
+```js
+"attachmentOfferings": [{
+    "name": "Customização",
+    "required": true,
+    "schema": {
+        "Nome": {
+            "maximumNumberOfCharacters": 20,
+            "domain": []
+        },
+        "Numero": {
+            "maximumNumberOfCharacters": 20,
+            "domain": []
+        }
+    }
+}],
+```
+
+O objeto `content` deve ser sempre passar todas as suas propriedades:
+
+```js
+var itemIndex = 0;
+var attachmentName = 'Customização';
+
+// Usuário inseriu o valor do campo Nome. O objeto deve também passar o campo Numero.
+var content = { Nome: 'Ronaldo', Numero: '' };
+
+vtexjs.checkout.addItemAttachment(itemIndex, attachmentName, content);
+```
+
+Não se esqueça de usar chamar o getOrderForm pelo menos uma vez anteriormente.
 
 ### Retorna
 
@@ -712,21 +747,27 @@ Não se esqueça de usar getOrderForm anteriormente.
 ### Exemplo
 
 ```js
+// Chamado em algum momento antes
+// vtexjs.checkout.getOrderForm()
+
 var itemIndex = 0;
-var attachmentName = 'personalizacao';
+var attachmentName = 'Customização';
 var content = {
-    "numero": "10"
+    "Frente": "10"
 };
 
-vtexjs.checkout.getOrderForm().then(function(){
-    return vtexjs.checkout.addItemAttachment(itemIndex, attachmentName, content);
-}).done(function(orderForm){
+vtexjs.checkout.addItemAttachment(itemIndex, attachmentName, content).done(function(orderForm){
     // Anexo incluído ao item!
     console.log(orderForm);
 });
-
 ```
 
+### Possíveis Erros
+
+**404** - O item não possui esse `attachment` associado ou o objeto `content` está com uma propriedade inválida
+**400** - O objeto `content` não foi passado corretamente
+
+Caso a chamada falhe, verifique o objeto de erro retornado (`error.message`), ele dará pistas do que está errado na chamada.
 
 ## removeItemAttachment(itemIndex, attachmentName, content, expectedOrderFormSections)
 
