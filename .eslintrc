@@ -1,0 +1,12 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
+  "extends": ["vtex"],
+  "rules": {},
+  "env": {
+    "browser": true,
+    "node": true
+  }
+}
