@@ -1,5 +1,5 @@
-import polyfill from './polyfill'
-import $ from 'jQuery'
+import polyfill from './utils/polyfill'
+import $ from 'jquery'
 
 polyfill()
 

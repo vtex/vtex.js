@@ -1,7 +1,7 @@
 import urlParam from './utils/url'
 import { readCookie, readSubcookie } from './utils/cookie'
-import polyfill from './polyfill'
-import $ from 'jQuery'
+import polyfill from './utils/polyfill'
+import $ from 'jquery'
 
 polyfill()
 
@@ -13,10 +13,10 @@ const events = {
 
 class Checkout {
   constructor(options = {}) {
-    if (options.hostURL) {
+    if (options.hostURL != null) {
       this.HOST_URL = options.hostURL
     } else {
-      this.HOST_URL = window ? window.location.origin : ''
+      this.HOST_URL = window && window.location.origin ? window.location.origin : ''
     }
 
     if (options.ajax) {
@@ -48,6 +48,11 @@ class Checkout {
       'ratesAndBenefitsData',
       'openTextField',
     ]
+
+    this._decreasePendingRequests = function() {
+      this._pendingRequestCounter--
+      $(window).trigger(events.REQUEST_END, arguments)
+    }
   }
 
   /*
@@ -62,11 +67,6 @@ class Checkout {
   _increasePendingRequests = (options) => {
     this._pendingRequestCounter++
     $(window).trigger(events.REQUEST_BEGIN, [options])
-  }
-
-  _decreasePendingRequests = () => {
-    this._pendingRequestCounter--
-    $(window).trigger(events.REQUEST_END, arguments)
   }
 
   _broadcastOrderFormUnlessPendingRequests = (orderForm) => {
@@ -117,7 +117,7 @@ class Checkout {
     this._urlToRequestMap[options.url] = xhr
 
     // Delete request from map upon completion
-    xhr.always(() => delete this._urlToRequestMap[options.url])
+    xhr.always(() => (delete this._urlToRequestMap[options.url]))
     xhr.always(this._decreasePendingRequests)
     xhr.done(this._cacheOrderForm)
     xhr.done(this._broadcastOrderFormUnlessPendingRequests)
@@ -569,7 +569,7 @@ class Checkout {
       price: manualPrice,
     }
 
-    this._updateOrderForm({
+    return this._updateOrderForm({
       url: this._manualPriceURL(itemIndex),
       type: 'PUT',
       contentType: 'application/json; charset=utf-8',

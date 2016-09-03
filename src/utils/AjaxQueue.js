@@ -1,4 +1,4 @@
-import $ from 'jQuery'
+import $ from 'jquery'
 
 const AjaxQueue = function(ajax) {
   let theQueue

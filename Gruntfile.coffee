@@ -38,6 +38,16 @@ module.exports = (grunt) ->
       options:
         sourceMap: true
 
+  config.karma = {
+    unit: {
+      configFile: 'karma.conf.js',
+      port: 9999,
+      singleRun: true,
+      browsers: ['PhantomJS'],
+      logLevel: 'ERROR'
+    }
+  }
+
   config.watch.coffee.files = ['src/*.coffee']
 
   tasks =
@@ -46,7 +56,7 @@ module.exports = (grunt) ->
     min: ['uglify'] # minifies files
   # Deploy tasks
     dist: ['build', 'min', 'copy:deploy'] # Dist - minifies files
-    test: []
+    test: ['karma']
     vtex_deploy: ['shell:cp', 'shell:cp_br']
   # Development tasks
     dev: ['nolr', 'build', 'min', 'watch']

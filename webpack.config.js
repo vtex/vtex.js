@@ -33,18 +33,18 @@ if (PROD) {
   console.log('Running webpack with PRODUCTION flag')
 
   plugins = plugins.concat([
-    new CleanWebpackPlugin(['build', 'deploy']),
+    new CleanWebpackPlugin(['lib']),
     new webpack.optimize.DedupePlugin(),
     new webpack.DefinePlugin({
       'process.env': {
         'NODE_ENV': '"production"',
       },
     }),
-    new webpack.optimize.UglifyJsPlugin({compressor: {warnings: false}}),
+    // new webpack.optimize.UglifyJsPlugin({compressor: {warnings: false}}),
   ])
 
   entry = ['./src/index']
-  outputPath = path.join(__dirname, 'deploy', pkg.version)
+  outputPath = path.join(__dirname, 'lib')
   publicPath = 'https://io.vtex.com.br/' + pkg.name + '/' + pkg.version + '/'
 }
 
@@ -58,14 +58,16 @@ module.exports = {
     publicPath: publicPath,
     filename: pkg.name,
     library: pkg.name.replace(/\-|\./g, ''),
-    libraryTarget: 'var',
+    libraryTarget: 'umd',
   },
 
   resolve: {
     extensions: ['', '.js'],
   },
 
-  externals: {},
+  externals: {
+    'jquery': 'jQuery',
+  },
 
   eslint: {
     configFile: '.eslintrc',
