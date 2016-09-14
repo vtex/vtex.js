@@ -293,6 +293,61 @@ vtexjs.checkout.getOrderForm().then(function(orderForm){
 ```
 
 
+## cloneItem(itemIndex, newItemsOptions, expectedOrderFormSections)
+
+Cria um ou mais itens no carrinho com base em um outro item.
+
+Um item é identificado pela sua propriedade `index`. No orderForm, essa propriedade pode ser obtida observando o índice do item no Array de items.
+
+Não se esqueça de usar getOrderForm anteriormente.
+
+### Retorna
+
+`Promise` para o orderForm
+
+
+### Argumentos
+
+| Nome                    | Tipo                          |
+| -----------------------:| :-----------------------------|
+| **itemIndex** | **Number** <br> o índice do item ao qual a oferta se aplica |
+| **newItemsOptions** | **Array** (Opcional) <br> Propriedades que devem ser atribuídas aos novos items|
+
+### Exemplo
+
+Cria um novo item com base no item de índice 0.
+
+```js
+var itemIndex = 0;
+
+vtexjs.checkout.cloneItem(itemIndex)
+  .done(function(orderForm) {
+    console.log(orderForm);
+  });
+```
+
+Cria um novo item com base no item de índice 0 com quantidade 2 e um anexo já configurado.
+
+```js
+var itemIndex = 0;
+var newItemsOptions = [
+  {
+    "itemAttachments": [{
+      "name": "Personalização",
+      "content": {
+        "Nome": "Ronaldo"
+      }
+    }],
+    "quantity": 2
+  }
+];
+
+vtexjs.checkout.cloneItem(itemIndex, newItemsOptions)
+  .done(function(orderForm) {
+    console.log(orderForm);
+  });
+```
+
 ## calculateShipping(address)
 
 Recebendo um endereço, registra o endereço no shippingData do usuário.

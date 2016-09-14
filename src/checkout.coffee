@@ -234,6 +234,12 @@ class Checkout
       item.quantity = 0 for item in items
       @updateItems(items, expectedOrderFormSections)
 
+  # Clone an item to one or more new items like it
+  cloneItem: (itemIndex, newItemsOptions, expectedFormSections = @_allOrderFormSections) =>
+    @_updateOrderForm
+      url: @_getCloneItemURL(itemIndex)
+      data: JSON.stringify(newItemsOptions)
+
   # Sends a request to change the price of an item, updating manualPrice on the orderForm
   # Only possible if allowManualPrice is true
   setManualPrice: (itemIndex, manualPrice) =>
@@ -443,6 +449,9 @@ class Checkout
 
   _getUpdateItemURL: =>
     @_getOrderFormURL() + '/items/update/'
+
+  _getCloneItemURL: (itemIndex) =>
+    @_getOrderFormURL() + '/items/' + itemIndex + '/clone'
 
   _getUpdateSelectableGifts: (list) =>
     @_getOrderFormURL() + '/selectable-gifts/' + list
