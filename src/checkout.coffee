@@ -161,6 +161,17 @@ class Checkout
   sendLocale: (locale='pt-BR') =>
     @sendAttachment('clientPreferencesData', {locale: locale}, [])
 
+  # Sends a request to select an available gift
+  updateSelectableGifts: (list, selectedGifts, expectedOrderFormSections = @_allOrderFormSections) =>
+    updateSelectableGiftsRequest =
+      id: list
+      selectedGifts: selectedGifts
+      expectedOrderFormSections: expectedOrderFormSections
+
+    @_updateOrderForm
+      url: @_getUpdateSelectableGifts(list)
+      data: JSON.stringify(updateSelectableGiftsRequest)
+
   # Sends a request to add an offering, along with its info, to the OrderForm.
   addOfferingWithInfo: (offeringId, offeringInfo, itemIndex, expectedOrderFormSections = @_allOrderFormSections) =>
     updateItemsRequest =
@@ -186,6 +197,20 @@ class Checkout
       url: @_getRemoveOfferingsURL(itemIndex, offeringId)
       data: JSON.stringify(updateItemsRequest)
 
+  # Sends a request to add an item in the OrderForm.
+  addToCart: (items, expectedOrderFormSections = @_allOrderFormSections, salesChannel) =>
+    addToCartRequest =
+      orderItems: items
+      expectedOrderFormSections: expectedOrderFormSections
+
+    salesChannelQueryString = ''
+    if salesChannel
+      salesChannelQueryString = '?sc=' + salesChannel
+
+    @_updateOrderForm
+      url: @_getAddToCartURL() + salesChannelQueryString
+      data: JSON.stringify addToCartRequest
+
   # Sends a request to update the items in the OrderForm. Items that are omitted are not modified.
   updateItems: (items, expectedOrderFormSections = @_allOrderFormSections) =>
     updateItemsRequest =
@@ -196,49 +221,38 @@ class Checkout
       url: @_getUpdateItemURL()
       data: JSON.stringify(updateItemsRequest)
 
-  # Sends a request to select an available gift
-  updateSelectableGifts: (list, selectedGifts, expectedOrderFormSections = @_allOrderFormSections) =>
-    updateSelectableGiftsRequest =
-      id: list
-      selectedGifts: selectedGifts
-      expectedOrderFormSections: expectedOrderFormSections
-
-    @_updateOrderForm
-      url: @_getUpdateSelectableGifts(list)
-      data: JSON.stringify(updateSelectableGiftsRequest)
-
   # Sends a request to remove items from the OrderForm.
   removeItems: (items, expectedOrderFormSections = @_allOrderFormSections) =>
     item.quantity = 0 for item in items
     @updateItems(items, expectedOrderFormSections)
 
   # Sends a request to remove all items from the OrderForm.
-  removeAllItems: (expectedOrderFormSections = @_allOrderFormSections)=>
+  removeAllItems: (expectedOrderFormSections = @_allOrderFormSections) =>
     @getOrderForm(['items']).then (orderForm) =>
       items = orderForm.items
       item.quantity = 0 for item in items
       @updateItems(items, expectedOrderFormSections)
 
-  # Sends a request to add a discount coupon to the OrderForm.
-  addDiscountCoupon: (couponCode, expectedOrderFormSections = @_allOrderFormSections) =>
-    couponCodeRequest =
-      text: couponCode
-      expectedOrderFormSections: expectedOrderFormSections
+  # Sends a request to change the price of an item, updating manualPrice on the orderForm
+  # Only possible if allowManualPrice is true
+  setManualPrice: (itemIndex, manualPrice) =>
+    setManualPriceRequest =
+      price: manualPrice
 
     @_updateOrderForm
-      url: @_getAddCouponURL()
-      data: JSON.stringify couponCodeRequest
+      url: @_manualPriceURL(itemIndex)
+      type: 'PUT'
+      contentType: 'application/json; charset=utf-8'
+      dataType: 'json'
+      data: JSON.stringify setManualPriceRequest
 
-  # Sends a request to remove the discount coupon from the OrderForm.
-  removeDiscountCoupon: (expectedOrderFormSections) =>
-    @addDiscountCoupon('', expectedOrderFormSections)
-
-  # Sends a request to remove the gift registry for the current OrderForm.
-  removeGiftRegistry: (expectedFormSections = @_allOrderFormSections) =>
-    checkoutRequest = { expectedOrderFormSections: expectedFormSections }
+  # Sends a request to remove the manualPrice of an item, updating manualPrice on the orderForm
+  removeManualPrice: (itemIndex) =>
     @_updateOrderForm
-      url: @_getRemoveGiftRegistryURL()
-      data: JSON.stringify(checkoutRequest)
+      url: @_manualPriceURL(itemIndex)
+      type: 'DELETE'
+      contentType: 'application/json; charset=utf-8'
+      dataType: 'json'
 
   # Sends a request to add an attachment to a specific item
   addItemAttachment: (itemIndex, attachmentName, content, expectedFormSections = @_allOrderFormSections) =>
@@ -281,6 +295,27 @@ class Checkout
       url: @_getBundleItemAttachmentURL(itemIndex, bundleItemId, attachmentName)
       type: 'DELETE'
       data: JSON.stringify(dataRequest)
+
+  # Sends a request to add a discount coupon to the OrderForm.
+  addDiscountCoupon: (couponCode, expectedOrderFormSections = @_allOrderFormSections) =>
+    couponCodeRequest =
+      text: couponCode
+      expectedOrderFormSections: expectedOrderFormSections
+
+    @_updateOrderForm
+      url: @_getAddCouponURL()
+      data: JSON.stringify couponCodeRequest
+
+  # Sends a request to remove the discount coupon from the OrderForm.
+  removeDiscountCoupon: (expectedOrderFormSections) =>
+    @addDiscountCoupon('', expectedOrderFormSections)
+
+  # Sends a request to remove the gift registry for the current OrderForm.
+  removeGiftRegistry: (expectedFormSections = @_allOrderFormSections) =>
+    checkoutRequest = { expectedOrderFormSections: expectedFormSections }
+    @_updateOrderForm
+      url: @_getRemoveGiftRegistryURL()
+      data: JSON.stringify(checkoutRequest)
 
   # Sends a request to calculates shipping for the current OrderForm, given a COMPLETE address object.
   calculateShipping: (address) =>
@@ -359,41 +394,6 @@ class Checkout
     HOST_URL + '/checkout/changeToAnonymousUser/' + @_getOrderFormId()
 
   getLogoutURL: @::getChangeToAnonymousUserURL
-
-  # Sends a request to add an item in the OrderForm.
-  addToCart: (items, expectedOrderFormSections = @_allOrderFormSections, salesChannel) =>
-    addToCartRequest =
-      orderItems: items
-      expectedOrderFormSections: expectedOrderFormSections
-
-    salesChannelQueryString = ''
-    if salesChannel
-      salesChannelQueryString = '?sc=' + salesChannel
-
-    @_updateOrderForm
-      url: @_getAddToCartURL() + salesChannelQueryString
-      data: JSON.stringify addToCartRequest
-
-  # Sends a request to change the price of an item, updating manualPrice on the orderForm
-  # Only possible if allowManualPrice is true
-  setManualPrice: (itemIndex, manualPrice) =>
-    setManualPriceRequest =
-      price: manualPrice
-
-    @_updateOrderForm
-      url: @_manualPriceURL(itemIndex)
-      type: 'PUT'
-      contentType: 'application/json; charset=utf-8'
-      dataType: 'json'
-      data: JSON.stringify setManualPriceRequest
-
-  # Sends a request to remove the manualPrice of an item, updating manualPrice on the orderForm
-  removeManualPrice: (itemIndex) =>
-    @_updateOrderForm
-      url: @_manualPriceURL(itemIndex)
-      type: 'DELETE'
-      contentType: 'application/json; charset=utf-8'
-      dataType: 'json'
 
   # URL BUILDERS
 
