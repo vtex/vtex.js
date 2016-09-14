@@ -216,7 +216,7 @@ Não se esqueça de usar getOrderForm anteriormente.
 | Nome                    | Tipo                          |
 | -----------------------:| :-----------------------------|
 | **items** | **Array** <br> o conjunto de items que vão ser atualizados. Mesmo que só haja um item, deve ser envolto num Array.|
-
+| **splitItem** | **Boolean** <br> Default: true <br> Informa se um item separado deve ser criado caso os items a serem atualizados tenham anexos incluídos.|
 
 ### Exemplo
 

@@ -212,10 +212,11 @@ class Checkout
       data: JSON.stringify addToCartRequest
 
   # Sends a request to update the items in the OrderForm. Items that are omitted are not modified.
-  updateItems: (items, expectedOrderFormSections = @_allOrderFormSections) =>
+  updateItems: (items, expectedOrderFormSections = @_allOrderFormSections, splitItem = true) =>
     updateItemsRequest =
       orderItems: items
       expectedOrderFormSections: expectedOrderFormSections
+      noSplitItem: !splitItem
 
     @_updateOrderForm
       url: @_getUpdateItemURL()
