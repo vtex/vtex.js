@@ -350,7 +350,7 @@ class Checkout
       data: {email: email, sc: salesChannel}
 
   # Sends a request to start the transaction. This is the final step in the checkout process.
-  startTransaction: (value, referenceValue, interestValue, savePersonalData = false, optinNewsLetter = false, expectedOrderFormSections = @_allOrderFormSections) =>
+  startTransaction: (value, referenceValue, interestValue, savePersonalData = false, optinNewsLetter, expectedOrderFormSections = @_allOrderFormSections) =>
     transactionRequest = {
       referenceId: @_getOrderFormId()
       savePersonalData: savePersonalData
