@@ -216,7 +216,7 @@ Não se esqueça de usar getOrderForm anteriormente.
 | Nome                    | Tipo                          |
 | -----------------------:| :-----------------------------|
 | **items** | **Array** <br> o conjunto de items que vão ser atualizados. Mesmo que só haja um item, deve ser envolto num Array.|
-| **splitItem** | **Boolean** <br> Default: true <br> Informa se um item separado deve ser criado caso os items a serem atualizados tenham anexos incluídos.|
+| **splitItem** | **Boolean** <br> Default: true <br> Informa se um item separado deve ser criado caso os items a serem atualizados tenham anexos/serviços incluídos.|
 
 ### Exemplo
 
@@ -228,7 +228,7 @@ vtexjs.checkout.getOrderForm().then(function(orderForm){
     item.index = 0;
     item.quantity = 5;
     item.seller = 2;
-    return vtexjs.checkout.updateItems([item]);
+    return vtexjs.checkout.updateItems([item], null, false);
 }).done(function(orderForm){
     alert('Items atualizados!');
     console.log(orderForm);
@@ -741,7 +741,7 @@ vtexjs.checkout.getOrderForm().then(function(){
 ```
 
 
-## addItemAttachment(itemIndex, attachmentName, content, expectedOrderFormSections)
+## addItemAttachment(itemIndex, attachmentName, content, expectedOrderFormSections, splitItem)
 
 Esse método adiciona um anexo (attachment) a um item no carrinho. Com isso, você pode adicionar informações extras ao item.
 
@@ -781,7 +781,7 @@ var attachmentName = 'Customização';
 // Usuário inseriu o valor do campo Nome. O objeto deve também passar o campo Numero.
 var content = { Nome: 'Ronaldo', Numero: '' };
 
-vtexjs.checkout.addItemAttachment(itemIndex, attachmentName, content);
+vtexjs.checkout.addItemAttachment(itemIndex, attachmentName, content, null, false);
 ```
 
 Não se esqueça de usar chamar o getOrderForm pelo menos uma vez anteriormente.
@@ -798,6 +798,7 @@ Não se esqueça de usar chamar o getOrderForm pelo menos uma vez anteriormente.
 | **itemIndex** | **Number** <br> o índice do item a ser incluído o anexo |
 | **attachmentName**  | **String**  <br> pode ser encontrado na propriedade `name` em attachmentOfferings dentro do objeto do item |
 | **content** | **Object** um objeto que respeite o schema descrito na propriedade `schema` em attachmentOfferings <br> |
+| **splitItem** | **Boolean** <br> Default: true <br> Informa se um item separado deve ser criado caso os items a serem atualizados tenham anexos incluídos.|
 
 ### Exemplo
 

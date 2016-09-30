@@ -262,10 +262,11 @@ class Checkout
       dataType: 'json'
 
   # Sends a request to add an attachment to a specific item
-  addItemAttachment: (itemIndex, attachmentName, content, expectedFormSections = @_allOrderFormSections) =>
+  addItemAttachment: (itemIndex, attachmentName, content, expectedFormSections = @_allOrderFormSections, splitItem = true) =>
     dataRequest =
       content: content
       expectedOrderFormSections: expectedFormSections
+      noSplitItem: !splitItem
 
     @_updateOrderForm
       url: @_getItemAttachmentURL(itemIndex, attachmentName)
