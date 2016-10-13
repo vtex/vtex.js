@@ -233,6 +233,17 @@ class Checkout
       item.quantity = 0 for item in items
       @updateItems(items, expectedOrderFormSections)
 
+  # Sends a request to change the order of all items inside the OrderForm.
+  changeItemsOrdination: (criteria, ascending, expectedOrderFormSections = @_allOrderFormSections) =>
+    changeItemsOrdinationRequest =
+      criteria: criteria
+      ascending: ascending
+      expectedOrderFormSections: expectedOrderFormSections
+
+    @_updateOrderForm
+      url: @_getChangeOrdinationURL()
+      data: JSON.stringify(changeItemsOrdinationRequest)
+
   # Sends a request to change the price of an item, updating manualPrice on the orderForm
   # Only possible if allowManualPrice is true
   setManualPrice: (itemIndex, manualPrice) =>
@@ -433,6 +444,9 @@ class Checkout
 
   _getItemAttachmentURL: (itemIndex, attachmentName) =>
     @_getOrderFormURL() + '/items/' + itemIndex + '/attachments/' + attachmentName
+
+  _getChangeOrdinationURL: =>
+    @_getOrderFormURL() + '/itemsOrdination'
 
   _getAddCouponURL: =>
     @_getOrderFormURL() + '/coupons'
