@@ -212,10 +212,11 @@ class Checkout
       data: JSON.stringify addToCartRequest
 
   # Sends a request to update the items in the OrderForm. Items that are omitted are not modified.
-  updateItems: (items, expectedOrderFormSections = @_allOrderFormSections) =>
+  updateItems: (items, expectedOrderFormSections = @_allOrderFormSections, splitItem = true) =>
     updateItemsRequest =
       orderItems: items
       expectedOrderFormSections: expectedOrderFormSections
+      noSplitItem: !splitItem
 
     @_updateOrderForm
       url: @_getUpdateItemURL()
@@ -232,6 +233,12 @@ class Checkout
       items = orderForm.items
       item.quantity = 0 for item in items
       @updateItems(items, expectedOrderFormSections)
+
+  # Clone an item to one or more new items like it
+  cloneItem: (itemIndex, newItemsOptions, expectedFormSections = @_allOrderFormSections) =>
+    @_updateOrderForm
+      url: @_getCloneItemURL(itemIndex)
+      data: JSON.stringify(newItemsOptions)
 
   # Sends a request to change the price of an item, updating manualPrice on the orderForm
   # Only possible if allowManualPrice is true
@@ -255,10 +262,11 @@ class Checkout
       dataType: 'json'
 
   # Sends a request to add an attachment to a specific item
-  addItemAttachment: (itemIndex, attachmentName, content, expectedFormSections = @_allOrderFormSections) =>
+  addItemAttachment: (itemIndex, attachmentName, content, expectedFormSections = @_allOrderFormSections, splitItem = true) =>
     dataRequest =
       content: content
       expectedOrderFormSections: expectedFormSections
+      noSplitItem: !splitItem
 
     @_updateOrderForm
       url: @_getItemAttachmentURL(itemIndex, attachmentName)
@@ -442,6 +450,9 @@ class Checkout
 
   _getUpdateItemURL: =>
     @_getOrderFormURL() + '/items/update/'
+
+  _getCloneItemURL: (itemIndex) =>
+    @_getOrderFormURL() + '/items/' + itemIndex + '/clone'
 
   _getUpdateSelectableGifts: (list) =>
     @_getOrderFormURL() + '/selectable-gifts/' + list
