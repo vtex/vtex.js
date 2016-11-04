@@ -160,6 +160,8 @@ vtexjs.checkout.getOrderForm().then(function(orderForm){
 
 Adiciona itens no orderForm.
 
+*Atenção:* este método não aplica automaticamente as promoções por UTM! Para adicionar promoções por UTM, faça um `sendAttachment` de `marketingData` com os dados necessários.
+
 Um item a ser adicionado é obrigatoriamente composto por: `id`, `quantity` e `seller`. A propriedade `id` pode ser obtida pelo [Catalog](../catalog/), observando o itemId do item no Array de items do produto.
 
 Itens que já estiverem no orderForm permanecerão inalterados.
