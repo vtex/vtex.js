@@ -751,7 +751,7 @@ Você pode associar um anexo ao sku pela interface administrativa. Para verifica
 
 Por exemplo: ao adicionar uma camiseta do Brasil ao carrinho, você pode adicionar o anexo de 'personalizacao' para que o cliente possa escolher o número a ser impresso na camiseta.
 
-Caso o attachment tenha mais de uma propriedade em seu objeto, você deverá enviar o objeto completo mesmo que só tenha mudado apenas um campo. 
+Caso o attachment tenha mais de uma propriedade em seu objeto, você deverá enviar o objeto completo mesmo que só tenha mudado apenas um campo.
 
 Exemplo:
 
@@ -1023,5 +1023,36 @@ var orderGroupId = 'v50123456abc';
 vtexjs.checkout.getOrders(orderGroupId).then(function(orders){
     console.log("Quantidade de pedidos nesse grupo: ", orders.length);
     console.log(orders);
+});
+```
+
+
+## changeItemsOrdination(criteria, ascending, expectedOrderFormSections)
+
+Altera a ordem dos items de acordo com um critério (criteria) e um parâmetro de ascenção(ascending).
+
+Isso causa uma alteração no objeto `itemsOrdination` do `OrderForm` e também na ordem dos objetos do array de `items`.
+
+### Retorna
+
+`Promise` para o orderForm
+
+
+### Argumentos
+
+| Nome                    | Tipo                          |
+| -----------------------:| :-----------------------------|
+| **criteria** | **String** <br> `name` ou `add_time` |
+| **ascending**  | **Boolean**  <br> `true` para crescente e `false` para decrescente |
+
+
+### Exemplo
+
+```js
+var criteria = 'add_time';
+var asceding = 'false';
+vtexjs.checkout.changeItemsOrdination(criteria, ascending).then(function(orderForm){
+    console.log("Critério de ordenação: ", orderForm.itemsOrdination );
+    console.log("Array de items ordenados segundo critério: ", orderForm.items);
 });
 ```
