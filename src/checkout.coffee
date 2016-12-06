@@ -69,6 +69,7 @@ class Checkout
         'giftRegistryData'
         'ratesAndBenefitsData'
         'openTextField'
+        'commercialConditionData'
       ]
 
   ###
