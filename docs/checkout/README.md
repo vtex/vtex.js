@@ -297,7 +297,7 @@ vtexjs.checkout.getOrderForm().then(function(orderForm){
 
 ## cloneItem(itemIndex, newItemsOptions, expectedOrderFormSections)
 
-Cria um ou mais itens no carrinho com base em um outro item.
+Cria um ou mais itens no carrinho com base em um outro item. O item a ser clonado deve ter um attachment.
 
 Um item é identificado pela sua propriedade `index`. No orderForm, essa propriedade pode ser obtida observando o índice do item no Array de items.
 
