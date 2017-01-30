@@ -232,8 +232,13 @@ class Checkout
   removeAllItems: (expectedOrderFormSections = @_allOrderFormSections) =>
     @getOrderForm(['items']).then (orderForm) =>
       items = orderForm.items
-      item.quantity = 0 for item in items
-      @updateItems(items, expectedOrderFormSections)
+      itemsToRemove = []
+      for item, i in items
+        itemsToRemove.push({
+          index: i,
+          quantity: 0
+        })
+      @updateItems(itemsToRemove, expectedOrderFormSections)
 
   # Clone an item to one or more new items like it
   cloneItem: (itemIndex, newItemsOptions, expectedFormSections = @_allOrderFormSections) =>
