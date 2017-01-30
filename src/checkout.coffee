@@ -225,8 +225,13 @@ class Checkout
 
   # Sends a request to remove items from the OrderForm.
   removeItems: (items, expectedOrderFormSections = @_allOrderFormSections) =>
-    item.quantity = 0 for item in items
-    @updateItems(items, expectedOrderFormSections)
+    itemsToRemove = []
+    for item, i in items
+      itemsToRemove.push({
+        index: item.index,
+        quantity: 0
+      })
+    @updateItems(itemsToRemove, expectedOrderFormSections)
 
   # Sends a request to remove all items from the OrderForm.
   removeAllItems: (expectedOrderFormSections = @_allOrderFormSections) =>
