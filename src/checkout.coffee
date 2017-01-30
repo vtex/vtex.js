@@ -225,6 +225,9 @@ class Checkout
 
   # Sends a request to remove items from the OrderForm.
   removeItems: (items, expectedOrderFormSections = @_allOrderFormSections) =>
+    if items and items.length is 0
+      return @getOrderForm(expectedOrderFormSections)
+
     itemsToRemove = []
     for item, i in items
       itemsToRemove.push({
@@ -237,6 +240,9 @@ class Checkout
   removeAllItems: (expectedOrderFormSections = @_allOrderFormSections) =>
     @getOrderForm(['items']).then (orderForm) =>
       items = orderForm.items
+      if items and items.length is 0
+        return orderForm
+
       itemsToRemove = []
       for item, i in items
         itemsToRemove.push({
