@@ -72,7 +72,7 @@ Dada essa explicação, não será mais explicado esse argumento na documentaç�
 ### Exemplo
 
 ```js
-$(window).on('orderFormUpdated.vtex', function(evt, orderForm){
+$(window).on('orderFormUpdated.vtex', function(evt, orderForm) {
   alert('Alguem atualizou o orderForm!');
   console.log(orderForm);
 });
@@ -91,9 +91,10 @@ Esse é um dos métodos mais importantes: é essencial certificar-se de que haja
 ### Exemplo
 
 ```js
-vtexjs.checkout.getOrderForm().done(function(orderForm){
+vtexjs.checkout.getOrderForm()
+  .done(function(orderForm) {
     console.log(orderForm);
-});
+  });
 ```
 
 
@@ -130,15 +131,16 @@ Alterar o primeiro nome do cliente.
 Vamos alterar a propriedade `firstName` de `clientProfileData`.
 
 ```js
-vtexjs.checkout.getOrderForm().then(function(orderForm){
+vtexjs.checkout.getOrderForm()
+  .then(function(orderForm) {
     var clientProfileData = orderForm.clientProfileData;
     clientProfileData.firstName = 'Guilherme';
     return vtexjs.checkout.sendAttachment('clientProfileData', clientProfileData)
-}).done(function(orderForm){
+  }).done(function(orderForm) {
     alert("Nome alterado!");
     console.log(orderForm);
     console.log(orderForm.clientProfileData);
-})
+  })
 ```
 
 #### Alterar openTextField
@@ -147,12 +149,13 @@ O openTextField é um campo destinado a observações e comentários.
 Consulte a [documentação do OrderForm](order-form.md) para mais detalhes sobre ele.
 
 ```js
-vtexjs.checkout.getOrderForm().then(function(orderForm){
+vtexjs.checkout.getOrderForm()
+  .then(function(orderForm) {
     var obs = 'Sem cebola!'
-    return vtexjs.checkout.sendAttachment('openTextField', {value: obs});
-}).done(function(orderForm){
-  console.log("openTextField preenchido com: ", orderForm.openTextField);
-});
+    return vtexjs.checkout.sendAttachment('openTextField', { value: obs });
+  }).done(function(orderForm) {
+    console.log("openTextField preenchido com: ", orderForm.openTextField);
+  });
 ```
 
 
@@ -286,12 +289,11 @@ Não se esqueça de usar getOrderForm anteriormente.
 ### Exemplo
 
 ```js
-vtexjs.checkout.getOrderForm().then(function(orderForm){
-    return vtexjs.checkout.removeAllItems([item]);
-}).done(function(orderForm){
+vtexjs.checkout.removeAllItems()
+  .done(function(orderForm) {
     alert('Carrinho esvaziado.');
     console.log(orderForm);
-});
+  });
 ```
 
 
@@ -430,7 +432,8 @@ var postalCode = '22250-040';
 // O `country` deve ser a sigla de 3 letras do país
 var country = 'BRA';
 
-vtexjs.checkout.simulateShipping(items, postalCode, country).done(function(result){
+vtexjs.checkout.simulateShipping(items, postalCode, country)
+  .done(function(result) {
     /* `result.logisticsInfo` é um array de objetos.
        Cada objeto corresponde às informações de logística (frete) para cada item,
          na ordem em que os items foram enviados.
@@ -438,7 +441,7 @@ vtexjs.checkout.simulateShipping(items, postalCode, country).done(function(resul
          de transportadora (com prazo e preço) para o primeiro item.
        Para maiores detalhes, consulte a documentação do orderForm.
     */
-});
+  });
 ```
 
 
@@ -469,11 +472,15 @@ var postalCode = '22250-040';
 // O `country` deve ser a sigla de 3 letras do país
 var country = 'BRA';
 
-var address = {postalCode: postalCode, country: country};
+var address = {
+  postalCode: postalCode,
+  country: country
+};
 
-vtexjs.checkout.getAddressInformation(address).done(function(result){
+vtexjs.checkout.getAddressInformation(address)
+  .done(function(result) {
     console.log(result);
-});
+  });
 ```
 
 
@@ -502,12 +509,14 @@ Não se esqueça de usar getOrderForm anteriormente.
 ### Exemplo
 
 ```js
-vtexjs.checkout.getOrderForm().then(function(orderForm){
+vtexjs.checkout.getOrderForm()
+  .then(function(orderForm) {
     var email = "exemplo@vtex.com.br";
     return vtexjs.checkout.getProfileByEmail(email);
-}).done(function(orderForm){
+  })
+  .done(function(orderForm) {
     console.log(orderForm);
-});
+  });
 ```
 
 
@@ -533,12 +542,13 @@ Não se esqueça de usar getOrderForm anteriormente.
 ### Exemplo
 
 ```js
-vtexjs.checkout.getOrderForm().then(function(orderForm){
+vtexjs.checkout.getOrderForm()
+  .then(function(orderForm) {
     var accountId = orderForm.paymentData.availableAccounts[0].accountId;
     return vtexjs.checkout.removeAccountId(accountId);
-}).then(function(){
+  }).then(function() {
     alert('Removido.');
-});
+  });
 ```
 
 
@@ -565,15 +575,16 @@ Não se esqueça de usar getOrderForm anteriormente.
 ### Exemplo
 
 ```js
-vtexjs.checkout.getOrderForm().then(function(orderForm){
+vtexjs.checkout.getOrderForm()
+  .then(function(orderForm) {
     var code = 'ABC123';
     return vtexjs.checkout.addDiscountCoupon(code);
-}).then(function(orderForm){
+  }).then(function(orderForm) {
     alert('Cupom adicionado.');
     console.log(orderForm);
     console.log(orderForm.paymentData);
     console.log(orderForm.totalizers);
-});
+  });
 ```
 
 
@@ -593,14 +604,15 @@ Não se esqueça de usar getOrderForm anteriormente.
 ### Exemplo
 
 ```js
-vtexjs.checkout.getOrderForm().then(function(orderForm){
+vtexjs.checkout.getOrderForm()
+  .then(function(orderForm) {
     return vtexjs.checkout.removeDiscountCoupon();
-}).then(function(orderForm){
+  }).then(function(orderForm) {
     alert('Cupom removido.');
     console.log(orderForm);
     console.log(orderForm.paymentData);
     console.log(orderForm.totalizers);
-});
+  });
 ```
 
 ## removeGiftRegistry(expectedOrderFormSections)
@@ -620,12 +632,14 @@ Não se esqueça de usar getOrderForm anteriormente.
 ### Exemplo
 
 ```js
-vtexjs.checkout.getOrderForm().then(function(orderForm){
+vtexjs.checkout.getOrderForm()
+  .then(function(orderForm) {
     return vtexjs.checkout.removeGiftRegistry();
-}).then(function(orderForm){
+  })
+  .then(function(orderForm) {
     alert('Lista de presente removida.');
     console.log(orderForm);
-});
+  });
 ```
 
 ## addOffering(offeringId, itemIndex, expectedOrderFormSections)
@@ -656,32 +670,33 @@ Não se esqueça de usar getOrderForm anteriormente.
 ```js
 // Considerando a seguinte estrutura (resumida) de items:
 var items = [{
-              "id": "2004075",
-              "productId": "4741",
-              "name": "Ração",
-              "skuName": "Ração 3 kg",
-              "quantity": 3,
-              "seller": "1",
-              "bundleItems": [],
-              "offerings": [{
-                "id": "1033",
-                "name": "A Oferta Magnifica",
-                "price": 100,
-                "type": "idk"
-              }],
-              "availability": "available"
-            }];
+  "id": "2004075",
+  "productId": "4741",
+  "name": "Ração",
+  "skuName": "Ração 3 kg",
+  "quantity": 3,
+  "seller": "1",
+  "bundleItems": [],
+  "offerings": [{
+    "id": "1033",
+    "name": "A Oferta Magnifica",
+    "price": 100,
+    "type": "idk"
+  }],
+  "availability": "available"
+}];
 
 var offeringId = items[0].offerings[0].id;
 var itemIndex = 0;
 
-vtexjs.checkout.getOrderForm().then(function(){
+vtexjs.checkout.getOrderForm()
+  .then(function() {
     return vtexjs.checkout.addOffering(offeringId, itemIndex);
-}).done(function(orderForm){
+  })
+  .done(function(orderForm) {
     // Oferta adicionada!
     console.log(orderForm);
-});
-
+  });
 ```
 
 
@@ -709,37 +724,37 @@ Não se esqueça de usar getOrderForm anteriormente.
 ```js
 // Considerando a seguinte estrutura (resumida) de items:
 var items = [{
-              "id": "2004075",
-              "productId": "4741",
-              "name": "Ração",
-              "skuName": "Ração 3 kg",
-              "quantity": 3,
-              "seller": "1",
-              "bundleItems": [{
-                "id": "1033",
-                "name": "A Oferta Magnifica",
-                "price": 100,
-                "type": "idk"
-              }],
-              "offerings": [{
-                "id": "1033",
-                "name": "A Oferta Magnifica",
-                "price": 100,
-                "type": "idk"
-              }],
-              "availability": "available"
-            }];
+  "id": "2004075",
+  "productId": "4741",
+  "name": "Ração",
+  "skuName": "Ração 3 kg",
+  "quantity": 3,
+  "seller": "1",
+  "bundleItems": [{
+    "id": "1033",
+    "name": "A Oferta Magnifica",
+    "price": 100,
+    "type": "idk"
+  }],
+  "offerings": [{
+    "id": "1033",
+    "name": "A Oferta Magnifica",
+    "price": 100,
+    "type": "idk"
+  }],
+  "availability": "available"
+}];
 
 var offeringId = items[0].bundleItems[0].id;
 var itemIndex = 0;
 
-vtexjs.checkout.getOrderForm().then(function(){
+vtexjs.checkout.getOrderForm()
+  .then(function() {
     return vtexjs.checkout.removeOffering(offeringId, itemIndex);
-}).done(function(orderForm){
+  }).done(function(orderForm) {
     // Oferta removida!
     console.log(orderForm);
-});
-
+  });
 ```
 
 
@@ -759,18 +774,18 @@ O item possui um `attachmentOffering` da seguinte maneira:
 
 ```js
 "attachmentOfferings": [{
-    "name": "Customização",
-    "required": true,
-    "schema": {
-        "Nome": {
-            "maximumNumberOfCharacters": 20,
-            "domain": []
-        },
-        "Numero": {
-            "maximumNumberOfCharacters": 20,
-            "domain": []
-        }
+  "name": "Customização",
+  "required": true,
+  "schema": {
+    "Nome": {
+      "maximumNumberOfCharacters": 20,
+      "domain": []
+    },
+    "Numero": {
+      "maximumNumberOfCharacters": 20,
+      "domain": []
     }
+  }
 }],
 ```
 
@@ -811,14 +826,15 @@ Não se esqueça de usar chamar o getOrderForm pelo menos uma vez anteriormente.
 var itemIndex = 0;
 var attachmentName = 'Customização';
 var content = {
-    Nome: 'Ronaldo',
-    Numero: '10'
+  Nome: 'Ronaldo',
+  Numero: '10'
 };
 
-vtexjs.checkout.addItemAttachment(itemIndex, attachmentName, content).done(function(orderForm){
+vtexjs.checkout.addItemAttachment(itemIndex, attachmentName, content)
+  .done(function(orderForm) {
     // Anexo incluído ao item!
     console.log(orderForm);
-});
+  });
 ```
 
 ### Possíveis Erros
@@ -880,13 +896,13 @@ var content = {
     "text": "Parabéns!"
 };
 
-vtexjs.checkout.getOrderForm().then(function(){
+vtexjs.checkout.getOrderForm()
+  .then(function() {
     return vtexjs.checkout.addBundleItemAttachment(itemIndex, bundleItemId, attachmentName, content);
-}).done(function(orderForm){
+  }).done(function(orderForm) {
     // Anexo incluído ao item!
     console.log(orderForm);
-});
-
+  });
 ```
 
 
@@ -934,11 +950,12 @@ Não se esqueça de usar getOrderForm anteriormente.
 ### Exemplo
 
 ```js
-vtexjs.checkout.getOrderForm().then(function(orderForm){
+vtexjs.checkout.getOrderForm()
+  .then(function(orderForm) {
     return vtexjs.checkout.sendLocale("en-US");
-}).then(function(){
+  }).then(function() {
     alert("Now you're an American ;)");
-});
+  });
 ```
 
 
@@ -958,11 +975,12 @@ Não se esqueça de usar getOrderForm anteriormente.
 ### Exemplo
 
 ```js
-vtexjs.checkout.getOrderForm().then(function(orderForm){
+vtexjs.checkout.getOrderForm()
+  .then(function(orderForm) {
     return vtexjs.checkout.clearMessages();
-}).then(function(){
+  }).then(function() {
     alert("Mensagens limpadas.");
-});
+  });
 ```
 
 ## getLogoutURL()
@@ -981,10 +999,11 @@ Não se esqueça de usar getOrderForm anteriormente.
 ### Exemplo
 
 ```js
-$('.logout').on('click', function(){
-    vtexjs.checkout.getOrderForm().then(function(orderForm){
-        var logoutURL = vtexjs.checkout.getLogoutURL();
-        window.location = logoutURL;
+$('.logout').on('click', function() {
+  vtexjs.checkout.getOrderForm()
+    .then(function(orderForm) {
+      var logoutURL = vtexjs.checkout.getLogoutURL();
+      window.location = logoutURL;
     });
 });
 ```
@@ -1020,10 +1039,11 @@ Em breve, estará disponível a documentação completa deste objeto.
 
 ```js
 var orderGroupId = 'v50123456abc';
-vtexjs.checkout.getOrders(orderGroupId).then(function(orders){
+vtexjs.checkout.getOrders(orderGroupId)
+  .then(function(orders) {
     console.log("Quantidade de pedidos nesse grupo: ", orders.length);
     console.log(orders);
-});
+  });
 ```
 
 
@@ -1051,8 +1071,9 @@ Isso causa uma alteração no objeto `itemsOrdination` do `OrderForm` e também 
 ```js
 var criteria = 'add_time';
 var asceding = 'false';
-vtexjs.checkout.changeItemsOrdination(criteria, ascending).then(function(orderForm){
-    console.log("Critério de ordenação: ", orderForm.itemsOrdination );
+vtexjs.checkout.changeItemsOrdination(criteria, ascending)
+  .then(function(orderForm) {
+    console.log("Critério de ordenação: ", orderForm.itemsOrdination);
     console.log("Array de items ordenados segundo critério: ", orderForm.items);
-});
+  });
 ```
