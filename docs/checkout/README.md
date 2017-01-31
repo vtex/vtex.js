@@ -229,16 +229,20 @@ Não se esqueça de usar getOrderForm anteriormente.
 Altera a quantidade e o seller do primeiro item.
 
 ```js
-vtexjs.checkout.getOrderForm().then(function(orderForm){
-    var item = orderForm.items[0];
-    item.index = 0;
-    item.quantity = 5;
-    item.seller = 2;
-    return vtexjs.checkout.updateItems([item], null, false);
-}).done(function(orderForm){
+vtexjs.checkout.getOrderForm()
+  .then(function(orderForm) {
+    var itemIndex = 0;
+    var item = orderForm.items[itemIndex];
+    var updateItem = {
+      index: itemIndex,
+      quantity: 5
+    };
+    return vtexjs.checkout.updateItems([updateItem], null, false);
+  })
+  .done(function(orderForm) {
     alert('Items atualizados!');
     console.log(orderForm);
-});
+  });
 ```
 
 
@@ -266,14 +270,22 @@ Não se esqueça de usar getOrderForm anteriormente.
 Remove o primeiro item.
 
 ```js
-vtexjs.checkout.getOrderForm().then(function(orderForm){
-    var item = orderForm.items[0];
-    item.index = 0;
-    return vtexjs.checkout.removeItems([item]);
-}).done(function(orderForm){
+vtexjs.checkout.getOrderForm()
+  .then(function(orderForm) {
+    var itemIndex = 0
+    var item = orderForm.items[itemIndex];
+    var itemsToRemove = [
+      {
+        "index": 0,
+        "quantity": 0,
+      }
+    ]
+    return vtexjs.checkout.removeItems(itemsToRemove);
+  })
+  .done(function(orderForm) {
     alert('Item removido!');
     console.log(orderForm);
-});
+  });
 ```
 
 
