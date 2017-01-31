@@ -388,17 +388,21 @@ Não se esqueça de usar getOrderForm anteriormente.
 ### Exemplo
 
 ```js
-vtexjs.checkout.getOrderForm().then(function(orderForm){
+vtexjs.checkout.getOrderForm()
+  .then(function(orderForm) {
     var postalCode = '22250-040';  // também pode ser sem o hífen
-    var country: 'Brazil';
-    var address = {postalCode: postalCode, country: country};
+    var country = 'BRA';
+    var address = {
+      "postalCode": postalCode,
+      "country": country
+    };
     return vtexjs.checkout.calculateShipping(address)
-})
-.done(function(orderForm){
+  })
+  .done(function(orderForm) {
     alert('Frete calculado.');
     console.log(orderForm.shippingData);
     console.log(orderForm.totalizers);
-});
+  });
 ```
 
 
