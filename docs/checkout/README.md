@@ -188,14 +188,15 @@ Adiciona um item de itemId 2000017893 do sales channel 3.
 
 ```js
 var item = {
-    id: 2000017893,
-    quantity: 1,
-    seller: 1
+  id: 2000017893,
+  quantity: 1,
+  seller: '1'
 };
-vtexjs.checkout.addToCart([item], null, 3).done(function(orderForm){
+vtexjs.checkout.addToCart([item], null, 3)
+  .done(function(orderForm) {
     alert('Item adicionado!');
     console.log(orderForm);
-});
+  });
 ```
 
 
@@ -419,9 +420,9 @@ de nome, prazo de entrega e preço.
 ```js
 // O `items` deve ser um array de objetos que contenham, no mínimo, as informações abaixo
 var items = [{
-    id: 5987,  // sku do item
-    quantity: 1,
-    seller: 1
+  id: 5987,  // sku do item
+  quantity: 1,
+  seller: '1'
 }];
 
 // O `postalCode` deve ser o CEP do cliente, no caso do Brasil
