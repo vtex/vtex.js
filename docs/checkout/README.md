@@ -73,7 +73,7 @@ Dada essa explicação, não será mais explicado esse argumento na documentaç�
 
 ```js
 $(window).on('orderFormUpdated.vtex', function(evt, orderForm) {
-  alert('Alguem atualizou o orderForm!');
+  console.log('Alguem atualizou o orderForm!');
   console.log(orderForm);
 });
 ```
@@ -92,7 +92,7 @@ Esse é um dos métodos mais importantes: é essencial certificar-se de que haja
 
 ```js
 vtexjs.checkout.getOrderForm()
-  .done(function(orderForm) {
+  .then(function(orderForm) {
     console.log(orderForm);
   });
 ```
@@ -107,8 +107,6 @@ Isso possibilita atualizar essa seção, enviando novas informações, alterando
 **Atenção**: é necessário mandar o attachment por completo. Veja os exemplos.
 
 Veja a [documentação do OrderForm](order-form.md) para descobrir quais são as seções.
-
-Não se esqueça de usar getOrderForm anteriormente.
 
 ### Retorna
 
@@ -127,18 +125,16 @@ Não se esqueça de usar getOrderForm anteriormente.
 
 #### Alterar clientProfileData
 
-Alterar o primeiro nome do cliente.
-Vamos alterar a propriedade `firstName` de `clientProfileData`.
+Alterar o email do cliente.
+Vamos alterar a propriedade `email` de `clientProfileData`.
 
 ```js
-vtexjs.checkout.getOrderForm()
+var clientProfileData = {
+  email: 'jose@mailinator.com'
+};
+vtexjs.checkout.sendAttachment('clientProfileData', clientProfileData)
   .then(function(orderForm) {
-    var clientProfileData = orderForm.clientProfileData;
-    clientProfileData.firstName = 'Guilherme';
-    return vtexjs.checkout.sendAttachment('clientProfileData', clientProfileData)
-  }).done(function(orderForm) {
-    alert("Nome alterado!");
-    console.log(orderForm);
+    console.log('Email alterado!');
     console.log(orderForm.clientProfileData);
   })
 ```
@@ -149,11 +145,9 @@ O openTextField é um campo destinado a observações e comentários.
 Consulte a [documentação do OrderForm](order-form.md) para mais detalhes sobre ele.
 
 ```js
-vtexjs.checkout.getOrderForm()
+var obs = 'Sem cebola!';
+vtexjs.checkout.sendAttachment('openTextField', { value: obs })
   .then(function(orderForm) {
-    var obs = 'Sem cebola!'
-    return vtexjs.checkout.sendAttachment('openTextField', { value: obs });
-  }).done(function(orderForm) {
     console.log("openTextField preenchido com: ", orderForm.openTextField);
   });
 ```
@@ -193,7 +187,7 @@ var item = {
   seller: '1'
 };
 vtexjs.checkout.addToCart([item], null, 3)
-  .done(function(orderForm) {
+  .then(function(orderForm) {
     alert('Item adicionado!');
     console.log(orderForm);
   });
@@ -209,8 +203,6 @@ Um item é identificado pela sua propriedade `index`. No orderForm, essa proprie
 Veja a [documentação do OrderForm](order-form.md) para conhecer mais sobre o que compõe o objeto de item.
 
 Propriedades que não forem enviadas serão mantidas inalteradas, assim como items que estão no orderForm mas nao foram enviados.
-
-Não se esqueça de usar getOrderForm anteriormente.
 
 ### Retorna
 
@@ -229,18 +221,15 @@ Não se esqueça de usar getOrderForm anteriormente.
 Altera a quantidade e o seller do primeiro item.
 
 ```js
-vtexjs.checkout.getOrderForm()
+var itemIndex = 0;
+var item = orderForm.items[itemIndex];
+var updateItem = {
+  index: itemIndex,
+  quantity: 5
+};
+vtexjs.checkout.updateItems([updateItem], null, false)
   .then(function(orderForm) {
-    var itemIndex = 0;
-    var item = orderForm.items[itemIndex];
-    var updateItem = {
-      index: itemIndex,
-      quantity: 5
-    };
-    return vtexjs.checkout.updateItems([updateItem], null, false);
-  })
-  .done(function(orderForm) {
-    alert('Items atualizados!');
+    console.log('Items atualizados!');
     console.log(orderForm);
   });
 ```
@@ -251,8 +240,6 @@ vtexjs.checkout.getOrderForm()
 Remove items no orderForm.
 
 Um item é identificado pela sua propriedade `index`. No orderForm, essa propriedade pode ser obtida observando o índice do item no Array de items.
-
-Não se esqueça de usar getOrderForm anteriormente.
 
 ### Retorna
 
@@ -270,20 +257,17 @@ Não se esqueça de usar getOrderForm anteriormente.
 Remove o primeiro item.
 
 ```js
-vtexjs.checkout.getOrderForm()
+var itemIndex = 0
+var item = orderForm.items[itemIndex];
+var itemsToRemove = [
+  {
+    "index": 0,
+    "quantity": 0,
+  }
+]
+vtexjs.checkout.removeItems(itemsToRemove)
   .then(function(orderForm) {
-    var itemIndex = 0
-    var item = orderForm.items[itemIndex];
-    var itemsToRemove = [
-      {
-        "index": 0,
-        "quantity": 0,
-      }
-    ]
-    return vtexjs.checkout.removeItems(itemsToRemove);
-  })
-  .done(function(orderForm) {
-    alert('Item removido!');
+    console.log('Item removido!');
     console.log(orderForm);
   });
 ```
@@ -293,8 +277,6 @@ vtexjs.checkout.getOrderForm()
 
 Remove todos os items presentes no orderForm.
 
-Não se esqueça de usar getOrderForm anteriormente.
-
 ### Retorna
 
 `Promise` para o orderForm
@@ -303,8 +285,8 @@ Não se esqueça de usar getOrderForm anteriormente.
 
 ```js
 vtexjs.checkout.removeAllItems()
-  .done(function(orderForm) {
-    alert('Carrinho esvaziado.');
+  .then(function(orderForm) {
+    console.log('Carrinho esvaziado.');
     console.log(orderForm);
   });
 ```
@@ -315,8 +297,6 @@ vtexjs.checkout.removeAllItems()
 Cria um ou mais itens no carrinho com base em um outro item. O item a ser clonado deve ter um attachment.
 
 Um item é identificado pela sua propriedade `index`. No orderForm, essa propriedade pode ser obtida observando o índice do item no Array de items.
-
-Não se esqueça de usar getOrderForm anteriormente.
 
 ### Retorna
 
@@ -338,7 +318,7 @@ Cria um novo item com base no item de índice 0.
 var itemIndex = 0;
 
 vtexjs.checkout.cloneItem(itemIndex)
-  .done(function(orderForm) {
+  .then(function(orderForm) {
     console.log(orderForm);
   });
 ```
@@ -360,7 +340,7 @@ var newItemsOptions = [
 ];
 
 vtexjs.checkout.cloneItem(itemIndex, newItemsOptions)
-  .done(function(orderForm) {
+  .then(function(orderForm) {
     console.log(orderForm);
   });
 ```
@@ -370,8 +350,6 @@ vtexjs.checkout.cloneItem(itemIndex, newItemsOptions)
 Recebendo um endereço, registra o endereço no shippingData do usuário.
 
 O efeito disso é que o frete estará calculado e disponível em um dos totalizers do orderForm.
-
-Não se esqueça de usar getOrderForm anteriormente.
 
 ### Retorna
 
@@ -388,18 +366,15 @@ Não se esqueça de usar getOrderForm anteriormente.
 ### Exemplo
 
 ```js
-vtexjs.checkout.getOrderForm()
+var postalCode = '22250-040';  // também pode ser sem o hífen
+var country = 'BRA';
+var address = {
+  "postalCode": postalCode,
+  "country": country
+};
+vtexjs.checkout.calculateShipping(address)
   .then(function(orderForm) {
-    var postalCode = '22250-040';  // também pode ser sem o hífen
-    var country = 'BRA';
-    var address = {
-      "postalCode": postalCode,
-      "country": country
-    };
-    return vtexjs.checkout.calculateShipping(address)
-  })
-  .done(function(orderForm) {
-    alert('Frete calculado.');
+    console.log('Frete calculado.');
     console.log(orderForm.shippingData);
     console.log(orderForm.totalizers);
   });
@@ -450,7 +425,7 @@ var postalCode = '22250-040';
 var country = 'BRA';
 
 vtexjs.checkout.simulateShipping(items, postalCode, country)
-  .done(function(result) {
+  .then(function(result) {
     /* `result.logisticsInfo` é um array de objetos.
        Cada objeto corresponde às informações de logística (frete) para cada item,
          na ordem em que os items foram enviados.
@@ -495,7 +470,7 @@ var address = {
 };
 
 vtexjs.checkout.getAddressInformation(address)
-  .done(function(result) {
+  .then(function(result) {
     console.log(result);
   });
 ```
@@ -508,11 +483,9 @@ Faz o login parcial do usuário usando o email.
 As informações provavelmente vão vir mascaradas e não será possível editá-las, caso o usuário já exista. Para isso, é necessário autenticar-se com VTEX ID.
 Certifique-se disso com a propriedade canEditData do orderForm. Veja a [documentação do OrderForm](order-form.md).
 
-Não se esqueça de usar getOrderForm anteriormente.
-
 ### Retorna
 
-`Promise` para o orderForm
+`Promise` para o resumo do perfil do usuário
 
 
 ### Argumentos
@@ -526,13 +499,10 @@ Não se esqueça de usar getOrderForm anteriormente.
 ### Exemplo
 
 ```js
-vtexjs.checkout.getOrderForm()
-  .then(function(orderForm) {
-    var email = "exemplo@vtex.com.br";
-    return vtexjs.checkout.getProfileByEmail(email);
-  })
-  .done(function(orderForm) {
-    console.log(orderForm);
+var email = "exemplo@vtex.com.br";
+vtexjs.checkout.getProfileByEmail(email)
+  .then(function(profileData) {
+    console.log(profileData);
   });
 ```
 
@@ -541,8 +511,6 @@ vtexjs.checkout.getOrderForm()
 
 Em orderForm.paymentData.availableAccounts, você acha as contas de pagamento do usuário.
 Cada conta tem vários detalhes, e um deles é o accountId. Esse id pode ser usado nesse método para a remoção da conta de pagamento.
-
-Não se esqueça de usar getOrderForm anteriormente.
 
 ### Retorna
 
@@ -559,12 +527,10 @@ Não se esqueça de usar getOrderForm anteriormente.
 ### Exemplo
 
 ```js
-vtexjs.checkout.getOrderForm()
-  .then(function(orderForm) {
-    var accountId = orderForm.paymentData.availableAccounts[0].accountId;
-    return vtexjs.checkout.removeAccountId(accountId);
-  }).then(function() {
-    alert('Removido.');
+var accountId = orderForm.paymentData.availableAccounts[0].accountId;
+vtexjs.checkout.removeAccountId(accountId)
+  .then(function() {
+    console.log('Cartão salvo apagado.');
   });
 ```
 
@@ -574,8 +540,6 @@ vtexjs.checkout.getOrderForm()
 Adiciona um cupom de desconto ao orderForm.
 
 Só pode existir um cupom de desconto por compra.
-
-Não se esqueça de usar getOrderForm anteriormente.
 
 ### Retorna
 
@@ -592,13 +556,10 @@ Não se esqueça de usar getOrderForm anteriormente.
 ### Exemplo
 
 ```js
-vtexjs.checkout.getOrderForm()
+var code = 'ABC123';
+vtexjs.checkout.addDiscountCoupon(code)
   .then(function(orderForm) {
-    var code = 'ABC123';
-    return vtexjs.checkout.addDiscountCoupon(code);
-  }).then(function(orderForm) {
-    alert('Cupom adicionado.');
-    console.log(orderForm);
+    console.log('Cupom adicionado.');
     console.log(orderForm.paymentData);
     console.log(orderForm.totalizers);
   });
@@ -611,8 +572,6 @@ Remove o cupom de desconto do orderForm.
 
 Só pode existir um cupom de desconto por compra, então não há necessidade de especificar nada aqui.
 
-Não se esqueça de usar getOrderForm anteriormente.
-
 ### Retorna
 
 `Promise` para o orderForm
@@ -621,11 +580,9 @@ Não se esqueça de usar getOrderForm anteriormente.
 ### Exemplo
 
 ```js
-vtexjs.checkout.getOrderForm()
+vtexjs.checkout.removeDiscountCoupon()
   .then(function(orderForm) {
-    return vtexjs.checkout.removeDiscountCoupon();
-  }).then(function(orderForm) {
-    alert('Cupom removido.');
+    console.log('Cupom removido.');
     console.log(orderForm);
     console.log(orderForm.paymentData);
     console.log(orderForm.totalizers);
@@ -639,8 +596,6 @@ Remove o gift registry do orderForm.
 Isso desvincula a lista de presente a que o orderForm está vinculado, se estiver.
 Se não estiver, não faz nada.
 
-Não se esqueça de usar getOrderForm anteriormente.
-
 ### Retorna
 
 `Promise` para o orderForm
@@ -649,12 +604,9 @@ Não se esqueça de usar getOrderForm anteriormente.
 ### Exemplo
 
 ```js
-vtexjs.checkout.getOrderForm()
+vtexjs.checkout.removeGiftRegistry()
   .then(function(orderForm) {
-    return vtexjs.checkout.removeGiftRegistry();
-  })
-  .then(function(orderForm) {
-    alert('Lista de presente removida.');
+    console.log('Lista de presente removida.');
     console.log(orderForm);
   });
 ```
@@ -667,7 +619,6 @@ Cada item do orderForm pode possuir uma lista de `offerings`. Estes são ofertas
 
 Quando uma oferta é adicionada, ela figurará no campo `bundleItems` do item.
 
-Não se esqueça de usar getOrderForm anteriormente.
 
 ### Retorna
 
@@ -706,12 +657,9 @@ var items = [{
 var offeringId = items[0].offerings[0].id;
 var itemIndex = 0;
 
-vtexjs.checkout.getOrderForm()
-  .then(function() {
-    return vtexjs.checkout.addOffering(offeringId, itemIndex);
-  })
-  .done(function(orderForm) {
-    // Oferta adicionada!
+vtexjs.checkout.addOffering(offeringId, itemIndex)
+  .then(function(orderForm) {
+    console.log('Oferta adicionada!');
     console.log(orderForm);
   });
 ```
@@ -720,8 +668,6 @@ vtexjs.checkout.getOrderForm()
 ## removeOffering(offeringId, itemIndex, expectedOrderFormSections)
 
 Remove uma oferta.
-
-Não se esqueça de usar getOrderForm anteriormente.
 
 ### Retorna
 
@@ -765,11 +711,9 @@ var items = [{
 var offeringId = items[0].bundleItems[0].id;
 var itemIndex = 0;
 
-vtexjs.checkout.getOrderForm()
-  .then(function() {
-    return vtexjs.checkout.removeOffering(offeringId, itemIndex);
-  }).done(function(orderForm) {
-    // Oferta removida!
+vtexjs.checkout.removeOffering(offeringId, itemIndex)
+  .then(function(orderForm) {
+    console.log('Oferta removida!');
     console.log(orderForm);
   });
 ```
@@ -818,8 +762,6 @@ var content = { Nome: 'Ronaldo', Numero: '' };
 vtexjs.checkout.addItemAttachment(itemIndex, attachmentName, content, null, false);
 ```
 
-Não se esqueça de usar chamar o getOrderForm pelo menos uma vez anteriormente.
-
 ### Retorna
 
 `Promise` para o orderForm
@@ -837,9 +779,6 @@ Não se esqueça de usar chamar o getOrderForm pelo menos uma vez anteriormente.
 ### Exemplo
 
 ```js
-// Chamado em algum momento antes
-// vtexjs.checkout.getOrderForm()
-
 var itemIndex = 0;
 var attachmentName = 'Customização';
 var content = {
@@ -848,8 +787,8 @@ var content = {
 };
 
 vtexjs.checkout.addItemAttachment(itemIndex, attachmentName, content)
-  .done(function(orderForm) {
-    // Anexo incluído ao item!
+  .then(function(orderForm) {
+    console.log('Anexo incluído ao item!');
     console.log(orderForm);
   });
 ```
@@ -864,8 +803,6 @@ Caso a chamada falhe, verifique o objeto de erro retornado (`error.message`), el
 ## removeItemAttachment(itemIndex, attachmentName, content, expectedOrderFormSections)
 
 Remove um anexo de item no carrinho.
-
-Não se esqueça de usar getOrderForm anteriormente.
 
 ### Retorna
 
@@ -886,8 +823,6 @@ Não se esqueça de usar getOrderForm anteriormente.
 Esse método adiciona um anexo a um serviço (bundleItem) de um item no carrinho.
 
 Você pode associar um anexo ao serviço pela interface administrativa. Para verificar quais anexos que podem ser inseridos, verifique a propriedade `attachmentOfferings` do serviço.
-
-Não se esqueça de usar getOrderForm anteriormente.
 
 ### Retorna
 
@@ -913,11 +848,9 @@ var content = {
     "text": "Parabéns!"
 };
 
-vtexjs.checkout.getOrderForm()
-  .then(function() {
-    return vtexjs.checkout.addBundleItemAttachment(itemIndex, bundleItemId, attachmentName, content);
-  }).done(function(orderForm) {
-    // Anexo incluído ao item!
+vtexjs.checkout.addBundleItemAttachment(itemIndex, bundleItemId, attachmentName, content)
+  .then(function(orderForm) {
+    console.log('Anexo incluído ao item!');
     console.log(orderForm);
   });
 ```
@@ -926,8 +859,6 @@ vtexjs.checkout.getOrderForm()
 ## removeBundleItemAttachment(itemIndex, bundleItemId, attachmentName, content, expectedOrderFormSections)
 
 Remove um anexo de um serviço.
-
-Não se esqueça de usar getOrderForm anteriormente.
 
 ### Retorna
 
@@ -950,8 +881,6 @@ Muda a locale do usuário.
 
 Isso causa uma mudança no orderForm, em `clientPreferencesData`.
 
-Não se esqueça de usar getOrderForm anteriormente.
-
 ### Retorna
 
 `Promise` para o sucesso (nenhuma seção do orderForm é requisitada)
@@ -967,11 +896,9 @@ Não se esqueça de usar getOrderForm anteriormente.
 ### Exemplo
 
 ```js
-vtexjs.checkout.getOrderForm()
-  .then(function(orderForm) {
-    return vtexjs.checkout.sendLocale("en-US");
-  }).then(function() {
-    alert("Now you're an American ;)");
+vtexjs.checkout.sendLocale('en-US')
+  .then(function() {
+    console.log('Now you\'re an American');
   });
 ```
 
@@ -982,8 +909,6 @@ Ocasionalmente, o orderForm tem sua seção `messages` preenchida com mensagens 
 
 Para limpar as mensagens, use esse método.
 
-Não se esqueça de usar getOrderForm anteriormente.
-
 ### Retorna
 
 `Promise` para o sucesso (nenhuma seção do orderForm é requisitada)
@@ -992,11 +917,9 @@ Não se esqueça de usar getOrderForm anteriormente.
 ### Exemplo
 
 ```js
-vtexjs.checkout.getOrderForm()
-  .then(function(orderForm) {
-    return vtexjs.checkout.clearMessages();
-  }).then(function() {
-    alert("Mensagens limpadas.");
+vtexjs.checkout.clearMessages()
+  .then(function() {
+    consoel.log('Mensagens limpadas.')
   });
 ```
 
@@ -1005,8 +928,6 @@ vtexjs.checkout.getOrderForm()
 Esse método retorna uma URL que desloga o usuário, porém mantendo seu carrinho.
 
 É sua responsabilidade executar esse redirecionamento.
-
-Não se esqueça de usar getOrderForm anteriormente.
 
 ### Retorna
 
@@ -1017,11 +938,8 @@ Não se esqueça de usar getOrderForm anteriormente.
 
 ```js
 $('.logout').on('click', function() {
-  vtexjs.checkout.getOrderForm()
-    .then(function(orderForm) {
-      var logoutURL = vtexjs.checkout.getLogoutURL();
-      window.location = logoutURL;
-    });
+  var logoutURL = vtexjs.checkout.getLogoutURL();
+  window.location = logoutURL;
 });
 ```
 
