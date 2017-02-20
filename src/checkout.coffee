@@ -99,6 +99,13 @@ class Checkout
       return false if not orderForm[section]
     return true
 
+  _requiresOrderForm: () =>
+    id = @_getOrderFormId()
+    if id is ''
+      return @getOrderForm()
+    else
+      return @promise()
+
   # $.ajax wrapper with common defaults.
   # Used to encapsulate requests which have side effects and should broadcast results
   _updateOrderForm: (options) =>
@@ -147,94 +154,103 @@ class Checkout
 
   # Sends an OrderForm attachment to the current OrderForm, possibly updating it.
   sendAttachment: (attachmentId, attachment, expectedOrderFormSections = @_allOrderFormSections) =>
-    if attachmentId is undefined or attachment is undefined
-      d = $.Deferred()
-      d.reject("Invalid arguments")
-      return d.promise()
+    @_requiresOrderForm().then =>
+      if attachmentId is undefined or attachment is undefined
+        d = $.Deferred()
+        d.reject("Invalid arguments")
+        return d.promise()
 
-    attachment['expectedOrderFormSections'] = expectedOrderFormSections
+      attachment['expectedOrderFormSections'] = expectedOrderFormSections
 
-    @_updateOrderForm
-      url: @_getSaveAttachmentURL(attachmentId)
-      data: JSON.stringify(attachment)
+      @_updateOrderForm
+        url: @_getSaveAttachmentURL(attachmentId)
+        data: JSON.stringify(attachment)
 
   # Sends a request to set the used locale.
   sendLocale: (locale='pt-BR') =>
-    @sendAttachment('clientPreferencesData', {locale: locale}, [])
+    @_requiresOrderForm().then =>
+      @sendAttachment('clientPreferencesData', {locale: locale}, [])
 
   # Sends a request to select an available gift
   updateSelectableGifts: (list, selectedGifts, expectedOrderFormSections = @_allOrderFormSections) =>
-    updateSelectableGiftsRequest =
-      id: list
-      selectedGifts: selectedGifts
-      expectedOrderFormSections: expectedOrderFormSections
+    @_requiresOrderForm().then =>
+      updateSelectableGiftsRequest =
+        id: list
+        selectedGifts: selectedGifts
+        expectedOrderFormSections: expectedOrderFormSections
 
-    @_updateOrderForm
-      url: @_getUpdateSelectableGifts(list)
-      data: JSON.stringify(updateSelectableGiftsRequest)
+      @_updateOrderForm
+        url: @_getUpdateSelectableGifts(list)
+        data: JSON.stringify(updateSelectableGiftsRequest)
 
   # Sends a request to add an offering, along with its info, to the OrderForm.
   addOfferingWithInfo: (offeringId, offeringInfo, itemIndex, expectedOrderFormSections = @_allOrderFormSections) =>
-    updateItemsRequest =
-      id: offeringId
-      info: offeringInfo
-      expectedOrderFormSections: expectedOrderFormSections
+    @_requiresOrderForm().then =>
+      updateItemsRequest =
+        id: offeringId
+        info: offeringInfo
+        expectedOrderFormSections: expectedOrderFormSections
 
-    @_updateOrderForm
-      url: @_getAddOfferingsURL(itemIndex)
-      data: JSON.stringify(updateItemsRequest)
+      @_updateOrderForm
+        url: @_getAddOfferingsURL(itemIndex)
+        data: JSON.stringify(updateItemsRequest)
 
   # Sends a request to add an offering to the OrderForm.
   addOffering: (offeringId, itemIndex, expectedOrderFormSections) =>
-    @addOfferingWithInfo(offeringId, null, itemIndex, expectedOrderFormSections)
+    @_requiresOrderForm().then =>
+      @addOfferingWithInfo(offeringId, null, itemIndex, expectedOrderFormSections)
 
   # Sends a request to remove an offering from the OrderForm.
   removeOffering: (offeringId, itemIndex, expectedOrderFormSections = @_allOrderFormSections) =>
-    updateItemsRequest =
-      Id: offeringId
-      expectedOrderFormSections: expectedOrderFormSections
+    @_requiresOrderForm().then =>
+      updateItemsRequest =
+        Id: offeringId
+        expectedOrderFormSections: expectedOrderFormSections
 
-    @_updateOrderForm
-      url: @_getRemoveOfferingsURL(itemIndex, offeringId)
-      data: JSON.stringify(updateItemsRequest)
+      @_updateOrderForm
+        url: @_getRemoveOfferingsURL(itemIndex, offeringId)
+        data: JSON.stringify(updateItemsRequest)
 
   # Sends a request to add an item in the OrderForm.
   addToCart: (items, expectedOrderFormSections = @_allOrderFormSections, salesChannel) =>
-    addToCartRequest =
-      orderItems: items
-      expectedOrderFormSections: expectedOrderFormSections
+    @_requiresOrderForm().then =>
+      addToCartRequest =
+        orderItems: items
+        expectedOrderFormSections: expectedOrderFormSections
 
-    salesChannelQueryString = ''
-    if salesChannel
-      salesChannelQueryString = '?sc=' + salesChannel
+      salesChannelQueryString = ''
+      if salesChannel
+        salesChannelQueryString = '?sc=' + salesChannel
 
-    @_updateOrderForm
-      url: @_getAddToCartURL() + salesChannelQueryString
-      data: JSON.stringify addToCartRequest
+      @_updateOrderForm
+        url: @_getAddToCartURL() + salesChannelQueryString
+        data: JSON.stringify addToCartRequest
 
   # Sends a request to update the items in the OrderForm. Items that are omitted are not modified.
   updateItems: (items, expectedOrderFormSections = @_allOrderFormSections, splitItem = true) =>
-    updateItemsRequest =
-      orderItems: items
-      expectedOrderFormSections: expectedOrderFormSections
-      noSplitItem: !splitItem
+    @_requiresOrderForm().then =>
+      updateItemsRequest =
+        orderItems: items
+        expectedOrderFormSections: expectedOrderFormSections
+        noSplitItem: !splitItem
 
-    @_updateOrderForm
-      url: @_getUpdateItemURL()
-      data: JSON.stringify(updateItemsRequest)
+      @_updateOrderForm
+        url: @_getUpdateItemURL()
+        data: JSON.stringify(updateItemsRequest)
 
   # Sends a request to remove items from the OrderForm.
   removeItems: (items, expectedOrderFormSections = @_allOrderFormSections) =>
-    if items and items.length is 0
-      return @getOrderForm(expectedOrderFormSections)
+    @_requiresOrderForm().then =>
+      if items and items.length is 0
+        return @getOrderForm(expectedOrderFormSections)
 
-    itemsToRemove = []
-    for item, i in items
-      itemsToRemove.push({
-        index: item.index,
-        quantity: 0
-      })
-    @updateItems(itemsToRemove, expectedOrderFormSections)
+      itemsToRemove = []
+      for item, i in items
+        itemsToRemove.push({
+          index: item.index,
+          quantity: 0
+        })
+      @updateItems(itemsToRemove, expectedOrderFormSections)
 
   # Sends a request to remove all items from the OrderForm.
   removeAllItems: (expectedOrderFormSections = @_allOrderFormSections) =>
@@ -253,109 +269,121 @@ class Checkout
 
   # Clone an item to one or more new items like it
   cloneItem: (itemIndex, newItemsOptions, expectedFormSections = @_allOrderFormSections) =>
-    @_updateOrderForm
-      url: @_getCloneItemURL(itemIndex)
-      data: JSON.stringify(newItemsOptions)
+    @_requiresOrderForm().then =>
+      @_updateOrderForm
+        url: @_getCloneItemURL(itemIndex)
+        data: JSON.stringify(newItemsOptions)
 
   # Sends a request to change the order of all items inside the OrderForm.
   changeItemsOrdination: (criteria, ascending, expectedOrderFormSections = @_allOrderFormSections) =>
-    changeItemsOrdinationRequest =
-      criteria: criteria
-      ascending: ascending
-      expectedOrderFormSections: expectedOrderFormSections
+    @_requiresOrderForm().then =>
+      changeItemsOrdinationRequest =
+        criteria: criteria
+        ascending: ascending
+        expectedOrderFormSections: expectedOrderFormSections
 
-    @_updateOrderForm
-      url: @_getChangeOrdinationURL()
-      data: JSON.stringify(changeItemsOrdinationRequest)
+      @_updateOrderForm
+        url: @_getChangeOrdinationURL()
+        data: JSON.stringify(changeItemsOrdinationRequest)
 
   # Sends a request to change the price of an item, updating manualPrice on the orderForm
   # Only possible if allowManualPrice is true
   setManualPrice: (itemIndex, manualPrice) =>
-    setManualPriceRequest =
-      price: manualPrice
+    @_requiresOrderForm().then =>
+      setManualPriceRequest =
+        price: manualPrice
 
-    @_updateOrderForm
-      url: @_manualPriceURL(itemIndex)
-      type: 'PUT'
-      contentType: 'application/json; charset=utf-8'
-      dataType: 'json'
-      data: JSON.stringify setManualPriceRequest
+      @_updateOrderForm
+        url: @_manualPriceURL(itemIndex)
+        type: 'PUT'
+        contentType: 'application/json; charset=utf-8'
+        dataType: 'json'
+        data: JSON.stringify setManualPriceRequest
 
   # Sends a request to remove the manualPrice of an item, updating manualPrice on the orderForm
   removeManualPrice: (itemIndex) =>
-    @_updateOrderForm
-      url: @_manualPriceURL(itemIndex)
-      type: 'DELETE'
-      contentType: 'application/json; charset=utf-8'
-      dataType: 'json'
+    @_requiresOrderForm().then =>
+      @_updateOrderForm
+        url: @_manualPriceURL(itemIndex)
+        type: 'DELETE'
+        contentType: 'application/json; charset=utf-8'
+        dataType: 'json'
 
   # Sends a request to add an attachment to a specific item
   addItemAttachment: (itemIndex, attachmentName, content, expectedFormSections = @_allOrderFormSections, splitItem = true) =>
-    dataRequest =
-      content: content
-      expectedOrderFormSections: expectedFormSections
-      noSplitItem: !splitItem
+    @_requiresOrderForm().then =>
+      dataRequest =
+        content: content
+        expectedOrderFormSections: expectedFormSections
+        noSplitItem: !splitItem
 
-    @_updateOrderForm
-      url: @_getItemAttachmentURL(itemIndex, attachmentName)
-      data: JSON.stringify(dataRequest)
+      @_updateOrderForm
+        url: @_getItemAttachmentURL(itemIndex, attachmentName)
+        data: JSON.stringify(dataRequest)
 
   # Sends a request to remove an attachment of a specific item
   removeItemAttachment: (itemIndex, attachmentName, content, expectedFormSections = @_allOrderFormSections) =>
-    dataRequest =
-      content: content
-      expectedOrderFormSections: expectedFormSections
+    @_requiresOrderForm().then =>
+      dataRequest =
+        content: content
+        expectedOrderFormSections: expectedFormSections
 
-    @_updateOrderForm
-      url: @_getItemAttachmentURL(itemIndex, attachmentName)
-      type: 'DELETE'
-      data: JSON.stringify(dataRequest)
+      @_updateOrderForm
+        url: @_getItemAttachmentURL(itemIndex, attachmentName)
+        type: 'DELETE'
+        data: JSON.stringify(dataRequest)
 
   # Send a request to add an attachment to a bunle item
   addBundleItemAttachment: (itemIndex, bundleItemId, attachmentName, content, expectedFormSections = @_allOrderFormSections) =>
-    dataRequest =
-      content: content
-      expectedOrderFormSections: expectedFormSections
+    @_requiresOrderForm().then =>
+      dataRequest =
+        content: content
+        expectedOrderFormSections: expectedFormSections
 
-    @_updateOrderForm
-      url: @_getBundleItemAttachmentURL(itemIndex, bundleItemId, attachmentName)
-      data: JSON.stringify(dataRequest)
+      @_updateOrderForm
+        url: @_getBundleItemAttachmentURL(itemIndex, bundleItemId, attachmentName)
+        data: JSON.stringify(dataRequest)
 
   # Sends a request to remove an attachmetn from a bundle item
   removeBundleItemAttachment: (itemIndex, bundleItemId, attachmentName, content, expectedFormSections = @_allOrderFormSections) =>
-    dataRequest =
-      content: content
-      expectedOrderFormSections: expectedFormSections
+    @_requiresOrderForm().then =>
+      dataRequest =
+        content: content
+        expectedOrderFormSections: expectedFormSections
 
-    @_updateOrderForm
-      url: @_getBundleItemAttachmentURL(itemIndex, bundleItemId, attachmentName)
-      type: 'DELETE'
-      data: JSON.stringify(dataRequest)
+      @_updateOrderForm
+        url: @_getBundleItemAttachmentURL(itemIndex, bundleItemId, attachmentName)
+        type: 'DELETE'
+        data: JSON.stringify(dataRequest)
 
   # Sends a request to add a discount coupon to the OrderForm.
   addDiscountCoupon: (couponCode, expectedOrderFormSections = @_allOrderFormSections) =>
-    couponCodeRequest =
-      text: couponCode
-      expectedOrderFormSections: expectedOrderFormSections
+    @_requiresOrderForm().then =>
+      couponCodeRequest =
+        text: couponCode
+        expectedOrderFormSections: expectedOrderFormSections
 
-    @_updateOrderForm
-      url: @_getAddCouponURL()
-      data: JSON.stringify couponCodeRequest
+      @_updateOrderForm
+        url: @_getAddCouponURL()
+        data: JSON.stringify couponCodeRequest
 
   # Sends a request to remove the discount coupon from the OrderForm.
   removeDiscountCoupon: (expectedOrderFormSections) =>
-    @addDiscountCoupon('', expectedOrderFormSections)
+    @_requiresOrderForm().then =>
+      @addDiscountCoupon('', expectedOrderFormSections)
 
   # Sends a request to remove the gift registry for the current OrderForm.
   removeGiftRegistry: (expectedFormSections = @_allOrderFormSections) =>
-    checkoutRequest = { expectedOrderFormSections: expectedFormSections }
-    @_updateOrderForm
-      url: @_getRemoveGiftRegistryURL()
-      data: JSON.stringify(checkoutRequest)
+    @_requiresOrderForm().then =>
+      checkoutRequest = { expectedOrderFormSections: expectedFormSections }
+      @_updateOrderForm
+        url: @_getRemoveGiftRegistryURL()
+        data: JSON.stringify(checkoutRequest)
 
   # Sends a request to calculates shipping for the current OrderForm, given a COMPLETE address object.
   calculateShipping: (address) =>
-    @sendAttachment('shippingData', {address: address})
+    @_requiresOrderForm().then =>
+      @sendAttachment('shippingData', {address: address})
 
   # Simulates shipping using a list of items, a postal code and a country.
   simulateShipping: (items, postalCode, country) =>
@@ -387,18 +415,19 @@ class Checkout
 
   # Sends a request to start the transaction. This is the final step in the checkout process.
   startTransaction: (value, referenceValue, interestValue, savePersonalData = false, optinNewsLetter, expectedOrderFormSections = @_allOrderFormSections) =>
-    transactionRequest = {
-      referenceId: @_getOrderFormId()
-      savePersonalData: savePersonalData
-      optinNewsLetter: optinNewsLetter
-      value: value
-      referenceValue: referenceValue
-      interestValue: interestValue
-      expectedOrderFormSections : expectedOrderFormSections
-    }
-    @_updateOrderForm
-      url: @_startTransactionURL(),
-      data: JSON.stringify(transactionRequest)
+    @_requiresOrderForm().then =>
+      transactionRequest = {
+        referenceId: @_getOrderFormId()
+        savePersonalData: savePersonalData
+        optinNewsLetter: optinNewsLetter
+        value: value
+        referenceValue: referenceValue
+        interestValue: interestValue
+        expectedOrderFormSections : expectedOrderFormSections
+      }
+      @_updateOrderForm
+        url: @_startTransactionURL(),
+        data: JSON.stringify(transactionRequest)
 
   # Sends a request to retrieve the orders for a specific orderGroupId.
   getOrders: (orderGroupId) =>
@@ -410,20 +439,22 @@ class Checkout
 
   # Sends a request to clear the OrderForm messages.
   clearMessages: (expectedOrderFormSections = @_allOrderFormSections) =>
-    clearMessagesRequest = { expectedOrderFormSections: expectedOrderFormSections }
-    @ajax
-      url: @_getOrderFormURL() + '/messages/clear'
-      type: 'POST'
-      contentType: 'application/json; charset=utf-8'
-      dataType: 'json'
-      data: JSON.stringify clearMessagesRequest
+    @_requiresOrderForm().then =>
+      clearMessagesRequest = { expectedOrderFormSections: expectedOrderFormSections }
+      @ajax
+        url: @_getMessagesClearURL()
+        type: 'POST'
+        contentType: 'application/json; charset=utf-8'
+        dataType: 'json'
+        data: JSON.stringify clearMessagesRequest
 
   # Sends a request to remove a payment account from the OrderForm.
   removeAccountId: (accountId, expectedOrderFormSections = @_allOrderFormSections) =>
-    removeAccountIdRequest = { expectedOrderFormSections: expectedOrderFormSections }
-    @_updateOrderForm
-      url: @_getOrderFormURL() + '/paymentAccount/' + accountId + '/remove'
-      data: JSON.stringify removeAccountIdRequest
+    @_requiresOrderForm().then =>
+      removeAccountIdRequest = { expectedOrderFormSections: expectedOrderFormSections }
+      @_updateOrderForm
+        url: @_getRemoveAccountIdURL(accountId)
+        data: JSON.stringify removeAccountIdRequest
 
   # URL to redirect the user to when he chooses to logout.
   getChangeToAnonymousUserURL: =>
@@ -470,6 +501,9 @@ class Checkout
   _getItemAttachmentURL: (itemIndex, attachmentName) =>
     @_getOrderFormURL() + '/items/' + itemIndex + '/attachments/' + attachmentName
 
+  _getMessagesClearURL: () =>
+    @_getOrderFormURL() + '/messages/clear'
+
   _getChangeOrdinationURL: =>
     @_getOrderFormURL() + '/itemsOrdination'
 
@@ -490,6 +524,9 @@ class Checkout
 
   _getRemoveGiftRegistryURL: =>
     @_getBaseOrderFormURL() + "/giftRegistry/#{@_getOrderFormId()}/remove"
+
+  _getRemoveAccountIdURL: (accountId) =>
+    @_getOrderFormURL() + '/paymentAccount/' + accountId + '/remove'
 
   _getAddToCartURL: =>
     @_getOrderFormURL() + '/items'
