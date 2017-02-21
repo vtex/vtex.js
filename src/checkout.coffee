@@ -386,14 +386,18 @@ class Checkout
       @sendAttachment('shippingData', {address: address})
 
   # Simulates shipping using a list of items, a postal code and a country.
-  simulateShipping: (items, postalCode, country) =>
+  simulateShipping: (items, postalCode, country, salesChannel) =>
     dataRequest =
       items: items
       postalCode: postalCode
       country: country
 
+    salesChannelQueryString = ''
+    if salesChannel
+      salesChannelQueryString = '?sc=' + salesChannel
+
     @ajax
-      url: @_getSimulationURL()
+      url: @_getSimulationURL() + salesChannelQueryString
       type: 'POST'
       contentType: 'application/json; charset=utf-8'
       dataType: 'json'

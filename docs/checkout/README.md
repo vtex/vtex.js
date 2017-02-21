@@ -173,7 +173,7 @@ Itens que já estiverem no orderForm permanecerão inalterados.
 | Nome                    | Tipo                          |
 | -----------------------:| :-----------------------------|
 | **items** | **Array** <br> o conjunto de items que vão ser adicionados. Mesmo que só haja um item, deve ser envolto num Array.|
-| **salesChannel** | **Number ou String** <br> (default = `1`) |
+| **salesChannel** | **Number ou String** <br> (Parâmetro opcional, default = `1`) |
 
 
 ### Exemplo
@@ -381,7 +381,7 @@ vtexjs.checkout.calculateShipping(address)
 ```
 
 
-## simulateShipping(items, postalCode, country)
+## simulateShipping(items, postalCode, country, salesChannel)
 
 Recebendo uma lista de items, seu postalCode e country, simula frete desses items para este endereço.
 
@@ -405,6 +405,7 @@ de nome, prazo de entrega e preço.
 | **items** | **Array** <br> de objetos que contenham no mínimo, `id`, `quantity` e `seller`. |
 | **postalCode** | **String** <br> no caso do Brasil é o CEP do cliente |
 | **country** | **String** <br> a sigla de 3 letras do país, por exemplo, "BRA" |
+| **salesChannel** | **Number ou String** <br> (Parâmetro opcional, default = `1`) |
 
 ### Exemplo
 
