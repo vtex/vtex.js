@@ -99,6 +99,13 @@ class Checkout
       return false if not orderForm[section]
     return true
 
+  # Blocking this branch:
+  # @promise signature is different from the @ajax signature
+  # That means that the functions now have a breaking change
+  # since they do not provide an `abort()` method anymore
+  #
+  # We need to figure out a way to make it return a proper abort
+  # function
   _requiresOrderForm: () =>
     id = @_getOrderFormId()
     if id is ''
