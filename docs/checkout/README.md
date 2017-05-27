@@ -1095,3 +1095,39 @@ vtexjs.checkout.changeItemsOrdination(criteria, ascending)
     console.log("Array de items ordenados segundo critério: ", orderForm.items);
   });
 ```
+
+## replaceSKU(items, noSplitItem, expectedOrderFormSections)
+
+Remove SKU de um item atual e substitui por um novo.
+
+### Retorna
+
+`Promise` para o orderForm
+
+### Argumentos
+
+| Nome                    | Tipo                          |
+| -----------------------:| :-----------------------------|
+| **items** | **Array** <br> objeto com o sku a ser removido em quantidade 0, e o novo sku que será adicionado. Deve estar em volto em um array|
+| **splitItem** | **Boolean** <br> Default: true <br> Informa se um item separado deve ser criado caso os items a serem atualizados tenham anexos/serviços incluídos.|
+
+### Exemplo
+```js
+var items = [
+  {
+    "seller":"1",
+    "quantity":0,
+    "index":0,
+  },
+  {
+    "seller":"1",
+    "quantity":1,
+    "id":"2",
+  }
+]
+
+vtexjs.checkout.replaceSKU(items)
+  .then(function(orderForm) {
+    console.log("Novos items: ", orderForm.items);
+  });
+```
