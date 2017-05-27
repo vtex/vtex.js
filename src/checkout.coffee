@@ -436,6 +436,18 @@ class Checkout
 
   getLogoutURL: @::getChangeToAnonymousUserURL
 
+  # Replace current SKU for new SKU
+  replaceSKU: (items, noSplitItem = true, expectedOrderFormSections = @_allOrderFormSections) =>
+    @_updateOrderForm({
+      url: @_getAddToCartURL()
+      type: 'PATCH'
+      data: JSON.stringify({
+        "orderItems": items,
+        "expectedOrderFormSections": expectedOrderFormSections,
+        "noSplitItem": noSplitItem,
+      })
+    })
+
   # URL BUILDERS
 
   _getOrderFormId: =>
