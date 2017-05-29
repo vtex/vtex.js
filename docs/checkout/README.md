@@ -1096,7 +1096,7 @@ vtexjs.checkout.changeItemsOrdination(criteria, ascending)
   });
 ```
 
-## replaceSKU(items, noSplitItem, expectedOrderFormSections)
+## replaceSKU(items, expectedOrderFormSections, splitItem)
 
 Remove SKU de um item atual e substitui por um novo.
 
