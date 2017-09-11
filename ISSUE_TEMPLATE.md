@@ -1,9 +1,10 @@
-**Você quer pedir uma nova feature ou reportar um bug?**
+<!-- Is that a new feature or a bug report? -->
+- [ ] Feature
+- [ ] Bug
 
-**Qual o comportamento atual?**
+**What is the current behaviour?**
 
-**Se o comportamento atual é um bug, por favor, forneça os passos para reproduzir o problema.**
+**What is the expected behaviour?**
 
-**Qual o comportamento esperado?**
+**If it's a bug, describe the steps to reproduce:**
 
-**Qual browser e sistema operacional são afetados por esse problema?**
