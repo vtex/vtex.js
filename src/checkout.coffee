@@ -25,6 +25,15 @@ readCookie = (name) ->
 readSubcookie = (name, cookie) ->
   mapize(cookie, '&', '=', ((s)->s), unescape)[name]
 
+
+ addWorkspaceQueryString = (url) ->
+  workspace = urlParam('workspace')
+  if workspace
+    if window.location.search.length > 0
+      return url + '&workspace=' + workspace
+    else return url + '?workspace=' + workspace
+  return url
+
 # IE
 window.location.origin or= window.location.protocol + "//" + window.location.hostname + (if window.location.port then ':' + window.location.port else '')
 
@@ -105,6 +114,8 @@ class Checkout
   _updateOrderForm: (options) =>
     throw new Error("options.url is required when sending request") unless options?.url
 
+    options.url = addWorkspaceQueryString(options.url)
+
     # Defaults
     options.type or= 'POST'
     options.contentType or= 'application/json; charset=utf-8'
@@ -137,7 +148,7 @@ class Checkout
     else
       checkoutRequest = { expectedOrderFormSections: expectedFormSections }
       xhr = @ajax
-        url: @_getBaseOrderFormURL()
+        url: addWorkspaceQueryString(@_getBaseOrderFormURL())
         type: 'POST'
         contentType: 'application/json; charset=utf-8'
         dataType: 'json'
@@ -204,6 +215,7 @@ class Checkout
     addToCartRequest =
       orderItems: items
       expectedOrderFormSections: expectedOrderFormSections
+
 
     salesChannelQueryString = ''
     if salesChannel
@@ -370,23 +382,24 @@ class Checkout
       salesChannelQueryString = '?sc=' + salesChannel
 
     @ajax
-      url: @_getSimulationURL() + salesChannelQueryString
+      url: addWorkspaceQueryString(@_getSimulationURL() + salesChannelQueryString)
       type: 'POST'
       contentType: 'application/json; charset=utf-8'
       dataType: 'json'
       data: JSON.stringify(dataRequest)
 
+
   # Given an address with postal code and a country, retrieves a complete address, when available.
   getAddressInformation: (address) =>
     @ajax
-      url: @_getPostalCodeURL(address.postalCode, address.country)
+      url: addWorkspaceQueryString(@_getPostalCodeURL(address.postalCode, address.country))
       type: 'GET'
       timeout : 20000
 
   # Sends a request to retrieve a user's profile.
   getProfileByEmail: (email, salesChannel = 1) =>
     @ajax
-      url: @_getProfileURL()
+      url: addWorkspaceQueryString(@_getProfileURL())
       type: 'GET'
       data: {email: email, sc: salesChannel}
 
@@ -408,7 +421,7 @@ class Checkout
   # Sends a request to retrieve the orders for a specific orderGroupId.
   getOrders: (orderGroupId) =>
     @ajax
-      url: @_getOrdersURL(orderGroupId)
+      url: addWorkspaceQueryString(@_getOrdersURL(orderGroupId) + workspaceQueryString)
       type: 'GET'
       contentType: 'application/json; charset=utf-8'
       dataType: 'json'
@@ -417,7 +430,7 @@ class Checkout
   clearMessages: (expectedOrderFormSections = @_allOrderFormSections) =>
     clearMessagesRequest = { expectedOrderFormSections: expectedOrderFormSections }
     @ajax
-      url: @_getOrderFormURL() + '/messages/clear'
+      url: addWorkspaceQueryString(@_getOrderFormURL() + '/messages/clear')
       type: 'POST'
       contentType: 'application/json; charset=utf-8'
       dataType: 'json'
