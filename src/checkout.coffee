@@ -29,7 +29,7 @@ readSubcookie = (name, cookie) ->
  addWorkspaceQueryString = (url) ->
   workspace = urlParam('workspace')
   if workspace
-    if window.location.search.length > 0
+    if /[?&]/.test(url)
       return url + '&workspace=' + workspace
     else return url + '?workspace=' + workspace
   return url
