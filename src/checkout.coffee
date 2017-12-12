@@ -388,7 +388,6 @@ class Checkout
       dataType: 'json'
       data: JSON.stringify(dataRequest)
 
-
   # Given an address with postal code and a country, retrieves a complete address, when available.
   getAddressInformation: (address) =>
     @ajax
@@ -460,6 +459,21 @@ class Checkout
         "noSplitItem": !splitItem,
       })
     })
+
+  getSkusSimulated: (items) =>
+   @ajax
+    type: 'POST',
+    contentType: 'application/json; charset=UTF-8',
+    url: addWorkspaceQueryString('/api/checkout/pub/orderForms/simulation'),
+    data: JSON.stringify({items: items}),
+
+  getGiftCardProviders: () =>
+   @ajax
+    url: addWorkspaceQueryString(window.location.origin + '/api/checkout/pub/gift-cards/providers')
+    type: 'GET'
+    contentType: 'application/json; charset=utf-8'
+    dataType: 'json'
+
 
   # URL BUILDERS
 
