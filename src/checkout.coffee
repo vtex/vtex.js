@@ -460,12 +460,12 @@ class Checkout
       })
     })
 
-  getSkusSimulated: (items) =>
+  simulateCart: (simulation) =>
    @ajax
     type: 'POST',
     contentType: 'application/json; charset=UTF-8',
     url: addWorkspaceQueryString('/api/checkout/pub/orderForms/simulation'),
-    data: JSON.stringify({items: items}),
+    data: JSON.stringify(simulation),
 
   getGiftCardProviders: () =>
    @ajax
