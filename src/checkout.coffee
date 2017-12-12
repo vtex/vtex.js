@@ -469,7 +469,7 @@ class Checkout
 
   getGiftCardProviders: () =>
    @ajax
-    url: addWorkspaceQueryString(window.location.origin + '/api/checkout/pub/gift-cards/providers')
+    url: addWorkspaceQueryString(@_getGiftCardProvidersURL())
     type: 'GET'
     contentType: 'application/json; charset=utf-8'
     dataType: 'json'
@@ -489,6 +489,9 @@ class Checkout
 
   _getOrderFormIdFromURL: =>
     urlParam('orderFormId')
+
+  _getGiftCardProvidersURL: ->
+    HOST_URL + '/api/checkout/pub/gift-cards/providers'
 
   _getBaseOrderFormURL: ->
     HOST_URL + '/api/checkout/pub/orderForm'
