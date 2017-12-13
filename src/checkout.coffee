@@ -420,7 +420,7 @@ class Checkout
   # Sends a request to retrieve the orders for a specific orderGroupId.
   getOrders: (orderGroupId) =>
     @ajax
-      url: addWorkspaceQueryString(@_getOrdersURL(orderGroupId) + workspaceQueryString)
+      url: addWorkspaceQueryString(@_getOrdersURL(orderGroupId))
       type: 'GET'
       contentType: 'application/json; charset=utf-8'
       dataType: 'json'
@@ -429,7 +429,7 @@ class Checkout
   clearMessages: (expectedOrderFormSections = @_allOrderFormSections) =>
     clearMessagesRequest = { expectedOrderFormSections: expectedOrderFormSections }
     @ajax
-      url: addWorkspaceQueryString(@_getOrderFormURL() + '/messages/clear')
+      url: addWorkspaceQueryString(@_getClearMessagesURL())
       type: 'POST'
       contentType: 'application/json; charset=utf-8'
       dataType: 'json'
@@ -464,7 +464,7 @@ class Checkout
    @ajax
     type: 'POST',
     contentType: 'application/json; charset=UTF-8',
-    url: addWorkspaceQueryString('/api/checkout/pub/orderForms/simulation'),
+    url: addWorkspaceQueryString(@_getSimulationURL()),
     data: JSON.stringify(simulation),
 
   getGiftCardProviders: () =>
@@ -489,6 +489,12 @@ class Checkout
 
   _getOrderFormIdFromURL: =>
     urlParam('orderFormId')
+
+  _getClearMessagesURL: =>
+    @_getOrderFormURL() + '/messages/clear'
+
+  _getSimulationURL: =>
+   HOST_URL + '/api/checkout/pub/orderForms/simulation'
 
   _getGiftCardProvidersURL: ->
     HOST_URL + '/api/checkout/pub/gift-cards/providers'
@@ -546,9 +552,6 @@ class Checkout
 
   _getOrdersURL: (orderGroupId) =>
     HOST_URL + '/api/checkout/pub/orders/order-group/' + orderGroupId
-
-  _getSimulationURL: =>
-    HOST_URL + '/api/checkout/pub/orderForms/simulation'
 
   _getPostalCodeURL: (postalCode = '', countryCode = 'BRA') =>
     HOST_URL + '/api/checkout/pub/postal-code/' + countryCode + '/' + postalCode
