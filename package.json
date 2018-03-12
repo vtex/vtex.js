@@ -21,7 +21,7 @@
     "karma-coffee-preprocessor": "^0.2.1",
     "karma-mocha": "^0.1.9",
     "karma-mocha-reporter": "^0.3.1",
-    "karma-phantomjs-launcher": "^0.1.4",
+    "karma-phantomjs-launcher": "1.0.4",
     "mocha": "^1.21.5"
   },
   "scripts": {
