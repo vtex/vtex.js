@@ -137,7 +137,7 @@ class Checkout
     else
       checkoutRequest = { expectedOrderFormSections: expectedFormSections }
       xhr = @ajax
-        url: @_getBaseOrderFormURL()
+        url: @_getOrderFormURLWithId()
         type: 'POST'
         contentType: 'application/json; charset=utf-8'
         dataType: 'json'
@@ -451,7 +451,7 @@ class Checkout
   # URL BUILDERS
 
   _getOrderFormId: =>
-    @orderFormId or @_getOrderFormIdFromCookie() or @_getOrderFormIdFromURL() or ''
+    @_getOrderFormIdFromURL() or @orderFormId or @_getOrderFormIdFromCookie() or ''
 
   _getOrderFormIdFromCookie: =>
     COOKIE_NAME = 'checkout.vtex.com'
@@ -471,6 +471,10 @@ class Checkout
     if id is ''
       throw new Error "This method requires an OrderForm. Use getOrderForm beforehand."
     "#{@_getBaseOrderFormURL()}/#{id}"
+
+  _getOrderFormURLWithId: =>
+    id = @_getOrderFormId()
+    if id then "#{@_getBaseOrderFormURL()}/#{id}" else @_getBaseOrderFormURL()
 
   _getSaveAttachmentURL: (attachmentId) =>
     @_getOrderFormURL() + '/attachments/' + attachmentId
