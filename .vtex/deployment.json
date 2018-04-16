@@ -1,0 +1,37 @@
+[
+  {
+    "name": "vtex-js",
+    "description": "",
+    "source": "https://github.com/vtex/vtex.js.git",
+    "script": {
+      "deploy": ".vtex/buildspec.yml"
+    },
+    "build": {
+      "type": "codebuild",
+      "image":
+        "053131491888.dkr.ecr.us-east-1.amazonaws.com/awsbuild/ubuntu/node:5.12.0",
+      "vpc": {
+        "id": "vpc-d4f109b1",
+        "subnets": ["subnet-955f63d3", "subnet-245f030c", "subnet-0e35267a"],
+        "securityGroups": ["sg-c84127b3"]
+      }
+    },
+    "service": {
+      "type": "front"
+    },
+    "tags": [
+      {
+        "key": "Product",
+        "value": "vtex-js"
+      },
+      {
+        "key": "Owner",
+        "value": "Fernando Coelho"
+      },
+      {
+        "key": "Team",
+        "value": "Shopping-xp"
+      }
+    ]
+  }
+]

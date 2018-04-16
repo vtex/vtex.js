@@ -1,0 +1,21 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo Installing Package...
+      - npm install
+  pre_build:
+    commands:
+      - echo Configuring build...
+  build:
+    commands:
+      - echo Building application...
+      - npm install
+      - grunt dist
+      - grunt vtex_deploy
+  post_build:
+    commands:
+      - echo build Finished
+
+
