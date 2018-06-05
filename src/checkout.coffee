@@ -215,14 +215,19 @@ class Checkout
       data: JSON.stringify addToCartRequest
 
   # Sends a request to update the items in the OrderForm. Items that are omitted are not modified.
-  updateItems: (items, expectedOrderFormSections = @_allOrderFormSections, splitItem = true) =>
+  updateItems: (items, expectedOrderFormSections = @_allOrderFormSections, splitItem = true, options = {}) =>
     updateItemsRequest =
       orderItems: items
       expectedOrderFormSections: expectedOrderFormSections
       noSplitItem: !splitItem
 
+    salesChannelQueryString = ''
+    if options?.salesChannel?
+      salesChannelQueryString = '?sc=' + options.salesChannel
+
     @_updateOrderForm
-      url: @_getUpdateItemURL()
+      url: @_getItemsURL() + salesChannelQueryString
+      type: 'PATCH'
       data: JSON.stringify(updateItemsRequest)
 
   # Sends a request to remove items from the OrderForm.
@@ -500,9 +505,6 @@ class Checkout
 
   _startTransactionURL: =>
     @_getOrderFormURL() + '/transaction'
-
-  _getUpdateItemURL: =>
-    @_getOrderFormURL() + '/items/update/'
 
   _getCloneItemURL: (itemIndex) =>
     @_getOrderFormURL() + '/items/' + itemIndex + '/clone'
