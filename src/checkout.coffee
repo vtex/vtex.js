@@ -210,7 +210,8 @@ class Checkout
       salesChannelQueryString = '?sc=' + salesChannel
 
     @_updateOrderForm
-      url: @_getAddToCartURL() + salesChannelQueryString
+      url: @_getItemsURL() + salesChannelQueryString
+      type: 'PATCH'
       data: JSON.stringify addToCartRequest
 
   # Sends a request to update the items in the OrderForm. Items that are omitted are not modified.
@@ -512,7 +513,7 @@ class Checkout
   _getRemoveGiftRegistryURL: =>
     @_getBaseOrderFormURL() + "/giftRegistry/#{@_getOrderFormId()}/remove"
 
-  _getAddToCartURL: =>
+  _getItemsURL: =>
     @_getOrderFormURL() + '/items'
 
   _manualPriceURL: (itemIndex) =>
