@@ -200,7 +200,7 @@ vtexjs.checkout.addToCart([item], null, 3)
 ```
 
 
-## updateItems(items, expectedOrderFormSections)
+## updateItems(items, expectedOrderFormSections, splitItem, options)
 
 Atualiza items no orderForm.
 
@@ -223,6 +223,8 @@ Não se esqueça de usar getOrderForm anteriormente.
 | -----------------------:| :-----------------------------|
 | **items** | **Array** <br> o conjunto de items que vão ser atualizados. Mesmo que só haja um item, deve ser envolto num Array.|
 | **splitItem** | **Boolean** <br> Default: true <br> Informa se um item separado deve ser criado caso os items a serem atualizados tenham anexos/serviços incluídos.|
+| **options** | **Object** <br> Default: {} <br> Pode receber a propriedade `salesChannel`.|
+
 
 ### Exemplo
 
