@@ -1,4 +1,3 @@
-vtex.js/docs/catalog/README.en.md
 
 # **Catalog Module**
 
