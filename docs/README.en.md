@@ -1,4 +1,3 @@
-vtex.js/docs/README.md
 
 # **Getting Started**
 
