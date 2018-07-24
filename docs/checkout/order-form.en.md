@@ -1,4 +1,3 @@
-vtex.js/docs/checkout/order-form.en.md
 
 # **OrderForm**
 
