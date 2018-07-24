@@ -1,4 +1,3 @@
-vtex.js/docs/checkout/README.md
 
 # **Checkout Module**
 
