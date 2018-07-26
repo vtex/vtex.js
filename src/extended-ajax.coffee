@@ -7,10 +7,14 @@ AjaxQueue = (ajax) ->
     promise = dfd.promise()
 
     requestFunction = (next) ->
-      jqXHR = ajax(ajaxOpts);
+      jqXHR = ajax(ajaxOpts)
+
+      if jqXHR.retry
+        jqXHR.retry({ times: 2, statusCodes: [500, 503] })
+
       jqXHR.done(dfd.resolve)
-      .fail(dfd.reject)
-      .then(next, next)
+        .fail(dfd.reject)
+        .then(next, next)
 
     abortFunction = (statusText) ->
       if jqXHR
