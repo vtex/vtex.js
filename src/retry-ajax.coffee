@@ -1,5 +1,6 @@
 events =
-  FAIL_RETRY: 'lastAjaxRetry.vtex'
+  RETRY: 'ajaxRetry.vtex'
+  FAIL_RETRY: 'failAjaxRetry.vtex'
 
 $.ajaxPrefilter (options, originalOptions, jqXHR) ->
   jqXHR.retry = (opts) ->
@@ -22,6 +23,7 @@ pipeFailRetry = (jqXHR, opts) ->
     # whenever we do make this request, pipe its output to our deferred
 
     nextRequest = ->
+      $(window).trigger(events.RETRY)
       $.ajax(ajaxOptions).retry(
         times: times - 1
         timeout: opts.timeout
