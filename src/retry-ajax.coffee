@@ -1,6 +1,6 @@
 events =
-  RETRY: 'ajaxRetry.vtex'
-  FAIL_RETRY: 'failAjaxRetry.vtex'
+  AJAX_RETRY: 'ajaxRetry.vtex'
+  AJAX_ERROR: 'ajaxError.vtex'
 
 $.ajaxPrefilter (options, originalOptions, jqXHR) ->
   jqXHR.retry = (opts) ->
@@ -23,7 +23,6 @@ pipeFailRetry = (jqXHR, opts) ->
     # whenever we do make this request, pipe its output to our deferred
 
     nextRequest = ->
-      $(window).trigger(events.RETRY, input)
       $.ajax(ajaxOptions).retry(
         times: times - 1
         timeout: opts.timeout
@@ -31,6 +30,8 @@ pipeFailRetry = (jqXHR, opts) ->
       return
 
     if times > 1 and (!jqXHR.statusCodes or $.inArray(input.status, jqXHR.statusCodes) > -1)
+      $(window).trigger(events.AJAX_RETRY, input)
+
       # implement Retry-After rfc
       # http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.37
       if retryAfter
@@ -49,7 +50,7 @@ pipeFailRetry = (jqXHR, opts) ->
         nextRequest()
     else
       if (input.statusText isnt 'abort' or jqXHR.statusText isnt 'abort')
-        $(window).trigger(events.FAIL_RETRY, input)
+        $(window).trigger(events.AJAX_ERROR, input)
       # no times left, reject our deferred with the current arguments
       output.rejectWith this, arguments
     output
