@@ -23,7 +23,7 @@ pipeFailRetry = (jqXHR, opts) ->
     # whenever we do make this request, pipe its output to our deferred
 
     nextRequest = ->
-      $(window).trigger(events.RETRY)
+      $(window).trigger(events.RETRY, input)
       $.ajax(ajaxOptions).retry(
         times: times - 1
         timeout: opts.timeout
@@ -48,7 +48,8 @@ pipeFailRetry = (jqXHR, opts) ->
       else
         nextRequest()
     else
-      $(window).trigger(events.FAIL_RETRY, input)
+      if (input.statusText isnt 'abort' or jqXHR.statusText isnt 'abort')
+        $(window).trigger(events.FAIL_RETRY, input)
       # no times left, reject our deferred with the current arguments
       output.rejectWith this, arguments
     output
