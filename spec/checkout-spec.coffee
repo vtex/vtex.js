@@ -161,6 +161,7 @@ describe 'VTEX JS Checkout Module', ->
     # Arrange
     $.mockjax
       url: mock.API_URL + "/#{mock.orderForm.simple.orderFormId}/items"
+      type: 'PATCH'
       data: JSON.stringify({ orderItems: [{ id: 2000017893, quantity: 1, seller: 1 }], expectedOrderFormSections: vtexjs.checkout._allOrderFormSections })
       responseText: mock.orderForm.addItem
 
@@ -307,7 +308,8 @@ describe 'VTEX JS Checkout Module', ->
       url: "#{mock.API_URL}/#{mock.orderForm.simple.orderFormId}/attachments/clientPreferencesData"
       responseText: mock.orderForm.first
     $.mockjax
-      url: "#{mock.API_URL}/#{mock.orderForm.simple.orderFormId}/items/update/"
+      type: 'PATCH'
+      url: "#{mock.API_URL}/#{mock.orderForm.simple.orderFormId}/items"
       responseText: mock.orderForm.second
     $.mockjax
       url: "#{mock.API_URL}/#{mock.orderForm.simple.orderFormId}/attachments/shippingData"
