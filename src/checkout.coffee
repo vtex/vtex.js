@@ -359,18 +359,20 @@ class Checkout
     @sendAttachment('shippingData', {address: address})
 
   # Simulates shipping using a list of items, a postal code and a country.
-  simulateShipping: (args...) =>
-    [firstArg,secondArg,country,salesChannel] = arguments
-    dataRequest = []
-    if Array.isArray( firstArg )
+  simulateShipping: () =>
+    dataRequest = null
+    [country, salesChannel] = [arguments[2], arguments[3]]
+    if Array.isArray( arguments[0] )
+      [items,postalCode] = [arguments[0], arguments[1]]
       dataRequest =
-        items: firstArg
-        postalCode: secondArg
+        items: items
+        postalCode: postalCode
         country: country
     else 
+      [shippingData,orderFormId] = [arguments[0], arguments[1]]
       dataRequest =
-        shippingData: firstArg
-        orderFormId: secondArg
+        shippingData: shippingData
+        orderFormId: orderFormId
         country: country
 
     salesChannelQueryString = ''
