@@ -360,16 +360,16 @@ class Checkout
 
   # Simulates shipping using a list of items, a postal code and a country.
   simulateShipping: () =>
-    dataRequest = []
-    [country,salesChannel] = [arguments[2],arguments[3]]
+    dataRequest = null
+    [country, salesChannel] = [arguments[2], arguments[3]]
     if Array.isArray( arguments[0] )
-      [items,postalCode] = [arguments[0],arguments[1]]
+      [items,postalCode] = [arguments[0], arguments[1]]
       dataRequest =
         items: items
         postalCode: postalCode
         country: country
     else 
-      [shippingData,orderFormId] = [arguments[0],arguments[1]]
+      [shippingData,orderFormId] = [arguments[0], arguments[1]]
       dataRequest =
         shippingData: shippingData
         orderFormId: orderFormId
