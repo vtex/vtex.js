@@ -1,4 +1,3 @@
-$ = require 'jquery'
 AjaxQueue = (ajax) ->
   theQueue = $({})
 

@@ -1,5 +1,5 @@
 # UTILITY FUNCTIONS
-$ = require 'jquery'
+
 trim = (str) ->
   str.replace(/^\s+|\s+$/g, '');
 
@@ -363,6 +363,7 @@ class Checkout
     dataRequest = null
     [country, salesChannel] = [arguments[2], arguments[3]]
     if Array.isArray( arguments[0] )
+      console.warn "Calling simulateShipping with a list of items and postal code is deprecated."
       [items,postalCode] = [arguments[0], arguments[1]]
       dataRequest =
         items: items

@@ -1,6 +1,6 @@
-
-AjaxQueue = require '../src/extended-ajax'
 $ = require 'jquery'
+window.$ = $
+AjaxQueue = require '../src/extended-ajax'
 jasmine = require 'jasmine'
 mockjax = require 'jquery-mockjax' 
 mockjax = mockjax($, window)
