@@ -358,7 +358,7 @@ class Checkout
   calculateShipping: (address) =>
     @sendAttachment('shippingData', {address: address})
 
-  # Simulates shipping using a list of items, a postal code and a country.
+  # Simulates shipping using a list of items, a postal code or a shippingData object, orderFormID and a country.
   simulateShipping: () =>
     dataRequest = null
     [country, salesChannel] = [arguments[2], arguments[3]]

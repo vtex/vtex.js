@@ -432,7 +432,7 @@ describe 'VTEX JS Checkout Module', ->
       vtexjs.checkout.calculateShipping({postalCode: '22030030', country: 'BRA'})
     , 120
 
-  it 'should trigger simulation request with new parameters', (done) ->
+  it 'should trigger simulation request with shippingData and orderFormId parameters', (done) ->
     data = {shippingData: simpleOrderForm.shippingData, orderFormId: simpleOrderForm.orderFormId, country: "BRA", salesChannel: "1"}
     $.mockjax
       url: SIMULATION_URL + '?sc=1'
@@ -449,7 +449,7 @@ describe 'VTEX JS Checkout Module', ->
     xhr.fail (jqXHR) ->
       done(jqXHR)
 
-  it 'should trigger simulation request with old parameters', (done) ->
+  it 'should trigger simulation request with a list of items and postal code parameters', (done) ->
     data = {items: simpleOrderForm.items, postalCode: '22260000', country: "BRA", salesChannel: "1"}
 
     $.mockjax
