@@ -363,8 +363,8 @@ class Checkout
     dataRequest = null
     [country, salesChannel] = [arguments[2], arguments[3]]
     if Array.isArray( arguments[0] )
-      console.warn "Calling simulateShipping with a list of items and postal code is deprecated."
-      console.warn "Call it with shippingData and orderFormId instead."
+      console.warn "Calling simulateShipping with a list of items and postal code is deprecated.\n" + \
+       "Call it with shippingData and orderFormId instead."
       [items,postalCode] = [arguments[0], arguments[1]]
       dataRequest =
         items: items
