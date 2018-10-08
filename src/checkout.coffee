@@ -1,5 +1,5 @@
 # UTILITY FUNCTIONS
-$ = require 'jquery'
+
 trim = (str) ->
   str.replace(/^\s+|\s+$/g, '');
 
@@ -358,11 +358,13 @@ class Checkout
   calculateShipping: (address) =>
     @sendAttachment('shippingData', {address: address})
 
-  # Simulates shipping using a list of items, a postal code and a country.
+  # Simulates shipping using a list of items, a postal code or a shippingData object, orderFormID and a country.
   simulateShipping: () =>
     dataRequest = null
     [country, salesChannel] = [arguments[2], arguments[3]]
     if Array.isArray( arguments[0] )
+      console.warn "Calling simulateShipping with a list of items and postal code is deprecated.\n" + \
+       "Call it with shippingData and orderFormId instead."
       [items,postalCode] = [arguments[0], arguments[1]]
       dataRequest =
         items: items
