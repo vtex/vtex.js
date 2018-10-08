@@ -6,7 +6,7 @@
   "deploy": "deploy/",
   "devDependencies": {
     "chai": "^1.9.2",
-    "coffee-script": "^1.8.0",
+    "coffee-script": "^1.12.7",
     "grunt": "~0.4.5",
     "grunt-contrib-clean": "~0.5.0",
     "grunt-contrib-coffee": "~0.8.0",
@@ -18,15 +18,15 @@
     "grunt-vtex": "^0.16.0",
     "jasmine": "^3.2.0",
     "jasmine-node": "^1.16.2",
-    "jest": "^22.0.0",
+    "jest": "^22.4.4",
     "jquery": "^3.3.1",
     "jquery-mockjax": "^2.5.0",
     "mocha": "^2.0.0"
   },
   "scripts": {
-    "jest": "jest --env=jsdom --watch",
-    "test": "./node_modules/karma/bin/karma start --single-run",
-    "test-watch": "./node_modules/karma/bin/karma start"
+    "jest": "jest --env=jsdom",
+    "test": "jest --env=jsdom",
+    "test-watch": "jest --env=jsdom --watch"
   },
   "jest": {
     "testMatch": [
@@ -37,7 +37,8 @@
       "js",
       "node",
       "coffee"
-    ]
+    ],
+    "transform": {".*": "<rootDir>/src/preprocessor.js"}
   },
   "repository": {
     "type": "git",
