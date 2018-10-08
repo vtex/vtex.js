@@ -1,5 +1,5 @@
 # UTILITY FUNCTIONS
-
+$ = require 'jquery'
 trim = (str) ->
   str.replace(/^\s+|\s+$/g, '');
 

@@ -1,4 +1,16 @@
-expect = chai.expect
+
+AjaxQueue = require '../src/extended-ajax'
+$ = require 'jquery'
+jasmine = require 'jasmine'
+mockjax = require 'jquery-mockjax' 
+mockjax = mockjax($, window)
+{mock, API_URL, SIMULATION_URL} = require './mock/checkout-mock.coffee'
+{orderForm, simpleOrderForm, addItemOrderForm} = require './mock/checkout-mock.coffee'
+{setManualPriceOrderForm, removeManualPriceOrderForm} = require './mock/checkout-mock.coffee'
+{firstOrderForm, secondOrderForm, thirdOrderForm} = require './mock/checkout-mock.coffee'
+checkout = require '../src/checkout'
+
+
 
 describe 'VTEX JS Checkout Module', ->
 
@@ -9,26 +21,26 @@ describe 'VTEX JS Checkout Module', ->
     $(window).off()
 
   it 'should have basic properties', (done) ->
-    expect(vtexjs.checkout).to.be.ok
-    expect(vtexjs.checkout.getOrderForm).to.be.a('function')
-    expect(vtexjs.checkout._getBaseOrderFormURL()).to.equal(mock.API_URL)
+    expect(vtexjs.checkout).toBeDefined()
+    expect(typeof vtexjs.checkout.getOrderForm).toBe('function')
+    expect(vtexjs.checkout._getBaseOrderFormURL()).toBe(API_URL)
     done()
 
   it 'should have empty orderform', (done) ->
-    expect(vtexjs.checkout.orderForm).to.not.exist
+    expect(vtexjs.checkout.orderForm).toBeUndefined()
     done()
 
   it 'should get orderform', (done) ->
     # Arrange
     $.mockjax
-      url: mock.API_URL
-      responseText: mock.orderForm.simple
+      url: API_URL
+      responseText: simpleOrderForm
 
     # Act
     xhr = vtexjs.checkout.getOrderForm()
     xhr.done (orderForm) ->
       # Assert
-      expect(orderForm).to.deep.equal(mock.orderForm.simple)
+      expect(orderForm).toEqual(simpleOrderForm)
       done()
     xhr.fail (jqXHR) ->
       done(jqXHR)
@@ -36,14 +48,14 @@ describe 'VTEX JS Checkout Module', ->
   it 'should have orderform after get', (done) ->
     # Arrange
     $.mockjax
-      url: mock.API_URL
-      responseText: mock.orderForm.simple
+      url: API_URL
+      responseText: simpleOrderForm
 
     # Act
     xhr = vtexjs.checkout.getOrderForm()
     xhr.done ->
       # Assert
-      expect(vtexjs.checkout.orderForm).to.deep.equal(mock.orderForm.simple)
+      expect(vtexjs.checkout.orderForm).toEqual(simpleOrderForm)
       done()
     xhr.fail (jqXHR) ->
       done(jqXHR)
@@ -51,14 +63,14 @@ describe 'VTEX JS Checkout Module', ->
   it 'should fetch from API if expectedOrderFormSections are not present', (done) ->
     # Arrange
     $.mockjax
-      url: mock.API_URL
-      responseText: mock.orderForm.simple
+      url: API_URL
+      responseText: simpleOrderForm
 
-    expect($.mockjax.mockedAjaxCalls()).to.have.length 0
+    expect($.mockjax.mockedAjaxCalls()).toHaveLength 0
     xhr = vtexjs.checkout.getOrderForm()
     xhr.done (orderForm) ->
-      expect($.mockjax.mockedAjaxCalls()).to.have.length 1
-      expect(orderForm).to.deep.equal(mock.orderForm.simple)
+      expect($.mockjax.mockedAjaxCalls()).toHaveLength 1
+      expect(orderForm).toEqual(simpleOrderForm)
       done()
     xhr.fail (jqXHR) ->
       done(jqXHR)
@@ -66,20 +78,20 @@ describe 'VTEX JS Checkout Module', ->
   it 'should not fetch from API if expectedOrderFormSections are present', (done) ->
     # Arrange
     $.mockjax
-      url: mock.API_URL
-      responseText: mock.orderForm.simple
+      url: API_URL
+      responseText: simpleOrderForm
 
-    expect($.mockjax.mockedAjaxCalls()).to.have.length 0
+    expect($.mockjax.mockedAjaxCalls()).toHaveLength 0
     xhr = vtexjs.checkout.getOrderForm(['clientProfileData'])
     xhr = xhr.done (orderForm) ->
-      expect($.mockjax.mockedAjaxCalls()).to.have.length 1
-      expect(orderForm).to.deep.equal(mock.orderForm.simple)
+      expect($.mockjax.mockedAjaxCalls()).toHaveLength 1
+      expect(orderForm).toEqual(simpleOrderForm)
 
       vtexjs.checkout.getOrderForm(['clientProfileData']).done (orderForm) ->
         # No new call was made, length is still 1
-        expect($.mockjax.mockedAjaxCalls()).to.have.length 1
-        expect(orderForm).to.deep.equal(mock.orderForm.simple)
-        expect(vtexjs.checkout.orderForm).to.deep.equal(mock.orderForm.simple)
+        expect($.mockjax.mockedAjaxCalls()).toHaveLength 1
+        expect(orderForm).toEqual(simpleOrderForm)
+        expect(vtexjs.checkout.orderForm).toEqual(simpleOrderForm)
         done()
 
     xhr.fail (jqXHR) ->
@@ -88,17 +100,17 @@ describe 'VTEX JS Checkout Module', ->
   it 'should send default expectedOrderFormSections on clearMessages', (done) ->
     # Arrange
     $.mockjax
-      url: mock.API_URL + "/#{mock.orderForm.simple.orderFormId}/messages/clear"
+      url: API_URL + "/#{simpleOrderForm.orderFormId}/messages/clear"
       data: JSON.stringify({ expectedOrderFormSections: vtexjs.checkout._allOrderFormSections })
-      responseText: mock.orderForm.simple
+      responseText: simpleOrderForm
 
-    vtexjs.checkout.orderFormId = mock.orderForm.simple.orderFormId
+    vtexjs.checkout.orderFormId = simpleOrderForm.orderFormId
 
     # Act
     xhr = vtexjs.checkout.clearMessages()
     xhr.done (orderForm) ->
       # Assert
-      expect(orderForm).to.deep.equal(mock.orderForm.simple)
+      expect(orderForm).toEqual(simpleOrderForm)
       done()
     xhr.fail (jqXHR) ->
       done(jqXHR)
@@ -106,17 +118,17 @@ describe 'VTEX JS Checkout Module', ->
   it 'should send custom expectedOrderFormSections on clearMessages', (done) ->
     # Arrange
     $.mockjax
-      url: mock.API_URL + "/#{mock.orderForm.simple.orderFormId}/messages/clear"
+      url: API_URL + "/#{simpleOrderForm.orderFormId}/messages/clear"
       data: JSON.stringify({ expectedOrderFormSections: ["shippingData"] })
-      responseText: mock.orderForm.simple
+      responseText: simpleOrderForm
 
-    vtexjs.checkout.orderFormId = mock.orderForm.simple.orderFormId
+    vtexjs.checkout.orderFormId = simpleOrderForm.orderFormId
 
     # Act
     xhr = vtexjs.checkout.clearMessages(["shippingData"])
     xhr.done (orderForm) ->
       # Assert
-      expect(orderForm).to.deep.equal(mock.orderForm.simple)
+      expect(orderForm).toEqual(simpleOrderForm)
       done()
     xhr.fail (jqXHR) ->
       done(jqXHR)
@@ -124,17 +136,17 @@ describe 'VTEX JS Checkout Module', ->
   it 'should send default expectedOrderFormSections on removeAccountId', (done) ->
     # Arrange
     $.mockjax
-      url: mock.API_URL + "/#{mock.orderForm.simple.orderFormId}/paymentAccount/1/remove"
+      url: API_URL + "/#{simpleOrderForm.orderFormId}/paymentAccount/1/remove"
       data: JSON.stringify({ expectedOrderFormSections: vtexjs.checkout._allOrderFormSections })
-      responseText: mock.orderForm.simple
+      responseText: simpleOrderForm
 
-    vtexjs.checkout.orderFormId = mock.orderForm.simple.orderFormId
+    vtexjs.checkout.orderFormId = simpleOrderForm.orderFormId
 
     # Act
     xhr = vtexjs.checkout.removeAccountId(1)
     xhr.done (orderForm) ->
       # Assert
-      expect(orderForm).to.deep.equal(mock.orderForm.simple)
+      expect(orderForm).toEqual(simpleOrderForm)
       done()
     xhr.fail (jqXHR) ->
       done(jqXHR)
@@ -142,17 +154,17 @@ describe 'VTEX JS Checkout Module', ->
   it 'should send custom expectedOrderFormSections on removeAccountId', (done) ->
     # Arrange
     $.mockjax
-      url: mock.API_URL + "/#{mock.orderForm.simple.orderFormId}/paymentAccount/1/remove"
+      url: API_URL + "/#{simpleOrderForm.orderFormId}/paymentAccount/1/remove"
       data: JSON.stringify({ expectedOrderFormSections: ["shippingData"] })
-      responseText: mock.orderForm.simple
+      responseText: simpleOrderForm
 
-    vtexjs.checkout.orderFormId = mock.orderForm.simple.orderFormId
+    vtexjs.checkout.orderFormId = simpleOrderForm.orderFormId
 
     # Act
     xhr = vtexjs.checkout.removeAccountId(1, ["shippingData"])
     xhr.done (orderForm) ->
       # Assert
-      expect(orderForm).to.deep.equal(mock.orderForm.simple)
+      expect(orderForm).toEqual(simpleOrderForm)
       done()
     xhr.fail (jqXHR) ->
       done(jqXHR)
@@ -160,17 +172,17 @@ describe 'VTEX JS Checkout Module', ->
   it 'should add an item on orderForm', (done) ->
     # Arrange
     $.mockjax
-      url: mock.API_URL + "/#{mock.orderForm.simple.orderFormId}/items"
+      url: API_URL + "/#{simpleOrderForm.orderFormId}/items"
       data: JSON.stringify({ orderItems: [{ id: 2000017893, quantity: 1, seller: 1 }], expectedOrderFormSections: vtexjs.checkout._allOrderFormSections })
-      responseText: mock.orderForm.addItem
+      responseText: addItemOrderForm
 
-    vtexjs.checkout.orderFormId = mock.orderForm.simple.orderFormId
+    vtexjs.checkout.orderFormId = simpleOrderForm.orderFormId
 
     # Act
     xhr = vtexjs.checkout.addToCart([{ id: 2000017893, quantity: 1, seller: 1 }])
     xhr.done (orderForm) ->
       # Assert
-      expect(orderForm).to.deep.equal(mock.orderForm.addItem)
+      expect(orderForm).toEqual(addItemOrderForm)
       done()
     xhr.fail (jqXHR) ->
       done(jqXHR)
@@ -178,20 +190,20 @@ describe 'VTEX JS Checkout Module', ->
   it 'should set a manualPrice for an item on orderForm', (done) ->
     # Arrange
     $.mockjax
-      url: mock.API_URL + "/#{mock.orderForm.simple.orderFormId}/items/0/price"
+      url: API_URL + "/#{simpleOrderForm.orderFormId}/items/0/price"
       type: 'PUT'
       contentType: 'application/json; charset=utf-8'
       dataType: 'json'
       data: JSON.stringify({ price: 8000 })
-      responseText: mock.orderForm.setManualPrice
+      responseText: setManualPriceOrderForm
 
-    vtexjs.checkout.orderFormId = mock.orderForm.simple.orderFormId
+    vtexjs.checkout.orderFormId = simpleOrderForm.orderFormId
 
     # Act
     xhr = vtexjs.checkout.setManualPrice(0, 8000)
     xhr.done (orderForm) ->
       # Assert
-      expect(orderForm).to.deep.equal(mock.orderForm.setManualPrice)
+      expect(orderForm).toEqual(setManualPriceOrderForm)
       done()
     xhr.fail (jqXHR) ->
       done(jqXHR)
@@ -199,19 +211,19 @@ describe 'VTEX JS Checkout Module', ->
   it 'should remove a manualPrice for an item on orderForm', (done) ->
     # Arrange
     $.mockjax
-      url: mock.API_URL + "/#{mock.orderForm.simple.orderFormId}/items/0/price"
+      url: API_URL + "/#{simpleOrderForm.orderFormId}/items/0/price"
       type: 'DELETE'
       contentType: 'application/json; chartset=utf-8'
       dataType: 'json'
-      responseText: mock.orderForm.removeManualPrice
+      responseText: removeManualPriceOrderForm
 
-    vtexjs.checkout.orderFormId = mock.orderForm.simple.orderFormId
+    vtexjs.checkout.orderFormId = simpleOrderForm.orderFormId
 
     # Act
     xhr = vtexjs.checkout.removeManualPrice(0)
     xhr.done (orderForm) ->
       # Assert
-      expect(orderForm).to.deep.equal(mock.orderForm.removeManualPrice)
+      expect(orderForm).toEqual(removeManualPriceOrderForm)
       done()
     xhr.fail (jqXHR) ->
       done(jqXHR)
@@ -219,18 +231,18 @@ describe 'VTEX JS Checkout Module', ->
   it 'should broadcast orderform before promise resolution', (done) ->
     # Arrange
     $.mockjax
-      url: mock.API_URL
-      responseText: mock.orderForm.simple
+      url: API_URL
+      responseText: simpleOrderForm
 
     handlerCalled = false
 
     $(window).on 'orderFormUpdated.vtex', (e, orderForm) ->
       handlerCalled = true
-      expect(orderForm).to.deep.equal(mock.orderForm.simple)
+      expect(orderForm).toEqual(simpleOrderForm)
 
     xhr = vtexjs.checkout.getOrderForm()
     xhr.done ->
-      expect(handlerCalled).to.be.true
+      expect(handlerCalled).toBeTruthy()
       done()
 
     xhr.fail (jqXHR) ->
@@ -239,11 +251,11 @@ describe 'VTEX JS Checkout Module', ->
   it 'should trigger request begin event', (done) ->
     # Arrange
     $.mockjax
-      url: mock.API_URL
-      responseText: mock.orderForm.simple
+      url: API_URL
+      responseText: simpleOrderForm
     $.mockjax
-      url: "#{mock.API_URL}/#{mock.orderForm.simple.orderFormId}/attachments/clientPreferencesData"
-      responseText: mock.orderForm.simple
+      url: "#{API_URL}/#{simpleOrderForm.orderFormId}/attachments/clientPreferencesData"
+      responseText: simpleOrderForm
 
     requestBeginCalled = false
 
@@ -252,17 +264,17 @@ describe 'VTEX JS Checkout Module', ->
 
     vtexjs.checkout.getOrderForm().done ->
       vtexjs.checkout.sendLocale('en-US').done ->
-        expect(requestBeginCalled).to.be.true
+        expect(requestBeginCalled).toBeTruthy
         done()
 
   it 'should trigger request end event after request begin event', (done) ->
     # Arrange
     $.mockjax
-      url: mock.API_URL
-      responseText: mock.orderForm.simple
+      url: API_URL
+      responseText: simpleOrderForm
     $.mockjax
-      url: "#{mock.API_URL}/#{mock.orderForm.simple.orderFormId}/attachments/clientPreferencesData"
-      responseText: mock.orderForm.simple
+      url: "#{API_URL}/#{simpleOrderForm.orderFormId}/attachments/clientPreferencesData"
+      responseText: simpleOrderForm
 
     requestBeginCalled = false
 
@@ -270,7 +282,7 @@ describe 'VTEX JS Checkout Module', ->
       requestBeginCalled = true
 
     $(window).on 'checkoutRequestEnd.vtex', ->
-      expect(requestBeginCalled).to.be.true
+      expect(requestBeginCalled).toBeTruthy
       done()
 
     vtexjs.checkout.getOrderForm().done ->
@@ -279,10 +291,10 @@ describe 'VTEX JS Checkout Module', ->
   it 'should trigger one request begin/end event pair for each request', (done) ->
     # Arrange
     $.mockjax
-      url: mock.API_URL + '/*'
-      responseText: mock.orderForm.simple
+      url: API_URL + '/*'
+      responseText: simpleOrderForm
 
-    vtexjs.checkout.orderFormId = mock.orderForm.simple.orderFormId
+    vtexjs.checkout.orderFormId = simpleOrderForm.orderFormId
 
     requestBeginCalled = 0
     requestEndCalled = 0
@@ -294,7 +306,7 @@ describe 'VTEX JS Checkout Module', ->
       requestEndCalled++
 
       if (requestEndCalled is 3)
-        expect(requestBeginCalled).to.equal 3
+        expect(requestBeginCalled).toEqual 3
         done()
 
     vtexjs.checkout.sendLocale('en-US')
@@ -304,16 +316,16 @@ describe 'VTEX JS Checkout Module', ->
   it 'should trigger only one order form updated event', (done) ->
     # Arrange
     $.mockjax
-      url: "#{mock.API_URL}/#{mock.orderForm.simple.orderFormId}/attachments/clientPreferencesData"
-      responseText: mock.orderForm.first
+      url: "#{API_URL}/#{simpleOrderForm.orderFormId}/attachments/clientPreferencesData"
+      responseText: firstOrderForm
     $.mockjax
-      url: "#{mock.API_URL}/#{mock.orderForm.simple.orderFormId}/items/update/"
-      responseText: mock.orderForm.second
+      url: "#{API_URL}/#{simpleOrderForm.orderFormId}/items/update/"
+      responseText: secondOrderForm
     $.mockjax
-      url: "#{mock.API_URL}/#{mock.orderForm.simple.orderFormId}/attachments/shippingData"
-      responseText: mock.orderForm.third
+      url: "#{API_URL}/#{simpleOrderForm.orderFormId}/attachments/shippingData"
+      responseText: thirdOrderForm
 
-    vtexjs.checkout.orderFormId = mock.orderForm.simple.orderFormId
+    vtexjs.checkout.orderFormId = simpleOrderForm.orderFormId
 
     requestBeginCalled = 0
     requestEndCalled = 0
@@ -323,12 +335,12 @@ describe 'VTEX JS Checkout Module', ->
 
     $(window).on 'checkoutRequestEnd.vtex', (e, orderForm) ->
       requestEndCalled++
-      expect(orderForm.request).to.equal requestEndCalled
+      expect(orderForm.request).toEqual requestEndCalled
 
     $(window).on 'orderFormUpdated.vtex', (e, orderForm) ->
-      expect(requestBeginCalled).to.equal 3
-      expect(requestEndCalled).to.equal 3
-      expect(orderForm.request).to.equal 3
+      expect(requestBeginCalled).toEqual 3
+      expect(requestEndCalled).toEqual 3
+      expect(orderForm.request).toEqual 3
 
       done()
 
@@ -339,15 +351,15 @@ describe 'VTEX JS Checkout Module', ->
   it 'should trigger order form updated event despite abort to middle request', (done) ->
     # Arrange
     $.mockjax
-      url: "#{mock.API_URL}/#{mock.orderForm.simple.orderFormId}/attachments/clientPreferencesData"
-      responseText: mock.orderForm.first
+      url: "#{API_URL}/#{simpleOrderForm.orderFormId}/attachments/clientPreferencesData"
+      responseText: firstOrderForm
       responseTime: 100
     $.mockjax
-      url: "#{mock.API_URL}/#{mock.orderForm.simple.orderFormId}/attachments/shippingData"
-      responseText: mock.orderForm.third
+      url: "#{API_URL}/#{simpleOrderForm.orderFormId}/attachments/shippingData"
+      responseText: thirdOrderForm
       responseTime: 100
 
-    vtexjs.checkout.orderFormId = mock.orderForm.simple.orderFormId
+    vtexjs.checkout.orderFormId = simpleOrderForm.orderFormId
 
     requestBeginCalled = 0
     requestEndCalledWithOrderForm = 0
@@ -359,33 +371,33 @@ describe 'VTEX JS Checkout Module', ->
       requestEndCalledWithOrderForm++ if orderForm.orderFormId?
 
     $(window).on 'orderFormUpdated.vtex', (e, orderForm) ->
-      expect(Object.keys(vtexjs.checkout._urlToRequestMap)).to.have.length 0
-      expect(requestBeginCalled).to.equal 3
-      expect(requestEndCalledWithOrderForm).to.equal 2
-      expect(orderForm.request).to.equal 3
+      expect(Object.keys(vtexjs.checkout._urlToRequestMap)).toHaveLength 0
+      expect(requestBeginCalled).toEqual 3
+      expect(requestEndCalledWithOrderForm).toEqual 2
+      expect(orderForm.request).toEqual 3
       # One request was aborted while in the queue
-      expect($.mockjax.mockedAjaxCalls()).to.have.length 2
+      expect($.mockjax.mockedAjaxCalls()).toHaveLength 2
 
       done()
 
-    expect(Object.keys(vtexjs.checkout._urlToRequestMap)).to.have.length 0
+    expect(Object.keys(vtexjs.checkout._urlToRequestMap)).toHaveLength 0
     vtexjs.checkout.sendLocale('en-US')
     vtexjs.checkout.calculateShipping({postalCode: '22260000', country: 'BRA'})
-    # This second request is immediately unqueued in AjaxQueue
+    # This secondOrderForm request is immediately unqueued in AjaxQueue
     vtexjs.checkout.calculateShipping({postalCode: '22030030', country: 'BRA'})
 
   it 'should trigger order form updated event despite abort to middle request during request', (done) ->
     # Arrange
     $.mockjax
-      url: "#{mock.API_URL}/#{mock.orderForm.simple.orderFormId}/attachments/clientPreferencesData"
-      responseText: mock.orderForm.first
+      url: "#{API_URL}/#{simpleOrderForm.orderFormId}/attachments/clientPreferencesData"
+      responseText: firstOrderForm
       responseTime: 100
     $.mockjax
-      url: "#{mock.API_URL}/#{mock.orderForm.simple.orderFormId}/attachments/shippingData"
-      responseText: mock.orderForm.third
+      url: "#{API_URL}/#{simpleOrderForm.orderFormId}/attachments/shippingData"
+      responseText: thirdOrderForm
       responseTime: 100
 
-    vtexjs.checkout.orderFormId = mock.orderForm.simple.orderFormId
+    vtexjs.checkout.orderFormId = simpleOrderForm.orderFormId
 
     requestBeginCalled = 0
     requestEndCalledWithOrderForm = 0
@@ -397,26 +409,60 @@ describe 'VTEX JS Checkout Module', ->
       requestEndCalledWithOrderForm++ if orderForm.orderFormId?
 
     $(window).on 'orderFormUpdated.vtex', (e, orderForm) ->
-      expect(Object.keys(vtexjs.checkout._urlToRequestMap)).to.have.length 0
-      expect(requestBeginCalled).to.equal 3
-      expect(requestEndCalledWithOrderForm).to.equal 2
-      expect(orderForm.request).to.equal 3
+      expect(Object.keys(vtexjs.checkout._urlToRequestMap)).toHaveLength 0
+      expect(requestBeginCalled).toEqual 3
+      expect(requestEndCalledWithOrderForm).toEqual 2
+      expect(orderForm.request).toEqual 3
       # One request was aborted after already being started
-      expect($.mockjax.mockedAjaxCalls()).to.have.length 3
-
+      expect($.mockjax.mockedAjaxCalls()).toHaveLength 3
       done()
 
-    expect(Object.keys(vtexjs.checkout._urlToRequestMap)).to.have.length 0
+    expect(Object.keys(vtexjs.checkout._urlToRequestMap)).toHaveLength 0
     vtexjs.checkout.sendLocale('en-US')
-    # While in the middle of first request, queue second
+    # While in the middle of firstOrderForm request, queue secondOrderForm
     setTimeout ->
-      # First request is pending
-      expect(vtexjs.checkout._urlToRequestMap["#{mock.API_URL}/#{mock.orderForm.simple.orderFormId}/attachments/clientPreferencesData"]).to.exist
+      # firstOrderForm request is pending
+      expect(vtexjs.checkout._urlToRequestMap["#{API_URL}/#{simpleOrderForm.orderFormId}/attachments/clientPreferencesData"]).toBeDefined()
       vtexjs.checkout.calculateShipping({postalCode: '22260000', country: 'BRA'})
     , 80
-    # While in the middle of second request, abort it and queue third
+    # While in the middle of secondOrderForm request, abort it and queue thirdOrderForm
     setTimeout ->
-      # Second request is pending
-      expect(vtexjs.checkout._urlToRequestMap["#{mock.API_URL}/#{mock.orderForm.simple.orderFormId}/attachments/shippingData"]).to.exist
+      # secondOrderForm request is pending
+      expect(vtexjs.checkout._urlToRequestMap["#{API_URL}/#{simpleOrderForm.orderFormId}/attachments/shippingData"]).toBeDefined()
       vtexjs.checkout.calculateShipping({postalCode: '22030030', country: 'BRA'})
     , 120
+
+  it 'should trigger simulation request with new parameters', (done) ->
+    data = {shippingData: simpleOrderForm.shippingData, orderFormId: simpleOrderForm.orderFormId, country: "BRA", salesChannel: "1"}
+    $.mockjax
+      url: SIMULATION_URL + '?sc=1'
+      responseText: data
+      responseTime: 100
+
+    # Act
+    xhr = vtexjs.checkout.simulateShipping(simpleOrderForm.shippingData, simpleOrderForm.orderFormId, "BRA", "1")
+    xhr.done (requestData) ->
+      # Assert
+      expect($.mockjax.mockedAjaxCalls()).toHaveLength 1
+      expect(requestData).toEqual(data)
+      done()
+    xhr.fail (jqXHR) ->
+      done(jqXHR)
+
+  it 'should trigger simulation request with old parameters', (done) ->
+    data = {items: simpleOrderForm.items, postalCode: '22260000', country: "BRA", salesChannel: "1"}
+
+    $.mockjax
+      url: SIMULATION_URL + '?sc=1'
+      responseText: data
+      responseTime: 100
+
+    # Act
+    xhr = vtexjs.checkout.simulateShipping(simpleOrderForm.items, '22260000', "BRA", "1")
+    xhr.done (requestData) ->
+      # Assert
+      expect($.mockjax.mockedAjaxCalls()).toHaveLength 1
+      expect(requestData).toEqual(data)
+      done()
+    xhr.fail (jqXHR) ->
+      done(jqXHR)
