@@ -15,18 +15,29 @@
     "grunt-contrib-uglify": "~0.5.1",
     "grunt-contrib-watch": "~0.5.1",
     "grunt-shell": "^0.7.0",
-    "grunt-vtex": "^0.14.0",
-    "karma": "^0.12.24",
-    "karma-chai": "^0.1.0",
-    "karma-coffee-preprocessor": "^0.2.1",
-    "karma-mocha": "^0.1.9",
-    "karma-mocha-reporter": "^0.3.1",
-    "karma-phantomjs-launcher": "1.0.4",
-    "mocha": "^1.21.5"
+    "grunt-vtex": "^0.16.0",
+    "jasmine": "^3.2.0",
+    "jasmine-node": "^1.16.2",
+    "jest": "^22.0.0",
+    "jquery": "^3.3.1",
+    "jquery-mockjax": "^2.5.0",
+    "mocha": "^2.0.0"
   },
   "scripts": {
+    "jest": "jest --env=jsdom --watch",
     "test": "./node_modules/karma/bin/karma start --single-run",
     "test-watch": "./node_modules/karma/bin/karma start"
+  },
+  "jest": {
+    "testMatch": [
+      "**/?(*-)(spec).coffee"
+    ],
+    "testURL": "http://localhost/",
+    "moduleFileExtensions": [
+      "js",
+      "node",
+      "coffee"
+    ]
   },
   "repository": {
     "type": "git",
