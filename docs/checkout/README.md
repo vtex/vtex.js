@@ -464,26 +464,26 @@ vtexjs.checkout.simulateShipping(items, postalCode, country)
 
 ## simulateShipping(shippingData, orderFormId, country, salesChannel)
 
-Recebendo o objeto com as informações de entrega (shippingData), o Id do orderForm e country, simula frete para os itens presentes no logisticsInfo para este endereço.
+Recebendo o objeto com as informações de entrega (`shippingData`), o `orderFormId` e `country`, simula frete para os itens presentes no `logisticsInfo` para este endereço.
 
 A diferença em relação ao uso anterior da mesma função `simulateShipping` é que esta chamada é feita com parâmetros diferentes para obter o mesmo resultado de chamada.
 
 Esta função é um polimorfismo da função anterior.
 
-O resultado dessa simualação é o mesmo da anterior: retorna diferentes transportadoras que podem ser usadas para cada item, acompanhadas
+O resultado dessa simulação é o mesmo da anterior: retorna diferentes transportadoras que podem ser usadas para cada item, acompanhadas
 de nome, prazo de entrega e preço.
 
 ### Retorna
 
-`Promise` para o resultado. O resultado tem uma propriedade logisticsInfo.
+`Promise` para o resultado. O resultado tem uma propriedade `logisticsInfo`.
 
 
 ### Argumentos
 
 | Nome                    | Tipo                          |
 | -----------------------:| :-----------------------------|
-| **shippingData** | **Object** <br> que contenha a informação de envio e dos itens com `id`, `quantity` e `seller`. |
-| **orderFormId** | **String** <br> contendo o Id do orderForm |
+| **shippingData** | **Object** <br> que contenha a informação de envio com `logisticsInfo` e `selectedAddresses`. |
+| **orderFormId** | **String** <br> contendo o Id do `orderForm` |
 | **country** | **String** <br> a sigla de 3 letras do país, por exemplo, "BRA" |
 | **salesChannel** | **Number ou String** <br> (Parâmetro opcional, default = `1`) |
 

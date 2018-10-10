@@ -504,17 +504,17 @@ vtexjs.checkout.simulateShipping(items, postalCode, country)
 ```
 ## **simulateShipping(shippingData, orderFormId, country, salesChannel)**
 
-Receiving an object containing shipping information (shippingData), the orderFormId and country, it simulates the shipping of these items to this address.
+Receiving an object containing shipping information (`shippingData`), the `orderFormId` and `country`, it simulates the shipping of these items to this address.
 
 The difference from `calculateShipping` is that this call receives different parameters in order to obtain the same result. 
 
-This function is an overloading.
+This is an overloaded function.
 
 The result of this simulation is the same of the last one: returns different carriers that can be used for each item, accompanied by name, delivery date and price.
 
 ### **Returns**
 
-Promise for the result. The result has the property logisticsInfo.
+Promise for the result. The result has the property `logisticsInfo`.
 
 ### **Arguments**
 
@@ -526,7 +526,7 @@ Promise for the result. The result has the property logisticsInfo.
   <tr>
     <td>shippingData</td>
     <td>Object
-containing shipping information and item information with `id`, `quantity` and `seller`.</td>
+containing shipping information and item information with logisticsInfo and selectedAddresses.</td>
   </tr>
   <tr>
     <td>orderFormId</td>
