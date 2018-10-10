@@ -432,7 +432,7 @@ vtexjs.checkout.getOrderForm()
     console.log(orderForm.totalizers);
   });
 ```
-## **simulateShipping(items, postalCode, country, salesChannel)**
+## **simulateShipping(items, postalCode, country, salesChannel)** [DEPRECATED]
 
 Receiving a list of items, the postalCode and country, it simulates the shipping of these items to this address.
 
@@ -502,6 +502,75 @@ vtexjs.checkout.simulateShipping(items, postalCode, country)
     */
   });
 ```
+## **simulateShipping(shippingData, orderFormId, country, salesChannel)**
+
+Receiving an object containing shipping information (shippingData), the orderFormId and country, it simulates the shipping of these items to this address.
+
+The difference from `calculateShipping` is that this call receives different parameters in order to obtain the same result. 
+
+This function is an overloading.
+
+The result of this simulation is the same of the last one: returns different carriers that can be used for each item, accompanied by name, delivery date and price.
+
+### **Returns**
+
+Promise for the result. The result has the property logisticsInfo.
+
+### **Arguments**
+
+<table>
+  <tr>
+    <td>Name</td>
+    <td>Type</td>
+  </tr>
+  <tr>
+    <td>shippingData</td>
+    <td>Object
+containing shipping information and item information with `id`, `quantity` and `seller`.</td>
+  </tr>
+  <tr>
+    <td>orderFormId</td>
+    <td>String 
+representing the Id of the current session's orderForm.</td>
+  </tr>
+  <tr>
+    <td>country</td>
+    <td>String 
+the 3-letter country abbreviation. For example, "BRA".</td>
+  </tr>
+  <tr>
+    <td>salesChannel</td>
+    <td>Number or String 
+(Optional parameter, default = 1)</td>
+  </tr>
+</table>
+
+
+### **Example**
+```html
+
+// `logisticsInfo` must be an array of objects logisticsInfo and contain at least one selectedAddresses
+var shippingData = [{
+  logisticsInfo: logisticsInfoList, 
+  selectedAddresses: selectedAddressesList
+}];
+
+// `orderFormId` must be an Id of the session's orderForm
+var orderFormId = '9f879d435f8b402cb133167d6058c14f';
+
+// `country` must be the 3-letter country abbreviation
+var country = 'BRA';
+
+vtexjs.checkout.simulateShipping(items, postalCode, country)
+  .done(function(result) {
+    /* `result.logisticsInfo` is an array of objects.
+       Each object corresponds to the logistics information (shipping) for each item, in the order in which the items were sent.
+       For example, in `result.logisticsInfo[0].slas` there will be the different carriers options (with deadline and price) for the first item.
+       For further details, check the orderForm documentation.
+    */
+  });
+```
+
 ## **getAddressInformation(address)**
 
 Given an incomplete address with postalCode and country, it returns a complete address, with city, state, street, and any other available information.

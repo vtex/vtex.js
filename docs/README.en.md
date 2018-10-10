@@ -46,3 +46,11 @@ The Catalog module gets data related to the products of the store.
 
 Read the complete documentation for all methods of this module [here](./catalog/).
 
+### Development
+
+In order to develop vtex.js properly, clone the repository, install the dependencies and run the command: 
+
+```shell
+sudo grunt
+```
+Now vtex.js can be linked to other repositories to development.
