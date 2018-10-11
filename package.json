@@ -1,6 +1,6 @@
 {
   "name": "vtex.js",
-  "version": "2.9.3",
+  "version": "2.9.4",
   "readmeFilename": "README.md",
   "description": "VTEX JS SDK",
   "deploy": "deploy/",
@@ -38,7 +38,9 @@
       "node",
       "coffee"
     ],
-    "transform": {".*": "<rootDir>/src/preprocessor.js"}
+    "transform": {
+      ".*": "<rootDir>/src/preprocessor.js"
+    }
   },
   "repository": {
     "type": "git",
