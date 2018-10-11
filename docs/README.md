@@ -52,3 +52,13 @@ Veja a documentação completa de todos os métodos desse módulo [aqui](./check
 O módulo Catalog obtém dados referentes aos produtos da loja.
 
 Veja a documentação completa de todos os métodos desse módulo [aqui](./catalog/).
+
+### Desenvolvimento
+
+Para poder desenvolver o vtex.js, baixe o repositório, instale as dependências e execute o comando: 
+
+```shell
+sudo grunt
+```
+
+Agora o vtex.js já pode ser linkado a outros repositórios para desenvolvimento.

@@ -1,10 +1,13 @@
-mock = {}
+exports.mock = {}
 
-mock.API_URL = window.location.origin + '/api/checkout/pub/orderForm'
 
-mock.orderForm = {}
+exports.API_URL = window.location.origin + '/api/checkout/pub/orderForm'
 
-mock.orderForm.simple = {
+exports.SIMULATION_URL = window.location.origin + '/api/checkout/pub/orderForms/simulation'
+
+exports.orderForm = {}
+
+exports.simpleOrderForm = {
   "orderFormId": "5c5214990aaf4a7499ce4fc58d3ec9e2",
   "salesChannel": "1",
   "loggedIn": false,
@@ -71,7 +74,7 @@ mock.orderForm.simple = {
   "ratesAndBenefitsData": null
 }
 
-mock.orderForm.addItem = {
+exports.addItemOrderForm = {
   "orderFormId": "5c5214990aaf4a7499ce4fc58d3ec9e2",
   "salesChannel": "1",
   "loggedIn": false,
@@ -193,7 +196,7 @@ mock.orderForm.addItem = {
   "ratesAndBenefitsData": null
 }
 
-mock.orderForm.setManualPrice = {
+exports.setManualPriceOrderForm = {
   "allowManualPrice": true,
   "orderFormId": "5c5214990aaf4a7499ce4fc58d3ec9e2",
   "salesChannel": "1",
@@ -317,7 +320,7 @@ mock.orderForm.setManualPrice = {
   "ratesAndBenefitsData": null
 }
 
-mock.orderForm.removeManualPrice = {
+exports.removeManualPriceOrderForm = {
   "allowManualPrice": true,
   "orderFormId": "5c5214990aaf4a7499ce4fc58d3ec9e2",
   "salesChannel": "1",
@@ -441,17 +444,17 @@ mock.orderForm.removeManualPrice = {
   "ratesAndBenefitsData": null
 }
 
-mock.orderForm.first = {
+exports.firstOrderForm = {
   "orderFormId": "5c5214990aaf4a7499ce4fc58d3ec9e2",
   "request": 1
 }
 
-mock.orderForm.second = {
+exports.secondOrderForm = {
   "orderFormId": "5c5214990aaf4a7499ce4fc58d3ec9e2",
   "request": 2
 }
 
-mock.orderForm.third = {
+exports.thirdOrderForm = {
   "orderFormId": "5c5214990aaf4a7499ce4fc58d3ec9e2",
   "request": 3
 }

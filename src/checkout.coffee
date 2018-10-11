@@ -251,7 +251,7 @@ class Checkout
           quantity: 0
         })
       @updateItems(itemsToRemove, expectedOrderFormSections)
-
+    
   # Clone an item to one or more new items like it
   cloneItem: (itemIndex, newItemsOptions, expectedFormSections = @_allOrderFormSections) =>
     @_updateOrderForm
@@ -358,12 +358,24 @@ class Checkout
   calculateShipping: (address) =>
     @sendAttachment('shippingData', {address: address})
 
-  # Simulates shipping using a list of items, a postal code and a country.
-  simulateShipping: (items, postalCode, country, salesChannel) =>
-    dataRequest =
-      items: items
-      postalCode: postalCode
-      country: country
+  # Simulates shipping using a list of items, a postal code or a shippingData object, orderFormID and a country.
+  simulateShipping: () =>
+    dataRequest = null
+    [country, salesChannel] = [arguments[2], arguments[3]]
+    if Array.isArray( arguments[0] )
+      console.warn "Calling simulateShipping with a list of items and postal code is deprecated.\n" + \
+       "Call it with shippingData and orderFormId instead."
+      [items,postalCode] = [arguments[0], arguments[1]]
+      dataRequest =
+        items: items
+        postalCode: postalCode
+        country: country
+    else 
+      [shippingData,orderFormId] = [arguments[0], arguments[1]]
+      dataRequest =
+        shippingData: shippingData
+        orderFormId: orderFormId
+        country: country
 
     salesChannelQueryString = ''
     if salesChannel

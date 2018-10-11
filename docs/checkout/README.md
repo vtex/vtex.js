@@ -406,7 +406,7 @@ vtexjs.checkout.getOrderForm()
 ```
 
 
-## simulateShipping(items, postalCode, country, salesChannel)
+## simulateShipping(items, postalCode, country, salesChannel) [DEPRECATED]
 
 Recebendo uma lista de items, seu postalCode e country, simula frete desses items para este endereço.
 
@@ -462,6 +462,58 @@ vtexjs.checkout.simulateShipping(items, postalCode, country)
   });
 ```
 
+## simulateShipping(shippingData, orderFormId, country, salesChannel)
+
+Recebendo o objeto com as informações de entrega (`shippingData`), o `orderFormId` e `country`, simula frete para os itens presentes no `logisticsInfo` para este endereço.
+
+A diferença em relação ao uso anterior da mesma função `simulateShipping` é que esta chamada é feita com parâmetros diferentes para obter o mesmo resultado de chamada.
+
+Esta função é um polimorfismo da função anterior.
+
+O resultado dessa simulação é o mesmo da anterior: retorna diferentes transportadoras que podem ser usadas para cada item, acompanhadas
+de nome, prazo de entrega e preço.
+
+### Retorna
+
+`Promise` para o resultado. O resultado tem uma propriedade `logisticsInfo`.
+
+
+### Argumentos
+
+| Nome                    | Tipo                          |
+| -----------------------:| :-----------------------------|
+| **shippingData** | **Object** <br> que contenha a informação de envio com `logisticsInfo` e `selectedAddresses`. |
+| **orderFormId** | **String** <br> contendo o Id do `orderForm` |
+| **country** | **String** <br> a sigla de 3 letras do país, por exemplo, "BRA" |
+| **salesChannel** | **Number ou String** <br> (Parâmetro opcional, default = `1`) |
+
+### Exemplo
+
+```js
+// O `logisticsInfo` deve ser um array de objetos logisticsInfo, e o selectedAddresses deve conter pelo menos um address
+var shippingData = [{
+  logisticsInfo: logisticsInfoList, 
+  selectedAddresses: selectedAddressesList
+}];
+
+// O `orderFormId` deve ser o Id do orderForm da sessão
+var orderFormId = '9f879d435f8b402cb133167d6058c14f';
+
+
+// O `country` deve ser a sigla de 3 letras do país
+var country = 'BRA';
+
+vtexjs.checkout.simulateShipping(shippingData, orderFormId, country)
+  .done(function(result) {
+    /* `result.logisticsInfo` é um array de objetos.
+       Cada objeto corresponde às informações de logística (frete) para cada item,
+         na ordem em que os items foram enviados.
+       Por exemplo, em `result.logisticsInfo[0].slas` estarão as diferentes opções
+         de transportadora (com prazo e preço) para o primeiro item.
+       Para maiores detalhes, consulte a documentação do orderForm.
+    */
+  });
+```
 
 ## getAddressInformation(address)
 
