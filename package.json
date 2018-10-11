@@ -7,21 +7,31 @@
   "devDependencies": {
     "chai": "^1.9.2",
     "coffee-script": "^1.12.7",
-    "grunt": "~0.4.5",
+    "cryptiles": "^4.1.2",
+    "debug": "^2.6.9",
+    "fresh": "^0.5.2",
+    "grunt": "^1.0.3",
     "grunt-contrib-clean": "~0.5.0",
     "grunt-contrib-coffee": "~0.8.0",
     "grunt-contrib-concat": "~0.4.0",
     "grunt-contrib-copy": "~0.5.0",
-    "grunt-contrib-uglify": "~0.5.1",
-    "grunt-contrib-watch": "~0.5.1",
+    "grunt-contrib-uglify": "^4.0.0",
+    "grunt-contrib-watch": "^1.1.0",
     "grunt-shell": "^0.7.0",
     "grunt-vtex": "^0.16.0",
     "jasmine": "^3.2.0",
-    "jasmine-node": "^1.16.2",
+    "jasmine-node": "^2.0.1",
     "jest": "^22.4.4",
     "jquery": "^3.3.1",
     "jquery-mockjax": "^2.5.0",
-    "mocha": "^2.0.0"
+    "lodash": "^4.17.5",
+    "mime": "^1.4.1",
+    "minimatch": "^3.0.2",
+    "mocha": "^5.2.0",
+    "negotiator": "^0.6.1",
+    "qs": "^1.0.0",
+    "randomatic": "^3.0.0",
+    "send": "^0.16.2"
   },
   "scripts": {
     "jest": "jest --env=jsdom",
@@ -59,5 +69,6 @@
     "Guilherme Rodrigues <gadr90@gmail.com>",
     "Breno Calazans <brenocalazans@gmail.com>"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {}
 }
