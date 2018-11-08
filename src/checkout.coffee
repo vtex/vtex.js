@@ -343,6 +343,20 @@ class Checkout
       url: @_getAddCouponURL()
       data: JSON.stringify couponCodeRequest
 
+  # Sends a custom data
+  setCustomData: (params) =>
+    customData = {
+      value: params.value
+    }
+
+    @_updateOrderForm
+      type: 'PUT'
+      url: @_getCustomDataUrl({
+        app: params.app,
+        field: params.field,
+      })
+      data: JSON.stringify customData
+
   # Sends a request to remove the discount coupon from the OrderForm.
   removeDiscountCoupon: (expectedOrderFormSections) =>
     @addDiscountCoupon('', expectedOrderFormSections)
@@ -505,6 +519,9 @@ class Checkout
 
   _getChangeOrdinationURL: =>
     @_getOrderFormURL() + '/itemsOrdination'
+
+  _getCustomDataUrl: (params) =>
+    @_getOrderFormURL() + '/customData/' + params.app + '/' + params.field
 
   _getAddCouponURL: =>
     @_getOrderFormURL() + '/coupons'
