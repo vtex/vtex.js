@@ -30,7 +30,7 @@ window.location.origin or= window.location.protocol + "//" + window.location.hos
 
 class Checkout
 
-  HOST_URL = window.location.origin
+  HOST_URL = document.baseURI.indexOf('checkout') > 0 ? window.location.origin : document.baseURI
 
   events =
     ORDER_FORM_UPDATED: 'orderFormUpdated.vtex'
@@ -251,7 +251,7 @@ class Checkout
           quantity: 0
         })
       @updateItems(itemsToRemove, expectedOrderFormSections)
-    
+
   # Clone an item to one or more new items like it
   cloneItem: (itemIndex, newItemsOptions, expectedFormSections = @_allOrderFormSections) =>
     @_updateOrderForm
@@ -384,7 +384,7 @@ class Checkout
         items: items
         postalCode: postalCode
         country: country
-    else 
+    else
       [shippingData,orderFormId] = [arguments[0], arguments[1]]
       dataRequest =
         shippingData: shippingData
