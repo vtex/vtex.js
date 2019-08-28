@@ -251,7 +251,7 @@ class Checkout
           quantity: 0
         })
       @updateItems(itemsToRemove, expectedOrderFormSections)
-
+    
   # Clone an item to one or more new items like it
   cloneItem: (itemIndex, newItemsOptions, expectedFormSections = @_allOrderFormSections) =>
     @_updateOrderForm
@@ -384,7 +384,7 @@ class Checkout
         items: items
         postalCode: postalCode
         country: country
-    else
+    else 
       [shippingData,orderFormId] = [arguments[0], arguments[1]]
       dataRequest =
         shippingData: shippingData
@@ -487,7 +487,7 @@ class Checkout
     return readSubcookie(cookie, COOKIE_ORDER_FORM_ID_KEY)
 
   _getOrderFormIdFromURL: =>
-    urlParam('orderformid')
+    urlParam('orderFormId')
 
   _getBaseOrderFormURL: ->
     HOST_URL + '/api/checkout/pub/orderForm'
