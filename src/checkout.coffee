@@ -163,6 +163,12 @@ class Checkout
   sendLocale: (locale='pt-BR') =>
     @sendAttachment('clientPreferencesData', {locale: locale}, [])
 
+
+  # Sends orderGroupId to checkout in order to finish a transaction
+  finishTransaction: (orderGroupId, expectedOrderFormSections = @_allOrderFormSections) =>
+    @_updateOrderForm
+      url: @_getFinishTransactionURL(orderGroupId)
+
   # Sends a request to select an available gift
   updateSelectableGifts: (list, selectedGifts, expectedOrderFormSections = @_allOrderFormSections) =>
     updateSelectableGiftsRequest =
@@ -561,6 +567,9 @@ class Checkout
 
   _getGatewayCallbackURL: =>
     HOST_URL + '/checkout/gatewayCallback/{0}/{1}/{2}'
+
+  _getFinishTransactionURL: (orderGroupId) =>
+    HOST_URL + '/api/checkout/pub/gatewayCallback/' + orderGroupId
 
 
 window.vtexjs or= {}

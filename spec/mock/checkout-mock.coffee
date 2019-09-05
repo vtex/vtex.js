@@ -3,6 +3,8 @@ exports.mock = {}
 
 exports.API_URL = window.location.origin + '/api/checkout/pub/orderForm'
 
+exports.GATEWAY_URL = window.location.origin + '/api/checkout/pub/gatewayCallback'
+
 exports.SIMULATION_URL = window.location.origin + '/api/checkout/pub/orderForms/simulation'
 
 exports.orderForm = {}

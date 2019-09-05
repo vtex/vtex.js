@@ -492,7 +492,7 @@ de nome, prazo de entrega e preço.
 ```js
 // O `logisticsInfo` deve ser um array de objetos logisticsInfo, e o selectedAddresses deve conter pelo menos um address
 var shippingData = [{
-  logisticsInfo: logisticsInfoList, 
+  logisticsInfo: logisticsInfoList,
   selectedAddresses: selectedAddressesList
 }];
 
@@ -1181,5 +1181,29 @@ var items = [
 vtexjs.checkout.replaceSKU(items)
   .then(function(orderForm) {
     console.log("Novos items: ", orderForm.items);
+  });
+```
+
+## finishTransaction(orderGroupId, expectedOrderFormSections)
+
+Avisa a API do checkout para terminar uma transação e ir para a url final (e.g. `order-placed`, `checkout`).
+
+### Retorna
+
+`Promise` para o orderForm
+
+### Argumentos
+
+| Nome                    | Tipo                          |
+| -----------------------:| :-----------------------------|
+| **orderGroupId** | **number** <br> id do pedido a ser gerado no momento da finalização da compra |
+
+### Exemplo
+```js
+var orderGroupId = "959290226406"
+
+vtexjs.checkout.finishTransaction(orderGroupId)
+  .then(function(response) {
+    console.log('Sucesso', response.status)
   });
 ```
