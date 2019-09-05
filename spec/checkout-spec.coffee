@@ -2,9 +2,9 @@ $ = require 'jquery'
 window.$ = $
 AjaxQueue = require '../src/extended-ajax'
 jasmine = require 'jasmine'
-mockjax = require 'jquery-mockjax' 
+mockjax = require 'jquery-mockjax'
 mockjax = mockjax($, window)
-{mock, API_URL, SIMULATION_URL} = require './mock/checkout-mock.coffee'
+{mock, API_URL, SIMULATION_URL, GATEWAY_URL} = require './mock/checkout-mock.coffee'
 {orderForm, simpleOrderForm, addItemOrderForm} = require './mock/checkout-mock.coffee'
 {setManualPriceOrderForm, removeManualPriceOrderForm} = require './mock/checkout-mock.coffee'
 {firstOrderForm, secondOrderForm, thirdOrderForm} = require './mock/checkout-mock.coffee'
@@ -459,6 +459,30 @@ describe 'VTEX JS Checkout Module', ->
 
     # Act
     xhr = vtexjs.checkout.simulateShipping(simpleOrderForm.items, '22260000', "BRA", "1")
+    xhr.done (requestData) ->
+      # Assert
+      expect($.mockjax.mockedAjaxCalls()).toHaveLength 1
+      expect(requestData).toEqual(data)
+      done()
+    xhr.fail (jqXHR) ->
+      done(jqXHR)
+
+  it 'should trigger finish transaction with orderId parameter', (done) ->
+    # Arrange
+    orderGroupId = '959290226406'
+    data = {
+      status: 'success'
+    }
+    $.mockjax
+      url: "#{GATEWAY_URL}/#{orderGroupId}"
+      type: 'POST'
+      contentType: 'application/json; chartset=utf-8'
+      dataType: 'json'
+      responseText: data
+      responseTime: 100
+
+    # Act
+    xhr = vtexjs.checkout.finishTransaction(orderGroupId)
     xhr.done (requestData) ->
       # Assert
       expect($.mockjax.mockedAjaxCalls()).toHaveLength 1
