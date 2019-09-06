@@ -38,6 +38,14 @@ module.exports = (grunt) ->
       options:
         sourceMap: true
 
+  config.copy.latest =
+    files: [
+      expand: true
+      cwd: "build/<%= relativePath %>/"
+      src: ['**']
+      dest: "#{pkg.deploy}/latest"
+    ]
+
   config.watch.coffee.files = ['src/*.coffee']
 
   tasks =
@@ -45,7 +53,7 @@ module.exports = (grunt) ->
     build: ['clean', 'copy:pkg', 'coffee', 'concat']
     min: ['uglify'] # minifies files
   # Deploy tasks
-    dist: ['build', 'min', 'copy:deploy'] # Dist - minifies files
+    dist: ['build', 'min', 'copy:deploy', 'copy:latest'] # Dist - minifies files
     test: []
     vtex_deploy: ['shell:cp']
   # Development tasks
