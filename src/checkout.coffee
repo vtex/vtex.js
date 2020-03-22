@@ -257,7 +257,7 @@ class Checkout
           quantity: 0
         })
       @updateItems(itemsToRemove, expectedOrderFormSections)
-    
+
   # Clone an item to one or more new items like it
   cloneItem: (itemIndex, newItemsOptions, expectedFormSections = @_allOrderFormSections) =>
     @_updateOrderForm
@@ -390,7 +390,7 @@ class Checkout
         items: items
         postalCode: postalCode
         country: country
-    else 
+    else
       [shippingData,orderFormId] = [arguments[0], arguments[1]]
       dataRequest =
         shippingData: shippingData
@@ -423,7 +423,7 @@ class Checkout
       data: {email: email, sc: salesChannel}
 
   # Sends a request to start the transaction. This is the final step in the checkout process.
-  startTransaction: (value, referenceValue, interestValue, savePersonalData = false, optinNewsLetter, expectedOrderFormSections = @_allOrderFormSections) =>
+  startTransaction: (value, referenceValue, interestValue, savePersonalData = false, optinNewsLetter, expectedOrderFormSections = @_allOrderFormSections, recaptchaKey, recaptchaToken) =>
     transactionRequest = {
       referenceId: @_getOrderFormId()
       savePersonalData: savePersonalData
@@ -432,6 +432,8 @@ class Checkout
       referenceValue: referenceValue
       interestValue: interestValue
       expectedOrderFormSections : expectedOrderFormSections
+      recaptchaKey: recaptchaKey
+      recaptchaToken: recaptchaToken
     }
     @_updateOrderForm
       url: @_startTransactionURL(),
