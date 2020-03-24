@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.11.2] - 2020-03-24
+
 ### Added
 
 - reCAPTCHA support on Checkout transaction (complete purchase)
