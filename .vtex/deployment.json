@@ -9,7 +9,7 @@
     "build": {
       "type": "codebuild",
       "image":
-        "053131491888.dkr.ecr.us-east-1.amazonaws.com/awsbuild/ubuntu/node:5.12.0",
+        "053131491888.dkr.ecr.us-east-1.amazonaws.com/awsbuild/ubuntu/node:12",
       "vpc": {
         "id": "vpc-d4f109b1",
         "subnets": ["subnet-955f63d3", "subnet-245f030c", "subnet-0e35267a"],
