@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `refreshOutdatedData` field to query string in `getOrderForm`
+
 ## [2.11.3] - 2021-04-16
 
 ### Changed

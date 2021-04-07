@@ -137,7 +137,7 @@ class Checkout
     else
       checkoutRequest = { expectedOrderFormSections: expectedFormSections }
       xhr = @ajax
-        url: @_getOrderFormURLWithId()
+        url: @_getOrderFormURLWithId() + '?refreshOutdatedData=true'
         type: 'POST'
         contentType: 'application/json; charset=utf-8'
         dataType: 'json'
