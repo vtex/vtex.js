@@ -1,6 +1,6 @@
 [
   {
-    "name": "vtex-js",
+    "name": "vtex.js",
     "description": "",
     "acronym": "vjs",
     "source": "https://github.com/vtex/vtex.js.git",
