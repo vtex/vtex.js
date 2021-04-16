@@ -1,9 +1,8 @@
 [
   {
     "name": "vtex.js",
-    "description": "",
     "acronym": "vjs",
-    "source": "https://github.com/vtex/vtex.js.git",
+    "description": "",
     "build": {
       "provider": "jenkins",
       "type": "grunt-frontend",
