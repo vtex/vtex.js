@@ -676,6 +676,11 @@ coffee-script@~1.6.3:
   resolved "https://registry.yarnpkg.com/coffee-script/-/coffee-script-1.6.3.tgz#6355d32cf1b04cdff6b484e5e711782b2f0c39be"
   integrity sha1-Y1XTLPGwTN/2tITl5xF4Ky8MOb4=
 
+coffeescript@^2.5.1:
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/coffeescript/-/coffeescript-2.5.1.tgz#b2442a1f2c806139669534a54adc35010559d16a"
+  integrity sha512-J2jRPX0eeFh5VKyVnoLrfVFgLZtnnmp96WQSLAS8OrLm2wtQLcnikYKe1gViJKDH7vucjuhHvBKKBP3rKcD1tQ==
+
 collection-visit@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/collection-visit/-/collection-visit-1.0.0.tgz#4bc0373c164bc3291b4d368c829cf1a80a59dca0"
