@@ -2,36 +2,16 @@
   {
     "name": "vtex-js",
     "description": "",
+    "acronym": "vjs",
     "source": "https://github.com/vtex/vtex.js.git",
-    "script": {
-      "deploy": ".vtex/buildspec.yml"
-    },
     "build": {
-      "type": "codebuild",
-      "image":
-        "053131491888.dkr.ecr.us-east-1.amazonaws.com/awsbuild/ubuntu/node:12",
-      "vpc": {
-        "id": "vpc-d4f109b1",
-        "subnets": ["subnet-955f63d3", "subnet-245f030c", "subnet-0e35267a"],
-        "securityGroups": ["sg-c84127b3"]
+      "provider": "jenkins",
+      "type": "grunt-frontend",
+      "parameters": {
+        "AWS_ACCOUNT_ID": "053131491888",
+        "AWS_REGION": "us-east-1",
+        "SLACK_CHANNEL": "checkout-ui-notifications"
       }
-    },
-    "service": {
-      "type": "front"
-    },
-    "tags": [
-      {
-        "key": "Product",
-        "value": "vtex-js"
-      },
-      {
-        "key": "Owner",
-        "value": "Shopping XP"
-      },
-      {
-        "key": "Team",
-        "value": "Shopping XP"
-      }
-    ]
+    }
   }
 ]
