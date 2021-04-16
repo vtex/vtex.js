@@ -13,8 +13,8 @@ sobre o vtex.js que rolou no VTEX Day 2014.
 
 Para desenvolver rodando os testes, instale as dependências e use o script test-watch:
 
-    npm i
-    npm run-script test-watch
+    yarn install
+    yarn test-watch
 
 ## CHANGELOG
 
