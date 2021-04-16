@@ -1,6 +1,6 @@
 {
   "name": "vtex.js",
-  "version": "2.11.2",
+  "version": "2.11.3",
   "readmeFilename": "README.md",
   "description": "VTEX JS SDK",
   "deploy": "deploy/",
@@ -36,7 +36,8 @@
   "scripts": {
     "jest": "jest --env=jsdom",
     "test": "jest --env=jsdom",
-    "test-watch": "jest --env=jsdom --watch"
+    "test-watch": "jest --env=jsdom --watch",
+    "build": "grunt dist --no-color --stack"
   },
   "jest": {
     "testMatch": [
