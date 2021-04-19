@@ -10,7 +10,7 @@ mockjax = mockjax($, window)
 {firstOrderForm, secondOrderForm, thirdOrderForm} = require './mock/checkout-mock.coffee'
 checkout = require '../src/checkout'
 
-
+REFRESH_FLAG = '?refreshOutdatedData=true'
 
 describe 'VTEX JS Checkout Module', ->
 
@@ -33,7 +33,7 @@ describe 'VTEX JS Checkout Module', ->
   it 'should get orderform', (done) ->
     # Arrange
     $.mockjax
-      url: API_URL
+      url: API_URL + REFRESH_FLAG
       responseText: simpleOrderForm
 
     # Act
@@ -48,7 +48,7 @@ describe 'VTEX JS Checkout Module', ->
   it 'should have orderform after get', (done) ->
     # Arrange
     $.mockjax
-      url: API_URL
+      url: API_URL + REFRESH_FLAG
       responseText: simpleOrderForm
 
     # Act
@@ -63,7 +63,7 @@ describe 'VTEX JS Checkout Module', ->
   it 'should fetch from API if expectedOrderFormSections are not present', (done) ->
     # Arrange
     $.mockjax
-      url: API_URL
+      url: API_URL + REFRESH_FLAG
       responseText: simpleOrderForm
 
     expect($.mockjax.mockedAjaxCalls()).toHaveLength 0
@@ -78,7 +78,7 @@ describe 'VTEX JS Checkout Module', ->
   it 'should not fetch from API if expectedOrderFormSections are present', (done) ->
     # Arrange
     $.mockjax
-      url: API_URL
+      url: API_URL + REFRESH_FLAG
       responseText: simpleOrderForm
 
     expect($.mockjax.mockedAjaxCalls()).toHaveLength 0
@@ -231,7 +231,7 @@ describe 'VTEX JS Checkout Module', ->
   it 'should broadcast orderform before promise resolution', (done) ->
     # Arrange
     $.mockjax
-      url: API_URL
+      url: API_URL + REFRESH_FLAG
       responseText: simpleOrderForm
 
     handlerCalled = false
@@ -251,7 +251,7 @@ describe 'VTEX JS Checkout Module', ->
   it 'should trigger request begin event', (done) ->
     # Arrange
     $.mockjax
-      url: API_URL
+      url: API_URL + REFRESH_FLAG
       responseText: simpleOrderForm
     $.mockjax
       url: "#{API_URL}/#{simpleOrderForm.orderFormId}/attachments/clientPreferencesData"
@@ -270,7 +270,7 @@ describe 'VTEX JS Checkout Module', ->
   it 'should trigger request end event after request begin event', (done) ->
     # Arrange
     $.mockjax
-      url: API_URL
+      url: API_URL + REFRESH_FLAG
       responseText: simpleOrderForm
     $.mockjax
       url: "#{API_URL}/#{simpleOrderForm.orderFormId}/attachments/clientPreferencesData"
