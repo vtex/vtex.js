@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.13.0] - 2021-09-16
+### Added
+- Event `attachmentUpdated.vtex` for when an attachment is updated by using the 
+  `sendAttachment` method.
+
 ## [2.12.0] - 2021-04-19
 
 ### Added

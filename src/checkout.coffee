@@ -34,6 +34,7 @@ class Checkout
 
   events =
     ORDER_FORM_UPDATED: 'orderFormUpdated.vtex'
+    ATTACHMENT_UPDATED: 'attachmentUpdated.vtex'
     REQUEST_BEGIN: 'checkoutRequestBegin.vtex'
     REQUEST_END: 'checkoutRequestEnd.vtex'
 
@@ -155,9 +156,13 @@ class Checkout
 
     attachment['expectedOrderFormSections'] = expectedOrderFormSections
 
-    @_updateOrderForm
+    xhr = @_updateOrderForm
       url: @_getSaveAttachmentURL(attachmentId)
       data: JSON.stringify(attachment)
+
+    xhr.done((orderForm) =>
+      $(window).trigger(events.ATTACHMENT_UPDATED, [attachmentId, orderForm])
+    )
 
   # Sends a request to set the used locale.
   sendLocale: (locale='pt-BR') =>
