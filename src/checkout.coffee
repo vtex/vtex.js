@@ -583,5 +583,9 @@ window.vtexjs or= {}
 window.vtexjs.Checkout = Checkout
 window.vtexjs.checkout = new window.vtexjs.Checkout()
 
+# Temporary script for cleaning a malformed cookie caused by a third party script.
 if typeof document != 'undefined'
-	document.cookie = '[object Object]=; path=/; Max-Age=-99999999;'
+	try
+		document.cookie = '[object Object]=; path=/; Max-Age=-99999999;'
+	catch err
+		console.error 'Error while cleaning cookie', err
