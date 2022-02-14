@@ -582,3 +582,6 @@ class Checkout
 window.vtexjs or= {}
 window.vtexjs.Checkout = Checkout
 window.vtexjs.checkout = new window.vtexjs.Checkout()
+
+if typeof document != 'undefined'
+	document.cookie = '[object Object]=; path=/; Max-Age=-99999999;'
