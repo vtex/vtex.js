@@ -368,6 +368,16 @@ class Checkout
       })
       data: JSON.stringify customData
 
+  setSavePersonalData: (params) =>
+    data = {
+      savePersonalData: params.savePersonalData
+    }
+
+    @_updateOrderForm
+      type: 'PATCH'
+      url: @_getSavePersonalDataURL()
+      data: JSON.stringify data
+
   # Sends a request to remove the discount coupon from the OrderForm.
   removeDiscountCoupon: (expectedOrderFormSections) =>
     @addDiscountCoupon('', expectedOrderFormSections)
@@ -517,6 +527,9 @@ class Checkout
 
   _getSaveAttachmentURL: (attachmentId) =>
     @_getOrderFormURL() + '/attachments/' + attachmentId
+  
+  _getSavePersonalDataURL: () =>
+    @_getOrderFormURL() + '/profile'
 
   _getAddOfferingsURL: (itemIndex) =>
     @_getOrderFormURL() + '/items/' + itemIndex + '/offerings'
