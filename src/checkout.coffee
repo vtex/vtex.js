@@ -368,6 +368,7 @@ class Checkout
       })
       data: JSON.stringify customData
 
+  # Sends a request to inform if the user wants to save his profile information or not.
   setSavePersonalData: (params) =>
     data = {
       savePersonalData: params.savePersonalData
