@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.14.0-beta.0] - 2022-04-14
+
 ## [2.14.0-beta] - 2022-04-14
 ### Added
 - `setSavePersonalData` for the user to be able to choose whether he wants to save his profile information or not.
