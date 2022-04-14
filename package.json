@@ -1,12 +1,13 @@
 {
   "name": "vtex.js",
-  "version": "2.11.2-beta",
+  "version": "2.13.0",
   "readmeFilename": "README.md",
   "description": "VTEX JS SDK",
   "deploy": "deploy/",
   "devDependencies": {
     "chai": "^1.9.2",
     "coffee-script": "^1.12.7",
+    "coffeescript": "^2.5.1",
     "cryptiles": "^4.1.2",
     "debug": "^2.6.9",
     "fresh": "^0.5.2",
@@ -36,7 +37,8 @@
   "scripts": {
     "jest": "jest --env=jsdom",
     "test": "jest --env=jsdom",
-    "test-watch": "jest --env=jsdom --watch"
+    "test-watch": "jest --env=jsdom --watch",
+    "build": "grunt dist --no-color --stack"
   },
   "jest": {
     "testMatch": [

@@ -34,6 +34,7 @@ class Checkout
 
   events =
     ORDER_FORM_UPDATED: 'orderFormUpdated.vtex'
+    ATTACHMENT_UPDATED: 'attachmentUpdated.vtex'
     REQUEST_BEGIN: 'checkoutRequestBegin.vtex'
     REQUEST_END: 'checkoutRequestEnd.vtex'
 
@@ -137,7 +138,7 @@ class Checkout
     else
       checkoutRequest = { expectedOrderFormSections: expectedFormSections }
       xhr = @ajax
-        url: @_getOrderFormURLWithId()
+        url: @_getOrderFormURLWithId() + '?refreshOutdatedData=true'
         type: 'POST'
         contentType: 'application/json; charset=utf-8'
         dataType: 'json'
@@ -155,9 +156,13 @@ class Checkout
 
     attachment['expectedOrderFormSections'] = expectedOrderFormSections
 
-    @_updateOrderForm
+    xhr = @_updateOrderForm
       url: @_getSaveAttachmentURL(attachmentId)
       data: JSON.stringify(attachment)
+
+    xhr.done((orderForm) =>
+      $(window).trigger(events.ATTACHMENT_UPDATED, [attachmentId, orderForm])
+    )
 
   # Sends a request to set the used locale.
   sendLocale: (locale='pt-BR') =>
@@ -363,6 +368,17 @@ class Checkout
       })
       data: JSON.stringify customData
 
+  # Sends a request to inform if the user wants to save his profile information or not.
+  setSavePersonalData: (params) =>
+    data = {
+      savePersonalData: params.savePersonalData
+    }
+
+    @_updateOrderForm
+      type: 'PATCH'
+      url: @_getSavePersonalDataURL()
+      data: JSON.stringify data
+
   # Sends a request to remove the discount coupon from the OrderForm.
   removeDiscountCoupon: (expectedOrderFormSections) =>
     @addDiscountCoupon('', expectedOrderFormSections)
@@ -512,6 +528,9 @@ class Checkout
 
   _getSaveAttachmentURL: (attachmentId) =>
     @_getOrderFormURL() + '/attachments/' + attachmentId
+  
+  _getSavePersonalDataURL: () =>
+    @_getOrderFormURL() + '/profile'
 
   _getAddOfferingsURL: (itemIndex) =>
     @_getOrderFormURL() + '/items/' + itemIndex + '/offerings'
