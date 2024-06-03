@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Custom checkout user agent header to `getOrderForm` calls.
+
 ## [2.13.0] - 2021-09-16
 ### Added
 - Event `attachmentUpdated.vtex` for when an attachment is updated by using the 
