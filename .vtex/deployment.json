@@ -5,7 +5,7 @@
     "description": "",
     "build": {
       "provider": "jenkins",
-      "type": "grunt-frontend",
+      "type": "frontend",
       "parameters": {
         "AWS_ACCOUNT_ID": "053131491888",
         "AWS_REGION": "us-east-1",

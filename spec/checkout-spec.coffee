@@ -1,7 +1,6 @@
 $ = require 'jquery'
 window.$ = $
 AjaxQueue = require '../src/extended-ajax'
-jasmine = require 'jasmine'
 mockjax = require 'jquery-mockjax'
 mockjax = mockjax($, window)
 {mock, API_URL, SIMULATION_URL, GATEWAY_URL} = require './mock/checkout-mock.coffee'

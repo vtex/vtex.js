@@ -143,6 +143,9 @@ class Checkout
         contentType: 'application/json; charset=utf-8'
         dataType: 'json'
         data: JSON.stringify(checkoutRequest)
+        beforeSend: (xhr) ->
+          if(window.vtex?.checkout?.version)
+            xhr.setRequestHeader('Checkout-User-Agent', 'legacy@' + window.vtex.checkout.version)
 
       xhr.done(@_cacheOrderForm)
       xhr.done(@_broadcastOrderFormUnlessPendingRequests)
