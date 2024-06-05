@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.13.1-beta] - 2024-06-05
+
 ## [2.13.0] - 2021-09-16
 ### Added
 - Event `attachmentUpdated.vtex` for when an attachment is updated by using the 
@@ -41,3 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Finish transaction method with new gateway callback endpoint which receives an orderGroupId
+
+
+[Unreleased]: https://github.com/vtex/vtex.js/compare/v2.13.1-beta...HEAD
+[2.13.1-beta]: https://github.com/vtex/vtex.js/compare/v2.13.0...v2.13.1-beta
