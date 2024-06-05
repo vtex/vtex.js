@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.13.1] - 2024-06-05
+
 ### Added
 - Custom checkout user agent header to `getOrderForm` calls.
 
@@ -44,3 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Finish transaction method with new gateway callback endpoint which receives an orderGroupId
+
+
+[Unreleased]: https://github.com/vtex/vtex.js/compare/v2.13.1...HEAD
+[2.13.1]: https://github.com/vtex/vtex.js/compare/v2.13.0...v2.13.1
