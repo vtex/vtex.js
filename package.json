@@ -20,8 +20,6 @@
     "grunt-contrib-watch": "^1.1.0",
     "grunt-shell": "^0.7.0",
     "grunt-vtex": "^0.16.0",
-    "jasmine": "^3.2.0",
-    "jasmine-node": "^2.0.1",
     "jest": "^22.4.4",
     "jquery": "^3.3.1",
     "jquery-mockjax": "^2.5.0",
