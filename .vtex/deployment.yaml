@@ -1,0 +1,20 @@
+- name: vtex.js
+  referenceId: PLACEHOLDER
+  description: SonarQube scan for vtex.js
+  build:
+    provider: dkcicd
+    pipelines:
+      - name: node-ci-v2
+        parameters:
+          sonarProjectName: vtex.js
+          nodeVersion: 20-bookworm
+          nodeCommands:
+            - test -- --coverage
+        runtime:
+          architecture: amd64
+        when:
+          - event: pull_request
+            source: branch
+          - event: push
+            source: branch
+            regex: master
