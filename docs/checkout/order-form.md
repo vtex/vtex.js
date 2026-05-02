@@ -135,7 +135,6 @@ Caso o email do cliente não tenha sido confirmado, vários dados pessoais serã
 
 ```json
 {
-  "attachmentId": "clientProfileData",
   "email": "gadr90@gmail.com",
   "firstName": "Gui******",
   "lastName": "Rod******",
@@ -167,7 +166,6 @@ Caso o email do cliente não tenha sido confirmado, vários dados pessoais serã
 
 ```json
 {
-  "attachmentId": "shippingData",
   "address": {
     "addressType": "residential",
     "receiverName": "Gui***rme",
@@ -399,12 +397,19 @@ Um array de mensagens referentes à chamada feita à API.
 
 ### marketingData
 
-**PENDING**
-
 #### Exemplo
 
 ```json
-null
+{
+  coupon: null,
+  marketingTags: [],
+  utmCampaign: null,
+  utmMedium: null,
+  utmSource: null,
+  utmiCampaign: null,
+  utmiPart: null,
+  utmipage: null
+}
 ```
 
 ### clientPreferencesData
@@ -415,7 +420,6 @@ Um objeto pequeno contendo preferências do cliente.
 
 ```json
 {
-  "attachmentId": "clientPreferencesData",
   "locale": "pt-BR",
   "optinNewsLetter": true
 }
