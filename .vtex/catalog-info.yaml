@@ -1,0 +1,22 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: vtex.js
+  description: SDK JavaScript para acesso às APIs da VTEX (legado, jQuery-based).
+  tags:
+    - coffee-script
+    - grunt
+  annotations:
+    vtex.com/janus-acronym: ""
+    vtex.com/o11y-os-index: ""
+    grafana/dashboard-selector: ""
+    github.com/project-slug: vtex/vtex.js
+    vtex.com/platform-flow-id: Shopper#4
+    backstage.io/techdocs-ref: dir:../
+    vtex.com/application-id: YHBZ8WHL
+spec:
+  system: checkout
+  lifecycle: maintenance
+  owner: te-0001
+  type: library
+  dependsOn: []
